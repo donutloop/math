@@ -665,6 +665,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "zeta requires x > 1"}
 		}
 		return zeta(x), nil
+	case "primecount":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "primecount requires n >= 0"}
+		}
+		return float64(primecount(n)), nil
 	case "lambertw":
 		x := args[0]
 		if x < -0.36787944117144233 {
@@ -776,6 +785,18 @@ func zeta(x float64) float64 {
 	// tail ~ n^(1-x)/(x-1) + 1/(2*n^x)
 	sum += math.Pow(n, 1-x)/(x-1) + 0.5/math.Pow(n, x)
 	return sum
+}
+
+
+func primecount(n int64) int64 {
+	// pi(n): number of primes <= n
+	count := int64(0)
+	for p := int64(2); p <= n; p++ {
+		if isPrime(p) {
+			count++
+		}
+	}
+	return count
 }
 
 func lambertw(x float64) float64 {

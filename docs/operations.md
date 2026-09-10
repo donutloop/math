@@ -355,6 +355,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `primorial(n)` | 1 | product of the first n primes (primorial(3)=30) |
 | `lambertw(x)` | 1 | Lambert W principal branch (lambertw(0)=0, lambertw(1)=0.56714329) |
 | `zeta(x)` | 1 | Riemann zeta for x > 1 (zeta(2)=1.644934) |
+| `primecount(n)` | 1 | pi(n): number of primes <= n (primecount(100)=25) |
 | `jn(n, x)` | 2 | Bessel J of order n |
 | `yn(n, x)` | 2 | Bessel Y of order n |
 

@@ -1,3 +1,8 @@
+## [102] primecount(n)
+
+- New `primecount(n)` = pi(n): number of primes <= n. primecount(10)=4,
+  primecount(100)=25, primecount(2)=1, primecount(0)=0.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [101] zeta(x)
 
 - New `zeta(x)`: Riemann zeta for x > 1 via a 2000-term series plus an
