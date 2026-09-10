@@ -1,3 +1,8 @@
+## [119] nthdigit(n, k)
+
+- New `nthdigit(n, k)`: the k-th decimal digit of n, 0-indexed from the
+  right. nthdigit(12345,0)=5, nthdigit(12345,1)=4, nthdigit(12345,4)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [118] digitalroot(n)
 
 - New `digitalroot(n)`: the iterated digit sum until a single digit.

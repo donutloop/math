@@ -79,6 +79,7 @@ var helpTopics = map[string]string{
 	"besselj1":  "besselj1(x): Bessel J1 (besselj1(1)=0.4401)",
 	"harmonic":  "harmonic(n): harmonic number H_n (harmonic(10)=2.9289)",
 	"digitalroot": "digitalroot(n): iterated digit sum (digitalroot(12345)=6)",
+	"nthdigit":   "nthdigit(n, k): k-th decimal digit from the right (nthdigit(12345, 0)=5)",
 	"sumproperdivisors": "sumproperdivisors(n): sum of proper divisors (sumproperdivisors(12)=16)",
 	"amicable":  "amicable(a, b): 1 if amicable pair (amicable(220, 284)=1)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",

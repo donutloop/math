@@ -822,6 +822,22 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "digitalroot requires n >= 0"}
 		}
 		return float64(digitalRoot(n)), nil
+	case "nthdigit":
+		if len(args) != 2 {
+			return 0, &EvalError{Err: ErrBadArity, Message: "nthdigit expects 2 arguments (n, k)"}
+		}
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		k, err := checkIntArg(args[1])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 || k < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "nthdigit requires n >= 0 and k >= 0"}
+		}
+		return float64(nthDigit(n, k)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1225,6 +1241,17 @@ func digitalRoot(n int64) int64 {
 		n = s
 	}
 	return n
+}
+
+func nthDigit(n, k int64) int64 {
+	if n == 0 {
+		return 0
+	}
+	div := int64(1)
+	for i := int64(0); i < k; i++ {
+		div *= 10
+	}
+	return (n / div) % 10
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
