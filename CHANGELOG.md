@@ -1,3 +1,8 @@
+## [92] Variadic gcd/lcm
+
+- `gcd` and `lcm` now accept two or more arguments (like `min`/`max`/`avg`),
+  folding left-to-right: `gcd(12, 18, 24)` -> 6, `lcm(4, 6, 10)` -> 60.
+- Updates parser dispatch, arity table, help text, docs, verify cases, and ADR.
 ## [91] Local bindings: let
 
 - New language-level `let(x = e1, y = e2, body)` expression: the last argument

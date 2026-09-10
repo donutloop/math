@@ -246,7 +246,11 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 	case "atan2":
 		return math.Atan2(args[0], args[1]), nil
 	case "gcd":
-		return gcd(args[0], args[1]), nil
+		g := args[0]
+		for _, v := range args[1:] {
+			g = gcd(g, v)
+		}
+		return g, nil
 	case "log10":
 		if args[0] <= 0 {
 			return math.NaN(), ErrDomain
@@ -434,7 +438,11 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 		return 0, nil
 
 	case "lcm":
-		return lcm(args[0], args[1]), nil
+		l := args[0]
+		for _, v := range args[1:] {
+			l = lcm(l, v)
+		}
+		return l, nil
 	case "sinh":
 		return math.Sinh(args[0]), nil
 	case "cosh":

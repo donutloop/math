@@ -64,8 +64,8 @@ var SupportedFunctions = map[string]int{
 	"acos":      1,
 	"atan":      1,
 	"atan2":     2,
-	"gcd":       2,
-	"lcm":       2,
+	"gcd":       -1, // variadic (2+)
+	"lcm":       -1, // variadic (2+)
 	"log10":     1,
 	"log1p":     1,
 	"asinh":     1,

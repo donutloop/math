@@ -325,8 +325,8 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `erfc(x)` | 1 | complementary error function |
 | `min(a, ...)` | variadic | smallest value |
 | `max(a, ...)` | variadic | largest value |
-| `gcd(a, b)` | 2 | greatest common divisor |
-| `lcm(a, b)` | 2 | least common multiple |
+| `gcd(a, b, ...)` | 2+ | greatest common divisor (variadic) |
+| `lcm(a, b, ...)` | 2+ | least common multiple (variadic) |
 | `isprime(x)` | 1 | 1 if x is prime, else 0 |
 | `prime(n)` | 1 | the n-th prime (1-indexed: prime(1)=2) |
 | `nextprime(n)` | 1 | the smallest prime >= n |
