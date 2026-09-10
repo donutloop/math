@@ -1,3 +1,9 @@
+## [113] sumproperdivisors(n)
+
+- New `sumproperdivisors(n)`: the aliquot sum (sum of proper divisors).
+  sumproperdivisors(12)=16, sumproperdivisors(6)=6, sumproperdivisors(28)=28
+  (6 and 28 are perfect, so their aliquot sums equal themselves).
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [112] carmichael(n)
 
 - New `carmichael(n)`: the Carmichael lambda function, the largest lambda

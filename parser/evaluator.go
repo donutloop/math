@@ -763,6 +763,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "carmichael requires n >= 1"}
 		}
 		return float64(carmichael(n)), nil
+	case "sumproperdivisors":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 2 {
+			return 0, &EvalError{Err: ErrDomain, Message: "sumproperdivisors requires n >= 2"}
+		}
+		return float64(sumProperDivisors(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1085,6 +1094,25 @@ func carmichael(n int64) int64 {
 		l = int64(lcm(float64(l), float64(m-1)))
 	}
 	return l
+}
+
+func sumProperDivisors(n int64) int64 {
+	if n < 2 {
+		return 0
+	}
+	sum := int64(0)
+	for d := int64(1); d*d <= n; d++ {
+		if n%d == 0 {
+			if d != n {
+				sum += d
+			}
+			other := n / d
+			if other != d && other != n {
+				sum += other
+			}
+		}
+	}
+	return sum
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
