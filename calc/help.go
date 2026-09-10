@@ -66,6 +66,7 @@ var helpTopics = map[string]string{
 	"digitsum":   "digitsum(n): sum of decimal digits of n (digitsum(1234)=10)",
 	"digitcount": "digitcount(n): number of decimal digits of n (digitcount(1234)=4)",
 	"primorial":  "primorial(n): product of the first n primes (primorial(3)=30)",
+	"lambertw":   "lambertw(x): Lambert W principal branch (lambertw(0)=0, lambertw(1)=omega 0.56714329)",
 	"let":       "let(x = e1, y = e2, body): local bindings — the last argument is the body; earlier args bind names that stay local (let(x = 2, x^2 + x) = 6)",
 	"asinh":     "asinh(x): inverse hyperbolic sine",
 	"acosh":     "acosh(x): inverse hyperbolic cosine (x >= 1)",

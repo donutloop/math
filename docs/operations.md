@@ -353,6 +353,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `digitsum(n)` | 1 | sum of decimal digits of n (digitsum(1234)=10) |
 | `digitcount(n)` | 1 | number of decimal digits of n (digitcount(1234)=4) |
 | `primorial(n)` | 1 | product of the first n primes (primorial(3)=30) |
+| `lambertw(x)` | 1 | Lambert W principal branch (lambertw(0)=0, lambertw(1)=0.56714329) |
 | `jn(n, x)` | 2 | Bessel J of order n |
 | `yn(n, x)` | 2 | Bessel Y of order n |
 

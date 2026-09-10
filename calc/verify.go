@@ -99,6 +99,7 @@ func Verify(w io.Writer) (passed, failed int) {
 		{"primorial(2)", "6"},
 		{"primorial(3)", "30"},
 		{"primorial(4)", "210"},
+		{"lambertw(0)", "0"},
 		{"gcd(12, 18, 24)", "6"},
 		{"lcm(4, 6, 10)", "60"},
 		{"gcd(36, 24)", "12"},

@@ -659,6 +659,12 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "sigma requires n != 0"}
 		}
 		return float64(sigma(n)), nil
+	case "lambertw":
+		x := args[0]
+		if x < -0.36787944117144233 {
+			return 0, &EvalError{Err: ErrDomain, Message: "lambertw requires x >= -1/e"}
+		}
+		return lambertw(x), nil
 	case "primorial":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -751,6 +757,31 @@ func totient(n int64) int64 {
 }
 
 
+
+
+func lambertw(x float64) float64 {
+	// principal branch of the Lambert W function via Newton iteration
+	if x == 0 {
+		return 0
+	}
+	w := math.Log(math.Max(x, 1e-9))
+	if x < 0.1 {
+		w = x // near 0, W(x) ~ x
+	}
+	for i := 0; i < 50; i++ {
+		e := math.Exp(w)
+		f := w*e - x
+		df := e * (w + 1)
+		if math.Abs(f) < 1e-14 {
+			break
+		}
+		if df == 0 {
+			break
+		}
+		w -= f / df
+	}
+	return w
+}
 
 func primorial(n int64) int64 {
 	// product of the first n primes

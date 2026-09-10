@@ -1,3 +1,10 @@
+## [100] lambertw(x)
+
+- New `lambertw(x)`: principal branch of the Lambert W function via Newton
+  iteration. lambertw(0)=0, lambertw(1)=0.56714329 (omega constant),
+  lambertw(e)=1. Domain error for x < -1/e.
+- Updates parser dispatch, arity table, help, operations.md, verify, unit
+  test (calc/lambertw_test.go), ADR.
 ## [99] Range gcd/lcm
 
 - `gcd` and `lcm` now accept range-loop form alongside their variadic
