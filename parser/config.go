@@ -149,6 +149,7 @@ var SupportedFunctions = map[string]int{
 	"mertens":   1,
 	"liouville": 1,
 	"carmichael": 1,
+	"loggamma":  1,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,

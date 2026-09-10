@@ -74,6 +74,7 @@ var helpTopics = map[string]string{
 	"mertens":   "mertens(n): sum of mobius(1..n) (mertens(10)=-1)",
 	"liouville": "liouville(n): (-1)^bigomega(n) (liouville(12)=-1)",
 	"carmichael": "carmichael(n): Carmichael lambda (carmichael(9)=6)",
+	"loggamma":  "loggamma(x): ln(gamma(x)) (loggamma(5)=ln24 3.1781)",
 	"sumproperdivisors": "sumproperdivisors(n): sum of proper divisors (sumproperdivisors(12)=16)",
 	"amicable":  "amicable(a, b): 1 if amicable pair (amicable(220, 284)=1)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",

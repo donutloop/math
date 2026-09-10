@@ -1,3 +1,11 @@
+## [115] loggamma(x)
+
+- New `loggamma(x)`: ln(gamma(x)) via recurrence into the large-x regime
+  plus Stirling expansion to the x^5 term. loggamma(1)=0, loggamma(5)=ln24
+  (3.1781), loggamma(0.5)=ln(sqrt(pi)) (0.5724).
+- Domain error at nonpositive integers.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/loggamma_test.go), ADR.
 ## [114] amicable(a, b)
 
 - New `amicable(a, b)` predicate: 1 if a and b form an amicable pair

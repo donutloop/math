@@ -794,6 +794,12 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case "loggamma":
+		x := args[0]
+		if x <= 0 && x == math.Floor(x) {
+			return 0, &EvalError{Err: ErrDomain, Message: "loggamma is undefined at nonpositive integers"}
+		}
+		return lnGamma(x), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1135,6 +1141,21 @@ func sumProperDivisors(n int64) int64 {
 		}
 	}
 	return sum
+}
+
+func lnGamma(x float64) float64 {
+	// recurrence lnGamma(x) = lnGamma(x+1) - ln(x) pushes into large-x regime
+	res := 0.0
+	for x < 10 {
+		res -= math.Log(x)
+		x++
+	}
+	// Stirling: lnGamma(x) ~ (x-0.5)*ln(x) - x + 0.5*ln(2pi) + 1/(12x) - 1/(360x^3) + 1/(1260x^5)
+	res += (x - 0.5)*math.Log(x) - x + 0.5*math.Log(2*math.Pi)
+	res += 1 / (12 * x)
+	res -= 1 / (360 * x * x * x)
+	res += 1 / (1260 * x * x * x * x * x)
+	return res
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

@@ -361,6 +361,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `mertens(n)` | 1 | Mertens function: sum of mobius(1..n) (mertens(10)=-1) |
 | `liouville(n)` | 1 | Liouville function (-1)^bigomega(n) (liouville(12)=-1) |
 | `carmichael(n)` | 1 | Carmichael lambda (carmichael(9)=6) |
+| `loggamma(x)` | 1 | log-gamma ln(gamma(x)) (loggamma(5)=3.1781) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |
