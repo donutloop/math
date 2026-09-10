@@ -357,6 +357,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `zeta(x)` | 1 | Riemann zeta for x > 1 (zeta(2)=1.644934) |
 | `primecount(n)` | 1 | pi(n): number of primes <= n (primecount(100)=25) |
 | `prevprime(n)` | 1 | largest prime strictly below n (prevprime(10)=7) |
+| `digamma(x)` | 1 | psi digamma function (digamma(1)=-0.5772) |
 | `jn(n, x)` | 2 | Bessel J of order n |
 | `yn(n, x)` | 2 | Bessel Y of order n |
 

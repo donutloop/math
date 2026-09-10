@@ -70,6 +70,7 @@ var helpTopics = map[string]string{
 	"zeta":       "zeta(x): Riemann zeta for x > 1 (zeta(2)=1.644934, zeta(3)=1.202056)",
 	"primecount": "primecount(n): number of primes <= n (primecount(100)=25)",
 	"prevprime":  "prevprime(n): largest prime strictly below n (prevprime(10)=7)",
+	"digamma":    "digamma(x): psi digamma function (digamma(1)=-gamma 0.5772)",
 	"let":       "let(x = e1, y = e2, body): local bindings — the last argument is the body; earlier args bind names that stay local (let(x = 2, x^2 + x) = 6)",
 	"asinh":     "asinh(x): inverse hyperbolic sine",
 	"acosh":     "acosh(x): inverse hyperbolic cosine (x >= 1)",

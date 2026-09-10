@@ -1,3 +1,11 @@
+## [104] digamma(x)
+
+- New `digamma(x)`: the psi (digamma) function via recurrence into the
+  large-x regime plus an asymptotic expansion. digamma(1)=-0.5772 (the
+  negative Euler-Mascheroni constant), digamma(0.5)=-1.9635.
+- Domain error at nonpositive integers.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/digamma_test.go), ADR.
 ## [103] prevprime(n)
 
 - New `prevprime(n)`: largest prime strictly below n. prevprime(10)=7,

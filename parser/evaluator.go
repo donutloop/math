@@ -679,6 +679,12 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			}
 		}
 		return 0, &EvalError{Err: ErrDomain, Message: "prevprime: no prime below n"}
+	case "digamma":
+		x := args[0]
+		if x <= 0 && math.Mod(x, 1) == 0 && x == math.Floor(x) {
+			return 0, &EvalError{Err: ErrDomain, Message: "digamma is undefined at nonpositive integers"}
+		}
+		return digamma(x), nil
 	case "primecount":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -801,6 +807,25 @@ func zeta(x float64) float64 {
 	return sum
 }
 
+
+
+func digamma(x float64) float64 {
+	// recurrence to push into the large-x regime
+	res := 0.0
+	for x < 10 {
+		res -= 1 / x
+		x++
+	}
+	// asymptotic expansion psi(x) ~ ln(x) - 1/(2x) - sum B_{2k}/(2k x^{2k})
+	res += math.Log(x) - 0.5/x
+	res -= 1 / (12 * x * x)
+	res += 1 / (120 * x * x * x * x)
+	res -= 1 / (252 * x * x * x * x * x * x)
+	res += 1 / (240 * x * x * x * x * x * x * x * x)
+	res -= 1 / (132 * x * x * x * x * x * x * x * x * x * x)
+	res += 691 / (32760 * math.Pow(x, 12))
+	return res
+}
 
 func primecount(n int64) int64 {
 	// pi(n): number of primes <= n
