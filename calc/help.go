@@ -103,6 +103,7 @@ var helpTopics = map[string]string{
 	"primecount": "primecount(n): number of primes <= n (primecount(100)=25)",
 	"prevprime":  "prevprime(n): largest prime strictly below n (prevprime(10)=7)",
 	"digamma":    "digamma(x): psi digamma function (digamma(1)=-gamma 0.5772)",
+	"trigamma":  "trigamma(x): psi prime (trigamma(1)=1.6449)",
 	"repeat":     "repeat(n, var, body): evaluate body with var=1..n, return last value (repeat(5, i, i*i)=25)",
 	"let":       "let(x = e1, y = e2, body): local bindings — the last argument is the body; earlier args bind names that stay local (let(x = 2, x^2 + x) = 6)",
 	"asinh":     "asinh(x): inverse hyperbolic sine",

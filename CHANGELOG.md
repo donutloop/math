@@ -1,3 +1,11 @@
+## [135] trigamma(x)
+
+- New `trigamma(x)`: the trigamma function psi'(x), via recurrence into
+  the large-x regime plus asymptotic expansion to x^7.
+  trigamma(1)=1.6449 (zeta(2)=pi^2/6), trigamma(2)=0.6449.
+- Domain error at nonpositive integers.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/trigamma_test.go), ADR.
 ## [134] nextperfect(n)
 
 - New `nextperfect(n)`: the smallest perfect number >= n, scanning upward

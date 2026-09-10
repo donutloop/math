@@ -681,6 +681,12 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			}
 		}
 		return 0, &EvalError{Err: ErrDomain, Message: "prevprime: no prime below n"}
+	case "trigamma":
+		x := args[0]
+		if x <= 0 && x == math.Floor(x) {
+			return 0, &EvalError{Err: ErrDomain, Message: "trigamma is undefined at nonpositive integers"}
+		}
+		return trigamma(x), nil
 	case "digamma":
 		x := args[0]
 		if x <= 0 && math.Mod(x, 1) == 0 && x == math.Floor(x) {
@@ -1149,6 +1155,20 @@ func zeta(x float64) float64 {
 
 
 
+
+func trigamma(x float64) float64 {
+	// recurrence trigamma(x) = trigamma(x+1) + 1/x^2 pushes into large-x regime
+	res := 0.0
+	for x < 10 {
+		res += 1 / (x * x)
+		x++
+	}
+	// asymptotic: trigamma(x) ~ 1/x + 1/(2x^2) + 1/(6x^3) - 1/(30x^5) + 1/(42x^7)
+	res += 1 / x + 1 / (2 * x * x) + 1 / (6 * x * x * x)
+	res -= 1 / (30 * math.Pow(x, 5))
+	res += 1 / (42 * math.Pow(x, 7))
+	return res
+}
 func digamma(x float64) float64 {
 	// recurrence to push into the large-x regime
 	res := 0.0

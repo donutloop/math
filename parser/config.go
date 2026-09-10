@@ -178,6 +178,7 @@ var SupportedFunctions = map[string]int{
 	"nextperfect": 1,
 	"primecount": 1,
 	"digamma":   1,
+	"trigamma":  1,
 	"prevprime":  1,
 	"digitcount": 1, // Collatz stopping time
 	"prod":      -1,

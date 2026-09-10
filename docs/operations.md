@@ -390,6 +390,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `primecount(n)` | 1 | pi(n): number of primes <= n (primecount(100)=25) |
 | `prevprime(n)` | 1 | largest prime strictly below n (prevprime(10)=7) |
 | `digamma(x)` | 1 | psi digamma function (digamma(1)=-0.5772) |
+| `trigamma(x)` | 1 | psi' trigamma function (trigamma(1)=1.6449) |
 | `repeat(n, var, body)` | 3 | loop macro: evaluate body with var=1..n, return last value |
 | `jn(n, x)` | 2 | Bessel J of order n |
 | `yn(n, x)` | 2 | Bessel Y of order n |
