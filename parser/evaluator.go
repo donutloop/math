@@ -838,6 +838,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "nthdigit requires n >= 0 and k >= 0"}
 		}
 		return float64(nthDigit(n, k)), nil
+	case "bell":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "bell requires n >= 0"}
+		}
+		return float64(bell(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1252,6 +1261,18 @@ func nthDigit(n, k int64) int64 {
 		div *= 10
 	}
 	return (n / div) % 10
+}
+
+func bell(n int64) int64 {
+	b := make([]int64, n+1)
+	b[0] = 1
+	for i := int64(1); i <= n; i++ {
+		b[i] = 0
+		for k := int64(0); k < i; k++ {
+			b[i] += choose(i-1, k) * b[k]
+		}
+	}
+	return b[n]
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

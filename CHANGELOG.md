@@ -1,3 +1,9 @@
+## [120] bell(n)
+
+- New `bell(n)`: the Bell number, the count of set partitions of n elements,
+  via the recurrence B(i)=sum choose(i-1,k)*B(k). bell(0)=1, bell(3)=5,
+  bell(4)=15, bell(5)=52.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [119] nthdigit(n, k)
 
 - New `nthdigit(n, k)`: the k-th decimal digit of n, 0-indexed from the

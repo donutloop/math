@@ -155,6 +155,7 @@ var SupportedFunctions = map[string]int{
 	"harmonic":  1,
 	"digitalroot": 1,
 	"nthdigit":   2,
+	"bell":      1,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,
