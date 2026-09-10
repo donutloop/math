@@ -136,7 +136,8 @@ var SupportedFunctions = map[string]int{
 	"powmod":    3, // modular exponentiation a^b mod m
 	"collatz":   1,
 	"totient":   1,
-	"sigma":     1, // Collatz stopping time
+	"sigma":     1,
+	"isperfect": 1, // Collatz stopping time
 	"prod":      -1,
 	"min":       -1, // variadic
 	"max":       -1, // variadic

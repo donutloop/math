@@ -659,6 +659,18 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "sigma requires n != 0"}
 		}
 		return float64(sigma(n)), nil
+	case "isperfect":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n <= 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "isperfect requires n >= 1"}
+		}
+		if sigma(n) == 2*n {
+			return 1, nil
+		}
+		return 0, nil
 	case "npr":
 		// permutations nPr(n, r) = n! / (n-r)! : npr(5, 2)=20, npr(10, 3)=720.
 		if len(args) != 2 {

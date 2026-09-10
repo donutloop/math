@@ -1,3 +1,8 @@
+## [94] isperfect(n)
+
+- New `isperfect(n)`: 1 if n is a perfect number (sigma(n) == 2n), else 0.
+  isperfect(6)=1, isperfect(28)=1, isperfect(10)=0. Domain error for n <= 0.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [93] Number theory: totient and sigma
 
 - New `totient(n)`: Euler\u2019s phi — count of integers 1..n coprime to n
