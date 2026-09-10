@@ -1,3 +1,9 @@
+## [109] tau(n) and mobius(n)
+
+- New `tau(n)` (divisor count) and `mobius(n)` (Moebius function).
+  tau(12)=6, tau(6)=4, mobius(6)=1, mobius(30)=-1, mobius(12)=0,
+  mobius(1)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [108] omega(n) and bigomega(n)
 
 - New `omega(n)` (omega prime-factor count) and `bigomega(n)` (Omega with

@@ -718,6 +718,24 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "bigomega requires n >= 1"}
 		}
 		return float64(bigomega(n)), nil
+	case "tau":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "tau requires n >= 1"}
+		}
+		return float64(tau(n)), nil
+	case "mobius":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "mobius requires n >= 1"}
+		}
+		return float64(mobius(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -949,6 +967,47 @@ func bigomega(n int64) int64 {
 		count++
 	}
 	return count
+}
+
+func tau(n int64) int64 {
+	count := int64(0)
+	for d := int64(1); d*d <= n; d++ {
+		if n%d == 0 {
+			if d*d == n {
+				count++
+			} else {
+				count += 2
+			}
+		}
+	}
+	return count
+}
+
+func mobius(n int64) int64 {
+	if n == 1 {
+		return 1
+	}
+	distinct := int64(0)
+	m := n
+	for p := int64(2); p*p <= m; p++ {
+		if m%p == 0 {
+			// if p^2 divides n, n is not squarefree => mu = 0
+			if (n/(p*p))*p*p == n {
+				return 0
+			}
+			distinct++
+			for m%p == 0 {
+				m /= p
+			}
+		}
+	}
+	if m > 1 {
+		distinct++
+	}
+	if distinct%2 == 0 {
+		return 1
+	}
+	return -1
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

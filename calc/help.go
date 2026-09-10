@@ -69,6 +69,8 @@ var helpTopics = map[string]string{
 	"choose":     "choose(n, k): binomial coefficient n choose k (choose(5, 2)=10)",
 	"omega":     "omega(n): number of distinct prime factors (omega(30)=3)",
 	"bigomega":  "bigomega(n): total prime factors with multiplicity (bigomega(12)=3)",
+	"tau":       "tau(n): number of divisors (tau(12)=6)",
+	"mobius":    "mobius(n): Moebius function (mobius(30)=-1)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",
 	"lambertw":   "lambertw(x): Lambert W principal branch (lambertw(0)=0, lambertw(1)=omega 0.56714329)",
 	"zeta":       "zeta(x): Riemann zeta for x > 1 (zeta(2)=1.644934, zeta(3)=1.202056)",

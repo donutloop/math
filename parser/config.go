@@ -144,6 +144,8 @@ var SupportedFunctions = map[string]int{
 	"primorial": 1,
 	"choose":    2,
 	"omega":     1,
+	"tau":       1,
+	"mobius":    1,
 	"bigomega":  1,
 	"sumofprimes": 1,
 	"lambertw":  1,
