@@ -665,6 +665,20 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "zeta requires x > 1"}
 		}
 		return zeta(x), nil
+	case "prevprime":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n <= 2 {
+			return 0, &EvalError{Err: ErrDomain, Message: "prevprime requires n > 2"}
+		}
+		for p := n - 1; p >= 2; p-- {
+			if isPrime(p) {
+				return float64(p), nil
+			}
+		}
+		return 0, &EvalError{Err: ErrDomain, Message: "prevprime: no prime below n"}
 	case "primecount":
 		n, err := checkIntArg(args[0])
 		if err != nil {

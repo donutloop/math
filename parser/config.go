@@ -145,6 +145,7 @@ var SupportedFunctions = map[string]int{
 	"lambertw":  1,
 	"zeta":      1,
 	"primecount": 1,
+	"prevprime":  1,
 	"digitcount": 1, // Collatz stopping time
 	"prod":      -1,
 	"min":       -1, // variadic

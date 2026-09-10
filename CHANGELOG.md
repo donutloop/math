@@ -1,3 +1,9 @@
+## [103] prevprime(n)
+
+- New `prevprime(n)`: largest prime strictly below n. prevprime(10)=7,
+  prevprime(100)=97, prevprime(3)=2. Domain error for n <= 2.
+- Complements nextprime. Updates parser dispatch, arity table, help,
+  operations.md, verify, ADR.
 ## [102] primecount(n)
 
 - New `primecount(n)` = pi(n): number of primes <= n. primecount(10)=4,
