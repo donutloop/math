@@ -847,6 +847,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "bell requires n >= 0"}
 		}
 		return float64(bell(n)), nil
+	case "catalan":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "catalan requires n >= 0"}
+		}
+		return float64(catalan(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1273,6 +1282,10 @@ func bell(n int64) int64 {
 		}
 	}
 	return b[n]
+}
+
+func catalan(n int64) int64 {
+	return choose(2*n, n) / (n + 1)
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

@@ -368,6 +368,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `digitalroot(n)` | 1 | iterated digit sum (digitalroot(12345)=6) |
 | `nthdigit(n, k)` | 2 | k-th decimal digit from the right (nthdigit(12345,0)=5) |
 | `bell(n)` | 1 | Bell number: set partitions of n (bell(4)=15) |
+| `catalan(n)` | 1 | Catalan number choose(2n,n)/(n+1) (catalan(4)=14) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |

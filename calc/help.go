@@ -81,6 +81,7 @@ var helpTopics = map[string]string{
 	"digitalroot": "digitalroot(n): iterated digit sum (digitalroot(12345)=6)",
 	"nthdigit":   "nthdigit(n, k): k-th decimal digit from the right (nthdigit(12345, 0)=5)",
 	"bell":      "bell(n): Bell number (partitions of n) (bell(4)=15)",
+	"catalan":   "catalan(n): Catalan number (catalan(4)=14)",
 	"sumproperdivisors": "sumproperdivisors(n): sum of proper divisors (sumproperdivisors(12)=16)",
 	"amicable":  "amicable(a, b): 1 if amicable pair (amicable(220, 284)=1)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",

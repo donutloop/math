@@ -1,3 +1,8 @@
+## [121] catalan(n)
+
+- New `catalan(n)`: the Catalan number C_n = choose(2n,n)/(n+1).
+  catalan(0)=1, catalan(3)=5, catalan(4)=14, catalan(5)=42.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [120] bell(n)
 
 - New `bell(n)`: the Bell number, the count of set partitions of n elements,
