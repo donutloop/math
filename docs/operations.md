@@ -370,6 +370,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `bell(n)` | 1 | Bell number: set partitions of n (bell(4)=15) |
 | `catalan(n)` | 1 | Catalan number choose(2n,n)/(n+1) (catalan(4)=14) |
 | `stirling(n, k)` | 2 | Stirling number 2nd kind (stirling(4,2)=7) |
+| `derangements(n)` | 1 | subfactorial !n (derangements(4)=9) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |

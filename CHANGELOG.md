@@ -1,3 +1,9 @@
+## [123] derangements(n)
+
+- New `derangements(n)`: the subfactorial !n, permutations of n elements
+  with no fixed points, via the recurrence !n = (n-1)*(!(n-1)+!(n-2)).
+  derangements(2)=1, derangements(3)=2, derangements(4)=9, derangements(5)=44.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [122] stirling(n, k)
 
 - New `stirling(n, k)`: the Stirling number of the second kind, partitions

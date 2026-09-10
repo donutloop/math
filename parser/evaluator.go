@@ -872,6 +872,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "stirling requires 0 <= k <= n"}
 		}
 		return float64(stirling(n, k)), nil
+	case "derangements":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "derangements requires n >= 0"}
+		}
+		return float64(derangements(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1321,6 +1330,21 @@ func stirling(n, k int64) int64 {
 		}
 	}
 	return dp[k]
+}
+
+func derangements(n int64) int64 {
+	if n == 0 {
+		return 1
+	}
+	if n == 1 {
+		return 0
+	}
+	a, b := int64(1), int64(0) // !0=1, !1=0
+	for i := int64(2); i <= n; i++ {
+		next := (i - 1) * (a + b)
+		a, b = b, next
+	}
+	return b
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
