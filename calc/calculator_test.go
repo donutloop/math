@@ -971,6 +971,9 @@ func TestRangeLoopExpressions(t *testing.T) {
 		{"min(i, 1, 4, i*i)", "1"},
 		{"max(i, 1, 4, i*i)", "16"},
 		{"avg(i, 1, 3, i)", "2"},
+		{"gcd(i, 1, 10, i)", "1"},
+		{"lcm(i, 1, 5, i)", "60"},
+		{"lcm(i, 2, 4, i)", "12"},
 		{"min(3, 1, 2)", "1"},
 		{"avg(1, 2, 3, 4)", "2.5"},
 		{"sum(i, 3, 1, i)", "0"},           // reversed range: sum identity

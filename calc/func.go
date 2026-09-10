@@ -460,7 +460,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			i = end + 1
 			continue
 		}
-		if k < n && s[k] == '(' && (ident == "sum" || ident == "prod" || ident == "count" || ident == "avg" || ident == "min" || ident == "max") {
+		if k < n && s[k] == '(' && (ident == "sum" || ident == "prod" || ident == "count" || ident == "avg" || ident == "min" || ident == "max" || ident == "gcd" || ident == "lcm") {
 			rangeOK := true
 			parenEnd := findMatchingParen(s, k)
 			if parenEnd < 0 {

@@ -106,6 +106,16 @@ func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
 			return "", fmt.Errorf("max over an empty range")
 		}
 		return "max(" + strings.Join(terms, ",") + ")", nil
+	case "gcd":
+		if len(terms) == 0 {
+			return "", fmt.Errorf("gcd over an empty range")
+		}
+		return "gcd(" + strings.Join(terms, ",") + ")", nil
+	case "lcm":
+		if len(terms) == 0 {
+			return "", fmt.Errorf("lcm over an empty range")
+		}
+		return "lcm(" + strings.Join(terms, ",") + ")", nil
 	}
 	return "", fmt.Errorf("unknown range kind %q", kind)
 }

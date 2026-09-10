@@ -1,3 +1,10 @@
+## [99] Range gcd/lcm
+
+- `gcd` and `lcm` now accept range-loop form alongside their variadic
+  math form: gcd(i, 1, 10, i)=1, lcm(i, 1, 5, i)=60.
+- Disambiguation mirrors min/max/avg: range only when the first arg is a
+  loop variable and the call has 4-5 args.
+- Updates dispatch, expandRangeLoop, help, operations.md, tests, ADR.
 ## [98] isabundant(n) / isdeficient(n)
 
 - New `isabundant(n)`: 1 if sigma(n) > 2n (abundant), else 0. isabundant(12)=1.

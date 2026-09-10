@@ -224,6 +224,8 @@ directly (comparisons already yield 1/0). Examples:
     min(i, 1, 4, i*i)            # -> 1
     max(i, 1, 4, i*i)            # -> 16
     avg(i, 1, 3, i)              # -> 2
+    gcd(i, 1, 10, i)             # -> 1
+    lcm(i, 1, 5, i)              # -> 60
 
 A reversed range yields the sum identity 0 and the product identity 1.
 

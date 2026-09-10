@@ -99,6 +99,7 @@ var helpTopics = map[string]string{
 	"root":       "root(x, n): n-th root of x = x^(1/n)",
 	"min":       "min(a, b, ...): smallest of the values",
 	"max":       "max(a, b, ...): largest of the values",
+	"range":     "min/max/avg/gcd/lcm(i, lo, hi, body): range iteration (min(i, 1, 4, i*i)=1, lcm(i, 1, 5, i)=60)",
 	"fact":      "fact(n): n! for integer n >= 0",
 	"atan2":     "atan2(y, x): angle whose tangent is y/x",
 	"sinh":      "sinh(x): hyperbolic sine",
