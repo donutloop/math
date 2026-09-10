@@ -659,6 +659,12 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "sigma requires n != 0"}
 		}
 		return float64(sigma(n)), nil
+	case "zeta":
+		x := args[0]
+		if x <= 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "zeta requires x > 1"}
+		}
+		return zeta(x), nil
 	case "lambertw":
 		x := args[0]
 		if x < -0.36787944117144233 {
@@ -758,6 +764,19 @@ func totient(n int64) int64 {
 
 
 
+
+
+func zeta(x float64) float64 {
+	// Riemann zeta via series plus an Euler-Maclaurin tail correction
+	n := 2000.0
+	sum := 0.0
+	for k := 1.0; k <= n; k++ {
+		sum += 1.0 / math.Pow(k, x)
+	}
+	// tail ~ n^(1-x)/(x-1) + 1/(2*n^x)
+	sum += math.Pow(n, 1-x)/(x-1) + 0.5/math.Pow(n, x)
+	return sum
+}
 
 func lambertw(x float64) float64 {
 	// principal branch of the Lambert W function via Newton iteration

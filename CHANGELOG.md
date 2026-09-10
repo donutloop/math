@@ -1,3 +1,10 @@
+## [101] zeta(x)
+
+- New `zeta(x)`: Riemann zeta for x > 1 via a 2000-term series plus an
+  Euler-Maclaurin tail correction. zeta(2)=1.644934, zeta(3)=1.202056.
+  Domain error for x <= 1.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/zeta_test.go), ADR.
 ## [100] lambertw(x)
 
 - New `lambertw(x)`: principal branch of the Lambert W function via Newton

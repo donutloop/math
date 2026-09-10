@@ -143,6 +143,7 @@ var SupportedFunctions = map[string]int{
 	"digitsum":   1,
 	"primorial": 1,
 	"lambertw":  1,
+	"zeta":      1,
 	"digitcount": 1, // Collatz stopping time
 	"prod":      -1,
 	"min":       -1, // variadic
