@@ -345,6 +345,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `isperfect(n)` | 1 | 1 if n is perfect (sigma(n)=2n), else 0 (isperfect(6)=1) |
 | `digitsum(n)` | 1 | sum of decimal digits of n (digitsum(1234)=10) |
 | `digitcount(n)` | 1 | number of decimal digits of n (digitcount(1234)=4) |
+| `primorial(n)` | 1 | product of the first n primes (primorial(3)=30) |
 | `jn(n, x)` | 2 | Bessel J of order n |
 | `yn(n, x)` | 2 | Bessel Y of order n |
 

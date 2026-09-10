@@ -659,6 +659,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "sigma requires n != 0"}
 		}
 		return float64(sigma(n)), nil
+	case "primorial":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n <= 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "primorial requires n >= 1"}
+		}
+		return float64(primorial(n)), nil
 	case "digitsum":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -717,6 +726,20 @@ func totient(n int64) int64 {
 	return count
 }
 
+
+
+func primorial(n int64) int64 {
+	// product of the first n primes
+	prod := int64(1)
+	count := int64(0)
+	for p := int64(2); count < n; p++ {
+		if isPrime(p) {
+			prod *= p
+			count++
+		}
+	}
+	return prod
+}
 
 func digitsum(n int64) int64 {
 	if n < 0 {

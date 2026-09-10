@@ -1,3 +1,8 @@
+## [96] primorial(n)
+
+- New `primorial(n)`: product of the first n primes. primorial(1)=2,
+  primorial(3)=30, primorial(4)=210. Domain error for n <= 0.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [95] digitsum / digitcount
 
 - New `digitsum(n)`: sum of decimal digits (digitsum(1234)=10, digitsum(0)=0).
