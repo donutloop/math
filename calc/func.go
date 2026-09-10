@@ -487,6 +487,23 @@ func (c *Calculator) expand(s string) (string, error) {
 				continue
 			}
 		}
+		if k < n && s[k] == '(' && ident == "repeat" {
+			end := findMatchingParen(s, k)
+			if end < 0 {
+				return "", fmt.Errorf("unmatched '(' in call to repeat")
+			}
+			args := splitArgs(s[k+1 : end])
+			if len(args) != 3 {
+				return "", fmt.Errorf("repeat expects 3 arguments (n, var, body), got %d", len(args))
+			}
+			r, err := c.expandRepeat(strings.TrimSpace(args[0]), strings.TrimSpace(args[1]), strings.TrimSpace(args[2]))
+			if err != nil {
+				return "", err
+			}
+			b.WriteString(r)
+			i = end + 1
+			continue
+		}
 		if k < n && s[k] == '(' && (ident == "countif" || ident == "sumif") {
 			end := findMatchingParen(s, k)
 			if end < 0 {

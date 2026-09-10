@@ -1,3 +1,11 @@
+## [105] repeat(n, var, body)
+
+- New language-level loop macro `repeat(n, var, body)`: evaluates body with
+  var bound to each integer 1..n and returns the LAST evaluated value.
+  Useful for final-iteration computations and nested iteration.
+- repeat(5, i, i*i)=25, repeat(3, j, j+j)=6, nested loops supported.
+- Updates macro dispatch, help, operations.md, unit test
+  (calc/repeat_test.go), ADR.
 ## [104] digamma(x)
 
 - New `digamma(x)`: the psi (digamma) function via recurrence into the

@@ -120,3 +120,33 @@ func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
 	return "", fmt.Errorf("unknown range kind %q", kind)
 }
 
+
+// expandRepeat expands a repeat(n, var, body) macro: it evaluates body with
+// var bound to each integer 1..n and returns the LAST evaluated value.
+func (c *Calculator) expandRepeat(nArg, varName, body string) (string, error) {
+	if !isIdent(varName) {
+		return "", fmt.Errorf("repeat loop variable %q is not a valid identifier", varName)
+	}
+	nE, err := c.expand(nArg)
+	if err != nil {
+		return "", err
+	}
+	nNum, err := parser.Evaluate(nE)
+	if err != nil {
+		return "", fmt.Errorf("repeat count must be numeric: %v", err)
+	}
+	n := int(nNum)
+	if n < 1 {
+		return "", fmt.Errorf("repeat count must be >= 1")
+	}
+	last := "0"
+	for i := 1; i <= n; i++ {
+		term := replaceIdent(body, varName, fmt.Sprintf("%d", i))
+		te, err := c.expand(term)
+		if err != nil {
+			return "", err
+		}
+		last = te
+	}
+	return last, nil
+}
