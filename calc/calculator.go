@@ -441,9 +441,23 @@ func (c *Calculator) substitute(expr string) (string, error) {
 // findAssignEq returns the index of the first '=' in s that is an assignment
 // operator (not part of ==, >=, <=, !=), or -1 if none.
 func findAssignEq(s string) int {
+	depth := 0
 	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '(':
+			depth++
+			continue
+		case ')':
+			if depth > 0 {
+				depth--
+			}
+			continue
+		}
 		if s[i] != '=' {
 			continue
+		}
+		if depth > 0 {
+			continue // skip '=' inside parentheses (e.g. let bindings)
 		}
 		if i+1 < len(s) && s[i+1] == '=' {
 			continue // part of ==

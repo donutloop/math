@@ -349,6 +349,20 @@ Functions with restricted domains return typed evaluation errors (e.g.
 `sqrt(-1)` is rejected). Division by zero and undefined trig reciprocals are
 also reported as errors rather than silent infinities.
 
+## Local bindings: let
+
+`let` gives expressions local scope without touching global variables. The
+last argument is the body; every earlier argument is a binding of the form
+`name = expr`. Bindings may reference earlier bindings, and names stay local:
+
+    let(x = 2, x^2 + x)                 # 6
+    let(x = 1, y = x + 1, x * y)        # 2
+    let(a = 5, b = 10, c = a + b, c * 2) # 30
+
+Because bindings are substituted into the body (with precedence preserved),
+`let` composes cleanly: `let(a = 5, b = 10, a + b)` is just `(5) + (10)` = 15
+and never assigns a global `a` or `b`.
+
 ## Feature history
 
 | Commit | Feature |

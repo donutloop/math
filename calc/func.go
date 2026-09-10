@@ -142,6 +142,61 @@ func splitArgs(s string) []string {
 
 // replaceIdent replaces every whole-word occurrence of the identifier target
 // in s with replacement.
+
+// expandLet implements local bindings: let(x = e1, y = e2, ..., body).
+// The last argument is the body expression; every preceding argument must be
+// a binding of the form name = expr. Bindings are substituted into the body
+// (and into later bindings) so names stay local and never touch global state.
+func (c *Calculator) expandLet(inner string) (string, error) {
+	args := splitArgs(inner)
+	if len(args) < 2 {
+		return "", fmt.Errorf("let expects at least one binding (name = expr) and a body expression")
+	}
+	// First pass: resolve every binding, substituting earlier bindings into
+	// later ones so let(x = 1, y = x + 1, x * y) works.
+	bindings := args[:len(args)-1]
+	body := args[len(args)-1]
+	subs := make([]subst, 0, len(bindings))
+	for _, b := range bindings {
+		eq := findAssignEq(b)
+		if eq < 0 {
+			return "", fmt.Errorf("let binding %q must be of the form name = expr", strings.TrimSpace(b))
+		}
+		name := strings.TrimSpace(b[:eq])
+		if !isIdent(name) {
+			return "", fmt.Errorf("let binding name %q is not a valid identifier", name)
+		}
+		expr := strings.TrimSpace(b[eq+1:])
+		if expr == "" {
+			return "", fmt.Errorf("let binding for %q has an empty expression", name)
+		}
+		// Substitute earlier bindings into this binding's expression.
+		for _, sb := range subs {
+			expr = replaceIdent(expr, sb.name, sb.expr)
+		}
+		ex, err := c.expand(expr)
+		if err != nil {
+			return "", err
+		}
+		subs = append(subs, subst{name: name, expr: "(" + ex + ")"})
+	}
+	// Apply all bindings to the body, then evaluate it.
+	for _, sb := range subs {
+		body = replaceIdent(body, sb.name, sb.expr)
+	}
+	eb, err := c.expand(body)
+	if err != nil {
+		return "", err
+	}
+	return "(" + eb + ")", nil
+}
+
+// subst records a resolved local binding for let.
+type subst struct {
+	name string
+	expr string
+}
+
 func replaceIdent(s, target, replacement string) string {
 	var b strings.Builder
 	i := 0
@@ -167,7 +222,7 @@ func replaceIdent(s, target, replacement string) string {
 
 // defineFunc validates and stores a user-defined function.
 func (c *Calculator) defineFunc(name string, params []string, body string) error {
-	if name == "ans" || name == "mem" || name == "pi" || name == "e" || name == "convert" || name == "if" || name == "and" || name == "or" || name == "not" || name == "clamp" || name == "lerp" || name == "step" || name == "diff" || name == "pct" || name == "smoothstep" || name == "remap" || name == "var" || name == "stddev" || name == "median" || name == "count" || name == "mode" || name == "countif" || name == "sumif" {
+	if name == "ans" || name == "mem" || name == "pi" || name == "e" || name == "convert" || name == "if" || name == "and" || name == "or" || name == "not" || name == "clamp" || name == "lerp" || name == "step" || name == "diff" || name == "pct" || name == "smoothstep" || name == "remap" || name == "var" || name == "stddev" || name == "median" || name == "count" || name == "mode" || name == "countif" || name == "sumif" || name == "let" {
 		return fmt.Errorf("cannot define function %q (reserved name)", name)
 	}
 	if _, ok := parser.SupportedFunctions[name]; ok {
@@ -229,6 +284,19 @@ func (c *Calculator) expand(s string) (string, error) {
 				return "", err
 			}
 			b.WriteString(conv)
+			i = end + 1
+			continue
+		}
+		if k < n && s[k] == '(' && ident == "let" {
+			end := findMatchingParen(s, k)
+			if end < 0 {
+				return "", fmt.Errorf("unmatched '(' in call to let")
+			}
+			le, err := c.expandLet(s[k+1 : end])
+			if err != nil {
+				return "", err
+			}
+			b.WriteString(le)
 			i = end + 1
 			continue
 		}

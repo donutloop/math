@@ -1,3 +1,16 @@
+## [91] Local bindings: let
+
+- New language-level `let(x = e1, y = e2, body)` expression: the last argument
+  is the body; earlier arguments bind names that stay local and never touch
+  global variables. Bindings can reference earlier bindings, and substituted
+  values are parenthesized to preserve precedence.
+  - `let(x = 2, x^2 + x)` -> 6
+  - `let(x = 1, y = x + 1, x * y)` -> 2
+  - `let(a = 5, b = 10, c = a + b, c * 2)` -> 30
+- `findAssignEq` now only treats `=` at paren depth 0 as an assignment, so
+  `let(x = 2, ...)` is not misparsed as a global assignment.
+- `let` is a reserved name so it cannot be shadowed by user definitions.
+- Adds unit tests, help text, and documentation.
 ## [90] Collatz stopping time: collatz
 
 - `collatz(n)` returns the number of Collatz steps to reach 1 (the stopping
