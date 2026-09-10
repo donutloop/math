@@ -379,6 +379,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `partition(n)` | 1 | integer partition count p(n) (partition(6)=11) |
 | `collatzmax(n)` | 1 | peak of Collatz sequence (collatzmax(3)=16) |
 | `nextabundant(n)` | 1 | smallest abundant number >= n (nextabundant(7)=12) |
+| `nextdeficient(n)` | 1 | smallest deficient number >= n (nextdeficient(6)=7) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |

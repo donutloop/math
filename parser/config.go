@@ -174,6 +174,7 @@ var SupportedFunctions = map[string]int{
 	"zeta":      1,
 	"eta":       1,
 	"nextabundant": 1,
+	"nextdeficient": 1,
 	"primecount": 1,
 	"digamma":   1,
 	"prevprime":  1,

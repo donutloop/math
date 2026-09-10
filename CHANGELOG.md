@@ -1,3 +1,10 @@
+## [133] nextdeficient(n)
+
+- New `nextdeficient(n)`: the smallest deficient number >= n, scanning
+  upward with the aliquot-sum criterion. nextdeficient(5)=5,
+  nextdeficient(6)=7, nextdeficient(12)=13.
+- Complements nextabundant. Updates parser dispatch, arity table, help,
+  operations.md, verify, ADR.
 ## [132] nextabundant(n)
 
 - New `nextabundant(n)`: the smallest abundant number >= n, scanning upward
