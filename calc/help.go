@@ -90,6 +90,7 @@ var helpTopics = map[string]string{
 	"risingfact": "risingfact(n, k): rising factorial n(n+1)... (risingfact(2, 3)=24)",
 	"multinomial": "multinomial(n, a, b, ...): n!/(a!b!...) (multinomial(6, 2, 2, 2)=90)",
 	"partition": "partition(n): integer partition count p(n) (partition(6)=11)",
+	"collatzmax": "collatzmax(n): peak of Collatz sequence (collatzmax(3)=16)",
 	"sumproperdivisors": "sumproperdivisors(n): sum of proper divisors (sumproperdivisors(12)=16)",
 	"amicable":  "amicable(a, b): 1 if amicable pair (amicable(220, 284)=1)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",

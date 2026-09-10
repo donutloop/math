@@ -969,6 +969,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "partition requires n >= 0"}
 		}
 		return float64(partition(n)), nil
+	case "collatzmax":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "collatzmax requires n >= 1"}
+		}
+		return float64(collatzMax(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1505,6 +1514,21 @@ func partition(n int64) int64 {
 		p[i] = total
 	}
 	return p[n]
+}
+
+func collatzMax(n int64) int64 {
+	m := n
+	for n != 1 {
+		if n%2 == 0 {
+			n /= 2
+		} else {
+			n = 3*n + 1
+		}
+		if n > m {
+			m = n
+		}
+	}
+	return m
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

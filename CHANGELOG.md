@@ -1,3 +1,9 @@
+## [130] collatzmax(n)
+
+- New `collatzmax(n)`: the maximum value reached in the Collatz sequence
+  from n down to 1. collatzmax(3)=16, collatzmax(6)=16, collatzmax(1)=1.
+- Complements collatz(n) (step count). Updates parser dispatch, arity
+  table, help, operations.md, verify, ADR.
 ## [129] partition(n)
 
 - New `partition(n)`: the integer partition count p(n) via the

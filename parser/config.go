@@ -165,6 +165,7 @@ var SupportedFunctions = map[string]int{
 	"risingfact": 2,
 	"multinomial": -1,
 	"partition": 1,
+	"collatzmax": 1,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,
