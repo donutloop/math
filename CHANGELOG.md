@@ -1,3 +1,10 @@
+## [116] besselj0(x) and besselj1(x)
+
+- New `besselj0(x)` and `besselj1(x)`: Bessel functions of the first kind
+  via the power series to 40 terms. besselj0(0)=1, besselj1(0)=0,
+  besselj0(1)=0.7652, besselj1(1)=0.4401.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/bessel_test.go), ADR.
 ## [115] loggamma(x)
 
 - New `loggamma(x)`: ln(gamma(x)) via recurrence into the large-x regime

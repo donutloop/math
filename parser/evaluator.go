@@ -800,6 +800,10 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "loggamma is undefined at nonpositive integers"}
 		}
 		return lnGamma(x), nil
+	case "besselj0":
+		return besselJ0(args[0]), nil
+	case "besselj1":
+		return besselJ1(args[0]), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1156,6 +1160,31 @@ func lnGamma(x float64) float64 {
 	res -= 1 / (360 * x * x * x)
 	res += 1 / (1260 * x * x * x * x * x)
 	return res
+}
+
+func besselJ0(x float64) float64 {
+	// series: sum (-1)^k / (k!)^2 * (x/2)^(2k)
+	sum := 0.0
+	term := 1.0 // k=0
+	sum += term
+	x2 := x / 2
+	for k := 1; k <= 40; k++ {
+		term *= -x2 * x2 / (float64(k) * float64(k))
+		sum += term
+	}
+	return sum
+}
+
+func besselJ1(x float64) float64 {
+	// series: sum (-1)^k / (k!(k+1)!) * (x/2)^(2k+1)
+	x2 := x / 2
+	term := x2 // k=0
+	sum := term
+	for k := 1; k <= 40; k++ {
+		term *= -x2 * x2 / (float64(k) * float64(k+1))
+		sum += term
+	}
+	return sum
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
