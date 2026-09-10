@@ -1,3 +1,8 @@
+## [106] sumofprimes(n)
+
+- New `sumofprimes(n)`: sum of the first n primes, complementing primorial.
+  sumofprimes(5)=28, sumofprimes(10)=129.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [105] repeat(n, var, body)
 
 - New language-level loop macro `repeat(n, var, body)`: evaluates body with

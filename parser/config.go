@@ -142,6 +142,7 @@ var SupportedFunctions = map[string]int{
 	"isdeficient": 1,
 	"digitsum":   1,
 	"primorial": 1,
+	"sumofprimes": 1,
 	"lambertw":  1,
 	"zeta":      1,
 	"primecount": 1,

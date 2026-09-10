@@ -66,6 +66,7 @@ var helpTopics = map[string]string{
 	"digitsum":   "digitsum(n): sum of decimal digits of n (digitsum(1234)=10)",
 	"digitcount": "digitcount(n): number of decimal digits of n (digitcount(1234)=4)",
 	"primorial":  "primorial(n): product of the first n primes (primorial(3)=30)",
+	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",
 	"lambertw":   "lambertw(x): Lambert W principal branch (lambertw(0)=0, lambertw(1)=omega 0.56714329)",
 	"zeta":       "zeta(x): Riemann zeta for x > 1 (zeta(2)=1.644934, zeta(3)=1.202056)",
 	"primecount": "primecount(n): number of primes <= n (primecount(100)=25)",

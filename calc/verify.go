@@ -107,6 +107,8 @@ func Verify(w io.Writer) (passed, failed int) {
 		{"prevprime(10)", "7"},
 		{"prevprime(100)", "97"},
 		{"prevprime(3)", "2"},
+		{"sumofprimes(5)", "28"},
+		{"sumofprimes(10)", "129"},
 		{"gcd(12, 18, 24)", "6"},
 		{"lcm(4, 6, 10)", "60"},
 		{"gcd(36, 24)", "12"},

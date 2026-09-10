@@ -709,6 +709,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "primorial requires n >= 1"}
 		}
 		return float64(primorial(n)), nil
+	case "sumofprimes":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "sumofprimes requires n >= 1"}
+		}
+		return float64(sumOfPrimes(n)), nil
 	case "digitsum":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -862,6 +871,18 @@ func lambertw(x float64) float64 {
 	return w
 }
 
+
+func sumOfPrimes(n int64) int64 {
+	sum := int64(0)
+	count := int64(0)
+	for p := int64(2); count < n; p++ {
+		if isPrime(p) {
+			sum += p
+			count++
+		}
+	}
+	return sum
+}
 func primorial(n int64) int64 {
 	// product of the first n primes
 	prod := int64(1)
