@@ -1,3 +1,8 @@
+## [108] omega(n) and bigomega(n)
+
+- New `omega(n)` (omega prime-factor count) and `bigomega(n)` (Omega with
+  multiplicity). omega(30)=3, omega(12)=2, bigomega(12)=3, bigomega(8)=3.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [107] choose(n, k)
 
 - New `choose(n, k)`: binomial coefficient via the multiplicative formula

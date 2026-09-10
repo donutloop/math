@@ -700,6 +700,24 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "lambertw requires x >= -1/e"}
 		}
 		return lambertw(x), nil
+	case "omega":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "omega requires n >= 1"}
+		}
+		return float64(omega(n)), nil
+	case "bigomega":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "bigomega requires n >= 1"}
+		}
+		return float64(bigomega(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -900,6 +918,38 @@ func sumOfPrimes(n int64) int64 {
 	return sum
 }
 
+
+func omega(n int64) int64 {
+	count := int64(0)
+	m := n
+	for p := int64(2); p*p <= m; p++ {
+		if m%p == 0 {
+			count++
+			for m%p == 0 {
+				m /= p
+			}
+		}
+	}
+	if m > 1 {
+		count++
+	}
+	return count
+}
+
+func bigomega(n int64) int64 {
+	count := int64(0)
+	m := n
+	for p := int64(2); p*p <= m; p++ {
+		for m%p == 0 {
+			m /= p
+			count++
+		}
+	}
+	if m > 1 {
+		count++
+	}
+	return count
+}
 func choose(n, k int64) int64 {
 	if k > n-k {
 		k = n - k
