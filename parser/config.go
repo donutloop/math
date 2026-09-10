@@ -153,6 +153,7 @@ var SupportedFunctions = map[string]int{
 	"besselj0":  1,
 	"besselj1":  1,
 	"harmonic":  1,
+	"digitalroot": 1,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,

@@ -1,3 +1,9 @@
+## [118] digitalroot(n)
+
+- New `digitalroot(n)`: the iterated digit sum until a single digit.
+  digitalroot(12345)=6, digitalroot(48)=3, digitalroot(9)=9,
+  digitalroot(0)=0.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [117] harmonic(n)
 
 - New `harmonic(n)`: the harmonic number H_n = sum 1/k for k=1..n.

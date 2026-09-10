@@ -813,6 +813,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "harmonic requires n >= 1"}
 		}
 		return harmonic(n), nil
+	case "digitalroot":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "digitalroot requires n >= 0"}
+		}
+		return float64(digitalRoot(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1202,6 +1211,20 @@ func harmonic(n int64) float64 {
 		h += 1.0 / float64(i)
 	}
 	return h
+}
+
+func digitalRoot(n int64) int64 {
+	if n == 0 {
+		return 0
+	}
+	for n >= 10 {
+		s := int64(0)
+		for m := n; m > 0; m /= 10 {
+			s += m % 10
+		}
+		n = s
+	}
+	return n
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

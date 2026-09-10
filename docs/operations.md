@@ -365,6 +365,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `besselj0(x)` | 1 | Bessel J0 (besselj0(1)=0.7652) |
 | `besselj1(x)` | 1 | Bessel J1 (besselj1(1)=0.4401) |
 | `harmonic(n)` | 1 | harmonic number H_n (harmonic(10)=2.9289) |
+| `digitalroot(n)` | 1 | iterated digit sum (digitalroot(12345)=6) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |
