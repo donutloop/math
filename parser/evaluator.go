@@ -700,6 +700,22 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "lambertw requires x >= -1/e"}
 		}
 		return lambertw(x), nil
+	case "choose":
+		if len(args) != 2 {
+			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
+		}
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		k, err := checkIntArg(args[1])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 || k < 0 || k > n {
+			return 0, &EvalError{Err: ErrDomain, Message: "choose requires 0 <= k <= n"}
+		}
+		return float64(choose(n, k)), nil
 	case "primorial":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -882,6 +898,17 @@ func sumOfPrimes(n int64) int64 {
 		}
 	}
 	return sum
+}
+
+func choose(n, k int64) int64 {
+	if k > n-k {
+		k = n - k
+	}
+	res := int64(1)
+	for i := int64(1); i <= k; i++ {
+		res = res * (n - k + i) / i
+	}
+	return res
 }
 func primorial(n int64) int64 {
 	// product of the first n primes

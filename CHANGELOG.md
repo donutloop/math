@@ -1,3 +1,8 @@
+## [107] choose(n, k)
+
+- New `choose(n, k)`: binomial coefficient via the multiplicative formula
+  with min(k, n-k). choose(5,2)=10, choose(10,3)=120, choose(5,0)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [106] sumofprimes(n)
 
 - New `sumofprimes(n)`: sum of the first n primes, complementing primorial.
