@@ -61,6 +61,8 @@ var helpTopics = map[string]string{
 	"totient":   "totient(n): Euler\u2019s phi — count of integers 1..n coprime to n (totient(12)=4)",
 	"sigma":     "sigma(n): sum of positive divisors of n (sigma(6)=12)",
 	"isperfect": "isperfect(n): 1 if n is a perfect number (sigma(n) = 2n), else 0 (isperfect(6)=1)",
+	"digitsum":   "digitsum(n): sum of decimal digits of n (digitsum(1234)=10)",
+	"digitcount": "digitcount(n): number of decimal digits of n (digitcount(1234)=4)",
 	"let":       "let(x = e1, y = e2, body): local bindings — the last argument is the body; earlier args bind names that stay local (let(x = 2, x^2 + x) = 6)",
 	"asinh":     "asinh(x): inverse hyperbolic sine",
 	"acosh":     "acosh(x): inverse hyperbolic cosine (x >= 1)",

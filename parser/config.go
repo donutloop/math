@@ -137,7 +137,9 @@ var SupportedFunctions = map[string]int{
 	"collatz":   1,
 	"totient":   1,
 	"sigma":     1,
-	"isperfect": 1, // Collatz stopping time
+	"isperfect": 1,
+	"digitsum":   1,
+	"digitcount": 1, // Collatz stopping time
 	"prod":      -1,
 	"min":       -1, // variadic
 	"max":       -1, // variadic

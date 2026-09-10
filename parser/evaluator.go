@@ -659,6 +659,18 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "sigma requires n != 0"}
 		}
 		return float64(sigma(n)), nil
+	case "digitsum":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		return float64(digitsum(n)), nil
+	case "digitcount":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		return float64(digitcount(n)), nil
 	case "isperfect":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -703,6 +715,37 @@ func totient(n int64) int64 {
 		}
 	}
 	return count
+}
+
+
+func digitsum(n int64) int64 {
+	if n < 0 {
+		n = -n
+	}
+	sum := int64(0)
+	if n == 0 {
+		return 0
+	}
+	for n > 0 {
+		sum += n % 10
+		n /= 10
+	}
+	return sum
+}
+
+func digitcount(n int64) int64 {
+	if n < 0 {
+		n = -n
+	}
+	if n == 0 {
+		return 1
+	}
+	c := int64(0)
+	for n > 0 {
+		c++
+		n /= 10
+	}
+	return c
 }
 
 func sigma(n int64) int64 {

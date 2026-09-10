@@ -1,3 +1,8 @@
+## [95] digitsum / digitcount
+
+- New `digitsum(n)`: sum of decimal digits (digitsum(1234)=10, digitsum(0)=0).
+- New `digitcount(n)`: number of decimal digits (digitcount(1234)=4, digitcount(0)=1).
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [94] isperfect(n)
 
 - New `isperfect(n)`: 1 if n is a perfect number (sigma(n) == 2n), else 0.
