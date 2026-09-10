@@ -2,9 +2,7 @@ package calc
 
 import (
 	"fmt"
-	"math"
-	"strconv"
-	"strings"
+			"strings"
 
 	"prototype_kl/parser"
 )
@@ -22,81 +20,93 @@ import (
 // with a running variable, generalizing the plain numeric sum/prod/count forms.
 func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
 	args := splitArgs(inner)
-	var varName, lo, hi, step, body string
-	switch len(args) {
-	case 4:
-		varName = strings.TrimSpace(args[0])
-		lo = strings.TrimSpace(args[1])
-		hi = strings.TrimSpace(args[2])
-		body = strings.TrimSpace(args[3])
-		step = "1"
-	case 5:
-		varName = strings.TrimSpace(args[0])
-		lo = strings.TrimSpace(args[1])
-		hi = strings.TrimSpace(args[2])
-		step = strings.TrimSpace(args[3])
-		body = strings.TrimSpace(args[4])
-	default:
-		return "", fmt.Errorf("%s with a loop variable expects 4 or 5 arguments (var, lo, hi[, step], body), got %d", kind, len(args))
+	if len(args) != 4 && len(args) != 5 {
+		return "", fmt.Errorf("%s expects 4 or 5 arguments (var, lo, hi[, step], body)", kind)
 	}
+	varName := strings.TrimSpace(args[0])
 	if !isIdent(varName) {
-		return "", fmt.Errorf("%s loop variable must be an identifier, got %q", kind, varName)
+		return "", fmt.Errorf("%s loop variable %q is not a valid identifier", kind, varName)
 	}
-
-	loE, err := c.expand(lo)
+	loArg := strings.TrimSpace(args[1])
+	hiArg := strings.TrimSpace(args[2])
+	stepArg := "1"
+	bodyArg := args[3]
+	if len(args) == 5 {
+		stepArg = strings.TrimSpace(args[3])
+		bodyArg = args[4]
+	}
+	loV, err := c.expand(loArg)
 	if err != nil {
 		return "", err
 	}
-	hiE, err := c.expand(hi)
+	hiV, err := c.expand(hiArg)
 	if err != nil {
 		return "", err
 	}
-	stepE, err := c.expand(step)
+	stepV, err := c.expand(stepArg)
 	if err != nil {
 		return "", err
 	}
-	loNum, err := parser.Evaluate(loE)
+	loNum, err := parser.Evaluate(loV)
 	if err != nil {
-		return "", fmt.Errorf("%s bounds must be numeric: %v", kind, err)
+		return "", fmt.Errorf("%s lower bound must be numeric", kind)
 	}
-	hiNum, err := parser.Evaluate(hiE)
+	hiNum, err := parser.Evaluate(hiV)
 	if err != nil {
-		return "", fmt.Errorf("%s bounds must be numeric: %v", kind, err)
+		return "", fmt.Errorf("%s upper bound must be numeric", kind)
 	}
-	stepNum, err := parser.Evaluate(stepE)
+	stepNum, err := parser.Evaluate(stepV)
 	if err != nil {
-		return "", fmt.Errorf("%s step must be numeric: %v", kind, err)
+		return "", fmt.Errorf("%s step must be numeric", kind)
 	}
-
-	loI := math.Floor(loNum)
-	hiI := math.Floor(hiNum)
-	stepI := math.Floor(stepNum)
-	if stepI < 1 {
-		stepI = 1
+	loN := int(loNum)
+	hiN := int(hiNum)
+	stepN := int(stepNum)
+	if stepN < 1 {
+		return "", fmt.Errorf("%s step must be >= 1", kind)
 	}
-
-	// Identity for the accumulator: 0 for sum/count, 1 for product.
-	var buf strings.Builder
-	if kind == "prod" {
-		buf.WriteString("1")
-	} else {
-		buf.WriteString("0")
-	}
-	if hiI < loI {
-		return buf.String(), nil
-	}
-	for i := loI; i <= hiI; i += stepI {
-		lit := strconv.FormatFloat(i, 'f', -1, 64)
-		e := replaceIdent(body, varName, lit)
-		eE, err := c.expand(e)
+	terms := []string{}
+	for i := loN; i <= hiN; i += stepN {
+		term := replaceIdent(bodyArg, varName, fmt.Sprintf("%d", i))
+		te, err := c.expand(term)
 		if err != nil {
 			return "", err
 		}
-		if kind == "prod" {
-			fmt.Fprintf(&buf, " * (%s)", eE)
-		} else {
-			fmt.Fprintf(&buf, " + (%s)", eE)
-		}
+		terms = append(terms, "("+te+")")
 	}
-	return buf.String(), nil
+	switch kind {
+	case "count":
+		// count sums the body values (comparisons yield 1/0), so it is the sum.
+		if len(terms) == 0 {
+			return "0", nil
+		}
+		return strings.Join(terms, "+"), nil
+	case "sum":
+		if len(terms) == 0 {
+			return "0", nil
+		}
+		return strings.Join(terms, "+"), nil
+	case "prod":
+		if len(terms) == 0 {
+			return "1", nil
+		}
+		return strings.Join(terms, "*"), nil
+	case "avg":
+		if len(terms) == 0 {
+			return "", fmt.Errorf("avg over an empty range")
+		}
+		return "(" + strings.Join(terms, "+") + ")/" + fmt.Sprintf("%d", len(terms)), nil
+	case "min":
+		if len(terms) == 0 {
+			return "", fmt.Errorf("min over an empty range")
+		}
+		return "min(" + strings.Join(terms, ",") + ")", nil
+	case "max":
+		if len(terms) == 0 {
+			return "", fmt.Errorf("max over an empty range")
+		}
+		return "max(" + strings.Join(terms, ",") + ")", nil
+	}
+	return "", fmt.Errorf("unknown range kind %q", kind)
 }
+

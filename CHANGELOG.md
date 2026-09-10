@@ -1,3 +1,12 @@
+## [97] Range min/max/avg
+
+- `min`, `max`, and `avg` now accept range-loop form alongside their
+  variadic math form: min(i, 1, 4, i*i)=1, max(i, 1, 4, i*i)=16,
+  avg(i, 1, 3, i)=2.
+- Disambiguation: a call is a range loop only when the first argument is a
+  loop variable and the call has 4-5 args; otherwise it falls through to the
+  variadic parser function.
+- Updates dispatch, loop expansion, help, operations.md, tests, ADR.
 ## [96] primorial(n)
 
 - New `primorial(n)`: product of the first n primes. primorial(1)=2,

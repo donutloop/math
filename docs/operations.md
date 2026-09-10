@@ -221,6 +221,9 @@ directly (comparisons already yield 1/0). Examples:
     prod(i, 1, 6, i)            # -> 720  (6!)
     sum(i, 1, 10, 2, i)         # -> 25   (1+3+5+7+9)
     count(i, 1, 10, i % 2 == 0) # -> 5
+    min(i, 1, 4, i*i)            # -> 1
+    max(i, 1, 4, i*i)            # -> 16
+    avg(i, 1, 3, i)              # -> 2
 
 A reversed range yields the sum identity 0 and the product identity 1.
 

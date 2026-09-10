@@ -968,6 +968,11 @@ func TestRangeLoopExpressions(t *testing.T) {
 		{"prod(i, 1, 5, 2^i)", "32768"},    // 2^1 * ... * 2^5 = 2^15
 		{"prod(i, 1, 6, i)", "720"},        // 6!
 		{"count(i, 1, 10, i % 2 == 0)", "5"},
+		{"min(i, 1, 4, i*i)", "1"},
+		{"max(i, 1, 4, i*i)", "16"},
+		{"avg(i, 1, 3, i)", "2"},
+		{"min(3, 1, 2)", "1"},
+		{"avg(1, 2, 3, 4)", "2.5"},
 		{"sum(i, 3, 1, i)", "0"},           // reversed range: sum identity
 		{"prod(i, 3, 1, i)", "1"},          // reversed range: product identity
 	}
