@@ -1,3 +1,9 @@
+## [132] nextabundant(n)
+
+- New `nextabundant(n)`: the smallest abundant number >= n, scanning upward
+  with the aliquot-sum criterion. nextabundant(7)=12, nextabundant(12)=12,
+  nextabundant(18)=18.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [131] eta(x)
 
 - New `eta(x)`: the Dirichlet eta function (1-2^(1-x))*zeta(x), with the

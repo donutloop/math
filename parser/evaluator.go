@@ -980,6 +980,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "collatzmax requires n >= 1"}
 		}
 		return float64(collatzMax(n)), nil
+	case "nextabundant":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "nextabundant requires n >= 1"}
+		}
+		return float64(nextAbundant(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1539,6 +1548,14 @@ func collatzMax(n int64) int64 {
 		}
 	}
 	return m
+}
+
+func nextAbundant(n int64) int64 {
+	for ; ; n++ {
+		if sumProperDivisors(n) > n {
+			return n
+		}
+	}
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
