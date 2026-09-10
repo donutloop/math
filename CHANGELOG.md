@@ -1,3 +1,9 @@
+## [125] digitproduct(n)
+
+- New `digitproduct(n)`: the product of the decimal digits.
+  digitproduct(123)=6, digitproduct(50)=0, digitproduct(9)=9,
+  digitproduct(0)=0.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [124] lucas(n)
 
 - New `lucas(n)`: the Lucas numbers L_n with L_0=2, L_1=1 and the

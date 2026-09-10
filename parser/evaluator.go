@@ -890,6 +890,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "lucas requires n >= 0"}
 		}
 		return float64(lucas(n)), nil
+	case "digitproduct":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "digitproduct requires n >= 0"}
+		}
+		return float64(digitProduct(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1368,6 +1377,18 @@ func lucas(n int64) int64 {
 		a, b = b, a+b
 	}
 	return b
+}
+
+func digitProduct(n int64) int64 {
+	if n == 0 {
+		return 0
+	}
+	prod := int64(1)
+	for n > 0 {
+		prod *= n % 10
+		n /= 10
+	}
+	return prod
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
