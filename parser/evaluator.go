@@ -881,6 +881,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "derangements requires n >= 0"}
 		}
 		return float64(derangements(n)), nil
+	case "lucas":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "lucas requires n >= 0"}
+		}
+		return float64(lucas(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1343,6 +1352,20 @@ func derangements(n int64) int64 {
 	for i := int64(2); i <= n; i++ {
 		next := (i - 1) * (a + b)
 		a, b = b, next
+	}
+	return b
+}
+
+func lucas(n int64) int64 {
+	if n == 0 {
+		return 2
+	}
+	if n == 1 {
+		return 1
+	}
+	a, b := int64(2), int64(1)
+	for i := int64(2); i <= n; i++ {
+		a, b = b, a+b
 	}
 	return b
 }

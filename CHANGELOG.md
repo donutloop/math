@@ -1,3 +1,8 @@
+## [124] lucas(n)
+
+- New `lucas(n)`: the Lucas numbers L_n with L_0=2, L_1=1 and the
+  Fibonacci recurrence. lucas(0)=2, lucas(3)=4, lucas(4)=7, lucas(5)=11.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [123] derangements(n)
 
 - New `derangements(n)`: the subfactorial !n, permutations of n elements
