@@ -152,6 +152,7 @@ var SupportedFunctions = map[string]int{
 	"loggamma":  1,
 	"besselj0":  1,
 	"besselj1":  1,
+	"harmonic":  1,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,

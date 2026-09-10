@@ -1,3 +1,9 @@
+## [117] harmonic(n)
+
+- New `harmonic(n)`: the harmonic number H_n = sum 1/k for k=1..n.
+  harmonic(1)=1, harmonic(3)=1.8333, harmonic(10)=2.9289.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/harmonic_test.go), ADR.
 ## [116] besselj0(x) and besselj1(x)
 
 - New `besselj0(x)` and `besselj1(x)`: Bessel functions of the first kind

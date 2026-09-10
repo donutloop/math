@@ -804,6 +804,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 		return besselJ0(args[0]), nil
 	case "besselj1":
 		return besselJ1(args[0]), nil
+	case "harmonic":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "harmonic requires n >= 1"}
+		}
+		return harmonic(n), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1185,6 +1194,14 @@ func besselJ1(x float64) float64 {
 		sum += term
 	}
 	return sum
+}
+
+func harmonic(n int64) float64 {
+	h := 0.0
+	for i := int64(1); i <= n; i++ {
+		h += 1.0 / float64(i)
+	}
+	return h
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
