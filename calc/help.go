@@ -73,6 +73,7 @@ var helpTopics = map[string]string{
 	"mobius":    "mobius(n): Moebius function (mobius(30)=-1)",
 	"mertens":   "mertens(n): sum of mobius(1..n) (mertens(10)=-1)",
 	"liouville": "liouville(n): (-1)^bigomega(n) (liouville(12)=-1)",
+	"carmichael": "carmichael(n): Carmichael lambda (carmichael(9)=6)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",
 	"lambertw":   "lambertw(x): Lambert W principal branch (lambertw(0)=0, lambertw(1)=omega 0.56714329)",
 	"zeta":       "zeta(x): Riemann zeta for x > 1 (zeta(2)=1.644934, zeta(3)=1.202056)",

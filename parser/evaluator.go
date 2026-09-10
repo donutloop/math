@@ -754,6 +754,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "liouville requires n >= 1"}
 		}
 		return float64(liouville(n)), nil
+	case "carmichael":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "carmichael requires n >= 1"}
+		}
+		return float64(carmichael(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1041,6 +1050,41 @@ func liouville(n int64) int64 {
 		return 1
 	}
 	return -1
+}
+
+func carmichael(n int64) int64 {
+	if n == 1 {
+		return 1
+	}
+	l := int64(1)
+	m := n
+	for p := int64(2); p*p <= m; p++ {
+		if m%p == 0 {
+			pe := int64(1)
+			k := int64(0)
+			for m%p == 0 {
+				m /= p
+				pe *= p
+				k++
+			}
+			var lam int64
+			switch {
+			case p == 2 && k >= 3:
+				lam = int64(1) << uint(k-2)
+			case p == 2 && k == 1:
+				lam = 1
+			case p == 2 && k == 2:
+				lam = 2
+			default:
+				lam = (pe / p) * (p - 1)
+			}
+			l = int64(lcm(float64(l), float64(lam)))
+		}
+	}
+	if m > 1 {
+		l = int64(lcm(float64(l), float64(m-1)))
+	}
+	return l
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

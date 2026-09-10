@@ -1,3 +1,10 @@
+## [112] carmichael(n)
+
+- New `carmichael(n)`: the Carmichael lambda function, the largest lambda
+  with a^lambda = 1 mod n for all a coprime to n. lcm over prime-power
+  factors; powers of 2 follow the special lambda(2^k)=2^(k-2) rule for k>=3.
+  carmichael(9)=6, carmichael(12)=2, carmichael(10)=4, carmichael(1)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [111] liouville(n)
 
 - New `liouville(n)`: the Liouville function (-1)^bigomega(n).
