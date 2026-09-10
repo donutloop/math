@@ -1,3 +1,8 @@
+## [111] liouville(n)
+
+- New `liouville(n)`: the Liouville function (-1)^bigomega(n).
+  liouville(12)=-1, liouville(8)=-1, liouville(6)=1, liouville(1)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [110] mertens(n)
 
 - New `mertens(n)`: the Mertens function, sum of mobius(1..n).
