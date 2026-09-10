@@ -162,6 +162,7 @@ var SupportedFunctions = map[string]int{
 	"lucas":     1,
 	"digitproduct": 1,
 	"doublefactorial": 1,
+	"risingfact": 2,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,

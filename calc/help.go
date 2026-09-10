@@ -87,6 +87,7 @@ var helpTopics = map[string]string{
 	"lucas":     "lucas(n): Lucas number (lucas(4)=7)",
 	"digitproduct": "digitproduct(n): product of decimal digits (digitproduct(123)=6)",
 	"doublefactorial": "doublefactorial(n): n!! semi-factorial (doublefactorial(5)=15)",
+	"risingfact": "risingfact(n, k): rising factorial n(n+1)... (risingfact(2, 3)=24)",
 	"sumproperdivisors": "sumproperdivisors(n): sum of proper divisors (sumproperdivisors(12)=16)",
 	"amicable":  "amicable(a, b): 1 if amicable pair (amicable(220, 284)=1)",
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",

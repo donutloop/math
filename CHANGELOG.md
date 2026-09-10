@@ -1,3 +1,9 @@
+## [127] risingfact(n, k)
+
+- New `risingfact(n, k)`: the rising factorial (Pochhammer symbol),
+  product n(n+1)...(n+k-1). risingfact(1,3)=6, risingfact(2,3)=24,
+  risingfact(5,0)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [126] doublefactorial(n)
 
 - New `doublefactorial(n)`: the semi-factorial n!!, product of every other

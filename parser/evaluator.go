@@ -908,6 +908,22 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "doublefactorial requires n >= 0"}
 		}
 		return float64(doubleFactorial(n)), nil
+	case "risingfact":
+		if len(args) != 2 {
+			return 0, &EvalError{Err: ErrBadArity, Message: "risingfact expects 2 arguments (n, k)"}
+		}
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		k, err := checkIntArg(args[1])
+		if err != nil {
+			return 0, err
+		}
+		if k < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "risingfact requires k >= 0"}
+		}
+		return float64(risingFact(n, k)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1404,6 +1420,14 @@ func doubleFactorial(n int64) int64 {
 	res := int64(1)
 	for i := n; i >= 2; i -= 2 {
 		res *= i
+	}
+	return res
+}
+
+func risingFact(n, k int64) int64 {
+	res := int64(1)
+	for i := int64(0); i < k; i++ {
+		res *= (n + i)
 	}
 	return res
 }
