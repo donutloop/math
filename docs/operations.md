@@ -383,6 +383,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |
 | `lambertw(x)` | 1 | Lambert W principal branch (lambertw(0)=0, lambertw(1)=0.56714329) |
 | `zeta(x)` | 1 | Riemann zeta for x > 1 (zeta(2)=1.644934) |
+| `eta(x)` | 1 | Dirichlet eta (1-2^(1-x))zeta(x) (eta(2)=0.8225) |
 | `primecount(n)` | 1 | pi(n): number of primes <= n (primecount(100)=25) |
 | `prevprime(n)` | 1 | largest prime strictly below n (prevprime(10)=7) |
 | `digamma(x)` | 1 | psi digamma function (digamma(1)=-0.5772) |

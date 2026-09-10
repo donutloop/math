@@ -665,6 +665,8 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "zeta requires x > 1"}
 		}
 		return zeta(x), nil
+	case "eta":
+		return eta(args[0]), nil
 	case "prevprime":
 		n, err := checkIntArg(args[0])
 		if err != nil {
@@ -1098,6 +1100,14 @@ func totient(n int64) int64 {
 
 
 
+
+func eta(x float64) float64 {
+	// eta(x) = (1 - 2^(1-x)) * zeta(x), with the analytic limit eta(1)=ln2
+	if x == 1 {
+		return math.Log(2)
+	}
+	return (1 - math.Pow(2, 1-x)) * zeta(x)
+}
 func zeta(x float64) float64 {
 	// Riemann zeta via series plus an Euler-Maclaurin tail correction
 	n := 2000.0

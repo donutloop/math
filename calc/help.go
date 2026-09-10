@@ -96,6 +96,7 @@ var helpTopics = map[string]string{
 	"sumofprimes": "sumofprimes(n): sum of the first n primes (sumofprimes(5)=28)",
 	"lambertw":   "lambertw(x): Lambert W principal branch (lambertw(0)=0, lambertw(1)=omega 0.56714329)",
 	"zeta":       "zeta(x): Riemann zeta for x > 1 (zeta(2)=1.644934, zeta(3)=1.202056)",
+	"eta":      "eta(x): Dirichlet eta (eta(2)=0.8225, eta(1)=ln2)",
 	"primecount": "primecount(n): number of primes <= n (primecount(100)=25)",
 	"prevprime":  "prevprime(n): largest prime strictly below n (prevprime(10)=7)",
 	"digamma":    "digamma(x): psi digamma function (digamma(1)=-gamma 0.5772)",

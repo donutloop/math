@@ -1,3 +1,9 @@
+## [131] eta(x)
+
+- New `eta(x)`: the Dirichlet eta function (1-2^(1-x))*zeta(x), with the
+  analytic limit eta(1)=ln2. eta(2)=0.8225 (pi^2/12), eta(1)=0.6931.
+- Updates parser dispatch, arity table, help, operations.md, unit test
+  (calc/eta_test.go), ADR.
 ## [130] collatzmax(n)
 
 - New `collatzmax(n)`: the maximum value reached in the Collatz sequence

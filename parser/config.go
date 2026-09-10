@@ -172,6 +172,7 @@ var SupportedFunctions = map[string]int{
 	"sumofprimes": 1,
 	"lambertw":  1,
 	"zeta":      1,
+	"eta":       1,
 	"primecount": 1,
 	"digamma":   1,
 	"prevprime":  1,
