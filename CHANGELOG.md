@@ -1,3 +1,9 @@
+## [114] amicable(a, b)
+
+- New `amicable(a, b)` predicate: 1 if a and b form an amicable pair
+  (aliquot sums match), 0 otherwise; equal a=b pairs are rejected.
+  amicable(220, 284)=1, amicable(10, 5)=0, amicable(6, 6)=0.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [113] sumproperdivisors(n)
 
 - New `sumproperdivisors(n)`: the aliquot sum (sum of proper divisors).

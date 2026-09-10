@@ -772,6 +772,28 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "sumproperdivisors requires n >= 2"}
 		}
 		return float64(sumProperDivisors(n)), nil
+	case "amicable":
+		if len(args) != 2 {
+			return 0, &EvalError{Err: ErrBadArity, Message: "amicable expects 2 arguments (a, b)"}
+		}
+		a, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		b, err := checkIntArg(args[1])
+		if err != nil {
+			return 0, err
+		}
+		if a < 2 || b < 2 {
+			return 0, &EvalError{Err: ErrDomain, Message: "amicable requires a, b >= 2"}
+		}
+		if a == b {
+			return 0, nil
+		}
+		if sumProperDivisors(a) == b && sumProperDivisors(b) == a {
+			return 1, nil
+		}
+		return 0, nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}

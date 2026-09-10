@@ -362,6 +362,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `liouville(n)` | 1 | Liouville function (-1)^bigomega(n) (liouville(12)=-1) |
 | `carmichael(n)` | 1 | Carmichael lambda (carmichael(9)=6) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
+| `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |
 | `lambertw(x)` | 1 | Lambert W principal branch (lambertw(0)=0, lambertw(1)=0.56714329) |
 | `zeta(x)` | 1 | Riemann zeta for x > 1 (zeta(2)=1.644934) |
