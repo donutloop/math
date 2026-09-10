@@ -373,6 +373,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `derangements(n)` | 1 | subfactorial !n (derangements(4)=9) |
 | `lucas(n)` | 1 | Lucas number (lucas(4)=7) |
 | `digitproduct(n)` | 1 | product of decimal digits (digitproduct(123)=6) |
+| `doublefactorial(n)` | 1 | n!! semi-factorial (doublefactorial(5)=15) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |

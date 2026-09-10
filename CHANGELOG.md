@@ -1,3 +1,9 @@
+## [126] doublefactorial(n)
+
+- New `doublefactorial(n)`: the semi-factorial n!!, product of every other
+  integer down from n. doublefactorial(0)=1, doublefactorial(4)=8,
+  doublefactorial(5)=15, doublefactorial(6)=48.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [125] digitproduct(n)
 
 - New `digitproduct(n)`: the product of the decimal digits.
