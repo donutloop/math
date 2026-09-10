@@ -1,3 +1,9 @@
+## [129] partition(n)
+
+- New `partition(n)`: the integer partition count p(n) via the
+  pentagonal-number recurrence. partition(0)=1, partition(4)=5,
+  partition(5)=7, partition(6)=11.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [128] multinomial(n, a, b, ...)
 
 - New variadic `multinomial(n, a, b, ...)`: n!/(a!b!...) via chained choose

@@ -376,6 +376,7 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `doublefactorial(n)` | 1 | n!! semi-factorial (doublefactorial(5)=15) |
 | `risingfact(n, k)` | 2 | rising factorial Pochhammer (risingfact(2,3)=24) |
 | `multinomial(n, ...)` | variadic | multinomial coefficient (multinomial(6,2,2,2)=90) |
+| `partition(n)` | 1 | integer partition count p(n) (partition(6)=11) |
 | `sumproperdivisors(n)` | 1 | sum of proper divisors (sumproperdivisors(12)=16) |
 | `amicable(a, b)` | 2 | 1 if amicable pair (amicable(220,284)=1) |
 | `sumofprimes(n)` | 1 | sum of the first n primes (sumofprimes(5)=28) |

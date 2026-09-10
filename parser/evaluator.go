@@ -960,6 +960,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			rem -= v
 		}
 		return float64(res), nil
+	case "partition":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "partition requires n >= 0"}
+		}
+		return float64(partition(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1466,6 +1475,36 @@ func risingFact(n, k int64) int64 {
 		res *= (n + i)
 	}
 	return res
+}
+
+func partition(n int64) int64 {
+	// p(n) via the pentagonal-number recurrence p(n) = sum (-1)^(k+1) p(n - g_k)
+	p := make([]int64, n+1)
+	p[0] = 1
+	for i := int64(1); i <= n; i++ {
+		total := int64(0)
+		k := int64(1)
+		for {
+			g1 := (k * (3*k - 1)) / 2
+			g2 := (k * (3*k + 1)) / 2
+			if g1 > i && g2 > i {
+				break
+			}
+			sign := int64(1)
+			if k%2 == 0 {
+				sign = -1
+			}
+			if g1 <= i {
+				total += sign * p[i-g1]
+			}
+			if g2 <= i {
+				total += sign * p[i-g2]
+			}
+			k++
+		}
+		p[i] = total
+	}
+	return p[n]
 }
 func choose(n, k int64) int64 {
 	if k > n-k {
