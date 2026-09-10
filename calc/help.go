@@ -61,6 +61,8 @@ var helpTopics = map[string]string{
 	"totient":   "totient(n): Euler\u2019s phi — count of integers 1..n coprime to n (totient(12)=4)",
 	"sigma":     "sigma(n): sum of positive divisors of n (sigma(6)=12)",
 	"isperfect": "isperfect(n): 1 if n is a perfect number (sigma(n) = 2n), else 0 (isperfect(6)=1)",
+	"isabundant": "isabundant(n): 1 if sigma(n) > 2n, else 0 (isabundant(12)=1)",
+	"isdeficient": "isdeficient(n): 1 if sigma(n) < 2n, else 0 (isdeficient(8)=1)",
 	"digitsum":   "digitsum(n): sum of decimal digits of n (digitsum(1234)=10)",
 	"digitcount": "digitcount(n): number of decimal digits of n (digitcount(1234)=4)",
 	"primorial":  "primorial(n): product of the first n primes (primorial(3)=30)",

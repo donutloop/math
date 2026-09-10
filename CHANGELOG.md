@@ -1,3 +1,9 @@
+## [98] isabundant(n) / isdeficient(n)
+
+- New `isabundant(n)`: 1 if sigma(n) > 2n (abundant), else 0. isabundant(12)=1.
+- New `isdeficient(n)`: 1 if sigma(n) < 2n (deficient), else 0. isdeficient(8)=1.
+- Domain error for n <= 0. Completes the abundant/perfect/deficient trio.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [97] Range min/max/avg
 
 - `min`, `max`, and `avg` now accept range-loop form alongside their

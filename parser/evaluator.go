@@ -680,6 +680,30 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, err
 		}
 		return float64(digitcount(n)), nil
+	case "isabundant":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n <= 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "isabundant requires n >= 1"}
+		}
+		if sigma(n) > 2*n {
+			return 1, nil
+		}
+		return 0, nil
+	case "isdeficient":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n <= 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "isdeficient requires n >= 1"}
+		}
+		if sigma(n) < 2*n {
+			return 1, nil
+		}
+		return 0, nil
 	case "isperfect":
 		n, err := checkIntArg(args[0])
 		if err != nil {

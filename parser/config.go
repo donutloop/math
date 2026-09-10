@@ -138,6 +138,8 @@ var SupportedFunctions = map[string]int{
 	"totient":   1,
 	"sigma":     1,
 	"isperfect": 1,
+	"isabundant": 1,
+	"isdeficient": 1,
 	"digitsum":   1,
 	"primorial": 1,
 	"digitcount": 1, // Collatz stopping time

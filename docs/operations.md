@@ -346,6 +346,8 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `totient(n)` | 1 | Euler\u2019s phi — count of integers 1..n coprime to n (totient(12)=4) |
 | `sigma(n)` | 1 | sum of positive divisors of n (sigma(6)=12) |
 | `isperfect(n)` | 1 | 1 if n is perfect (sigma(n)=2n), else 0 (isperfect(6)=1) |
+| `isabundant(n)` | 1 | 1 if sigma(n)>2n (abundant), else 0 (isabundant(12)=1) |
+| `isdeficient(n)` | 1 | 1 if sigma(n)<2n (deficient), else 0 (isdeficient(8)=1) |
 | `digitsum(n)` | 1 | sum of decimal digits of n (digitsum(1234)=10) |
 | `digitcount(n)` | 1 | number of decimal digits of n (digitcount(1234)=4) |
 | `primorial(n)` | 1 | product of the first n primes (primorial(3)=30) |
