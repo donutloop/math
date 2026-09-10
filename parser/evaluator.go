@@ -736,6 +736,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "mobius requires n >= 1"}
 		}
 		return float64(mobius(n)), nil
+	case "mertens":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "mertens requires n >= 1"}
+		}
+		return float64(mertens(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1008,6 +1017,14 @@ func mobius(n int64) int64 {
 		return 1
 	}
 	return -1
+}
+
+func mertens(n int64) int64 {
+	sum := int64(0)
+	for i := int64(1); i <= n; i++ {
+		sum += mobius(i)
+	}
+	return sum
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

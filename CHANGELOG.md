@@ -1,3 +1,8 @@
+## [110] mertens(n)
+
+- New `mertens(n)`: the Mertens function, sum of mobius(1..n).
+  mertens(10)=-1, mertens(1)=1, mertens(6)=-1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [109] tau(n) and mobius(n)
 
 - New `tau(n)` (divisor count) and `mobius(n)` (Moebius function).
