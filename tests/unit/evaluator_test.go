@@ -1,0 +1,503 @@
+package parser_test
+
+import (
+	"math"
+	"prototype_kl/parser"
+	"testing"
+)
+
+func TestEvaluator(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    float64
+		wantErr bool
+	}{
+		{"Add", "1 + 2", 3, false},
+		{"Sub", "10 - 3", 7, false},
+		{"Mul", "4 * 2.5", 10, false},
+		{"Div", "10 / 4", 2.5, false},
+		{"Unary", "-3 + 5", 2, false},
+		{"Complex", "(2 + 3) * (4 - 1)", 15, false},
+		{"DivByZero", "10 / 0", 0, true},
+		{"Sqrt", "sqrt(9)", 3, false},
+		{"Rsqrt", "rsqrt(4)", 0.5, false},
+		{"RsqrtDomain", "rsqrt(0)", 0, true},
+		{"RsqrtNegative", "rsqrt(-4)", 0, true},
+		{"Abs", "abs(-4)", 4, false},
+		{"Floor", "floor(2.9)", 2, false},
+		{"Ceil", "ceil(2.1)", 3, false},
+		{"SqrtNegative", "sqrt(-4)", 0, true},
+		{"Round", "round(2.5)", 3, false},
+		{"Trunc", "trunc(-2.7)", -2, false},
+		{"Cbrt", "cbrt(8)", 2, false},
+		{"Sin", "sin(0)", 0, false},
+		{"Cos", "cos(0)", 1, false},
+		{"Tan", "tan(0)", 0, false},
+		{"Asin", "asin(1)", 1.5707963267948966, false},
+		{"Acos", "acos(1)", 0, false},
+		{"Atan", "atan(1)", 0.7853981633974483, false},
+		{"Sinh", "sinh(0)", 0, false},
+		{"Cosh", "cosh(0)", 1, false},
+		{"Tanh", "tanh(0)", 0, false},
+		{"Ln", "ln(1)", 0, false},
+		{"Log", "log(100)", 2, false},
+		{"Log2", "log2(8)", 3, false},
+		{"Atan2", "atan2(1, 1)", 0.7853981633974483, false},
+		{"Gcd", "gcd(12, 18)", 6, false},
+		{"Lcm", "lcm(4, 6)", 12, false},
+		{"Log10", "log10(100)", 2, false},
+		{"Log1p", "log1p(9)", 2.302585092994046, false},
+		{"Asinh", "asinh(0)", 0, false},
+		{"Acosh", "acosh(1)", 0, false},
+		{"Atanh", "atanh(0)", 0, false},
+		{"Expm1", "expm1(0)", 0, false},
+		{"Exp2", "exp2(3)", 8, false},
+		{"Exp10", "exp10(2)", 100, false},
+		{"Exp10Neg", "exp10(-1)", 0.1, false},
+		{"Sinc", "sinc(0)", 1, false},
+		{"Sec", "sec(0)", 1, false},
+		{"Csc", "csc(pi/2)", 1, false},
+		{"CscDomain", "csc(0)", 0, true},
+		{"CotDomain", "cot(0)", 0, true},
+		{"AsecDomain", "asec(0.5)", 0, true},
+		{"Acsc", "acsc(2)", math.Pi / 6, false},
+		{"AcscDomain", "acsc(0.5)", 0, true},
+		{"Acot", "acot(1)", math.Pi / 4, false},
+		{"AcotDomain", "acot(0)", 0, true},
+		{"Sech", "sech(0)", 1, false},
+		{"CschDomain", "csch(0)", 0, true},
+		{"CothDomain", "coth(0)", 0, true},
+		{"AsechDomain", "asech(2)", 0, true},
+		{"AcschDomain", "acsch(0)", 0, true},
+		{"AcothDomain", "acoth(1)", 0, true},
+		{"Logistic", "logistic(0)", 0.5, false},
+		{"Softplus", "softplus(0)", math.Log(2), false},
+		{"Gamma", "gamma(5)", 24, false},
+		{"Mod", "mod(10, 3)", 1, false},
+		{"Sign", "sign(-7)", -1, false},
+		{"Clamp", "clamp(5, 0, 3)", 3, false},
+		{"Lerp", "lerp(0, 10, 0.5)", 5, false},
+		{"Fma", "fma(2, 3, 4)", 10, false},
+		{"Copysign", "copysign(5, -2)", -5, false},
+		{"Erf", "erf(1)", 0.8427007929497149, false},
+		{"Erfc", "erfc(0)", 1, false},
+		{"Beta", "beta(1, 2)", 0.5, false},
+		{"Logb", "logb(8)", 3, false},
+		{"Nextafter", "nextafter(1, 2)", 1.0000000000000002, false},
+		{"Ldexp", "ldexp(1, 3)", 8, false},
+		{"Dim", "dim(5, 3)", 2, false},
+		{"Signbit", "signbit(-0.0)", 1, false},
+		{"Jn", "jn(0, 1)", 0.7651976865579666, false},
+		{"Yn", "yn(1, 1)", -0.7812128213002887, false},
+		{"Lgamma", "lgamma(5)", 3.1780538303479456, false},
+		{"Exp", "exp(0)", 1, false},
+		{"Pow", "pow(2, 10)", 1024, false},
+		{"Hypot", "hypot(3, 4)", 5, false},
+		{"Min", "min(3, 1, 2)", 1, false},
+		{"Max", "max(3, 1, 2)", 3, false},
+		{"Fact", "fact(5)", 120, false},
+		{"FactNegative", "fact(-3)", 0, true},
+		{"BadArity", "pow(2)", 0, true},
+		{"Pi", "pi", 3.141592653589793, false},
+		{"E", "e", 2.718281828459045, false},
+		{"PiExpr", "2 * pi", 6.283185307179586, false},
+		{"PiSin", "sin(pi / 2)", 1, false},
+		{"FactorialPostfix", "5!", 120, false},
+		{"FactorialPostfixPrecedence", "3 * 4!", 72, false},
+		{"FactorialPostfixParen", "(3 + 4)!", 5040, false},
+		{"Percent", "50%", 0.5, false},
+		{"PercentAdd", "200% + 10", 12, false},
+		{"PercentNested", "100% * 2", 2, false},
+		{"Eln", "ln(e)", 1, false},
+		{"Npr", "npr(5, 2)", 20, false},
+		{"NprZero", "npr(5, 0)", 1, false},
+		{"NprFull", "npr(5, 5)", 120, false},
+		{"Ncr", "ncr(5, 2)", 10, false},
+		{"NcrSymmetric", "ncr(10, 5)", 252, false},
+		{"NcrZero", "ncr(10, 0)", 1, false},
+		{"NcrFull", "ncr(5, 5)", 1, false},
+		{"NprDomain", "npr(3, 5)", 0, true},
+		{"NcrDomain", "ncr(3, 4)", 0, true},
+		{"SumDigits", "sumdigits(1234)", 10, false},
+		{"SumDigitsZero", "sumdigits(0)", 0, false},
+		{"Rev", "rev(1234)", 4321, false},
+		{"RevTrailingZero", "rev(120)", 21, false},
+		{"IspalYes", "ispal(1221)", 1, false},
+		{"IspalNo", "ispal(123)", 0, false},
+		{"SumDigitsDomain", "sumdigits(2.5)", 0, true},
+		{"RevDomain", "rev(-5)", 0, true},
+		{"IspalDomain", "ispal(1.5)", 0, true},
+		{"Fib0", "fib(0)", 0, false},
+		{"Fib1", "fib(1)", 1, false},
+		{"Fib10", "fib(10)", 55, false},
+		{"Fib30", "fib(30)", 832040, false},
+		{"FibDomain", "fib(2.5)", 0, true},
+		{"FibNegative", "fib(-1)", 0, true},
+		{"FibTooBig", "fib(100)", 0, true},
+		{"PowMod", "powmod(2, 10, 1000)", 24, false},
+		{"PowModZeroExp", "powmod(7, 0, 5)", 1, false},
+		{"PowModLarge", "powmod(2, 100, 97)", 16, false},
+		{"PowModDomain", "powmod(2, 3, 0)", 0, true},
+		{"PowModNegative", "powmod(2, -3, 5)", 0, true},
+		{"PowModNonInt", "powmod(2.5, 3, 5)", 0, true},
+		{"Collatz1", "collatz(1)", 0, false},
+		{"Collatz3", "collatz(3)", 7, false},
+		{"Collatz27", "collatz(27)", 111, false},
+		{"CollatzDomain", "collatz(0)", 0, true},
+		{"CollatzNegative", "collatz(-3)", 0, true},
+		{"CollatzNonInt", "collatz(2.5)", 0, true},
+		{"CollatzTooBig", "collatz(200000)", 0, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res, err := parser.Evaluate(tt.input)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Evaluate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !tt.wantErr && res != tt.want {
+				t.Errorf("Evaluate() = %g, want %g", res, tt.want)
+			}
+		})
+	}
+}
+
+// TestSincNonZero verifies sinc(x) = sin(x)/x for nonzero x within tolerance.
+func TestSincNonZero(t *testing.T) {
+	res, err := parser.Evaluate("sinc(pi)")
+	if err != nil {
+		t.Fatalf("sinc(pi): %v", err)
+	}
+	want := math.Sin(math.Pi) / math.Pi
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("sinc(pi) = %g, want %g", res, want)
+	}
+}
+
+// TestCot verifies cot(x) = 1/tan(x) within tolerance.
+func TestCot(t *testing.T) {
+	res, err := parser.Evaluate("cot(pi/4)")
+	if err != nil {
+		t.Fatalf("cot(pi/4): %v", err)
+	}
+	want := 1 / math.Tan(math.Pi/4)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("cot(pi/4) = %g, want %g", res, want)
+	}
+}
+
+// TestAsec verifies asec(x) = acos(1/x) within tolerance.
+func TestAsec(t *testing.T) {
+	res, err := parser.Evaluate("asec(2)")
+	if err != nil {
+		t.Fatalf("asec(2): %v", err)
+	}
+	want := math.Acos(0.5)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("asec(2) = %g, want %g", res, want)
+	}
+}
+
+// TestCsch verifies csch(x) = 1/sinh(x) within tolerance.
+func TestCsch(t *testing.T) {
+	res, err := parser.Evaluate("csch(1)")
+	if err != nil {
+		t.Fatalf("csch(1): %v", err)
+	}
+	want := 1 / math.Sinh(1)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("csch(1) = %g, want %g", res, want)
+	}
+}
+
+// TestCoth verifies coth(x) = 1/tanh(x) within tolerance.
+func TestCoth(t *testing.T) {
+	res, err := parser.Evaluate("coth(1)")
+	if err != nil {
+		t.Fatalf("coth(1): %v", err)
+	}
+	want := 1 / math.Tanh(1)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("coth(1) = %g, want %g", res, want)
+	}
+}
+
+// TestAsech verifies asech(x) = acosh(1/x) within tolerance.
+func TestAsech(t *testing.T) {
+	res, err := parser.Evaluate("asech(0.5)")
+	if err != nil {
+		t.Fatalf("asech(0.5): %v", err)
+	}
+	want := math.Acosh(2)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("asech(0.5) = %g, want %g", res, want)
+	}
+}
+
+// TestAcsch verifies acsch(x) = asinh(1/x) within tolerance.
+func TestAcsch(t *testing.T) {
+	res, err := parser.Evaluate("acsch(1)")
+	if err != nil {
+		t.Fatalf("acsch(1): %v", err)
+	}
+	want := math.Asinh(1)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("acsch(1) = %g, want %g", res, want)
+	}
+}
+
+// TestAcoth verifies acoth(x) = atanh(1/x) within tolerance.
+func TestAcoth(t *testing.T) {
+	res, err := parser.Evaluate("acoth(2)")
+	if err != nil {
+		t.Fatalf("acoth(2): %v", err)
+	}
+	want := math.Atanh(0.5)
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("acoth(2) = %g, want %g", res, want)
+	}
+}
+
+// TestLogisticPos verifies logistic(1) within tolerance.
+func TestLogisticPos(t *testing.T) {
+	res, err := parser.Evaluate("logistic(1)")
+	if err != nil {
+		t.Fatalf("logistic(1): %v", err)
+	}
+	want := 1 / (1 + math.Exp(-1))
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("logistic(1) = %g, want %g", res, want)
+	}
+}
+
+// TestSoftplusPos verifies softplus(1) = ln(1+e) within tolerance.
+func TestSoftplusPos(t *testing.T) {
+	res, err := parser.Evaluate("softplus(1)")
+	if err != nil {
+		t.Fatalf("softplus(1): %v", err)
+	}
+	want := math.Log(1 + math.Exp(1))
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("softplus(1) = %g, want %g", res, want)
+	}
+}
+
+// TestTernary verifies the conditional operator cond ? a : b.
+func TestTernary(t *testing.T) {
+	res, err := parser.Evaluate("1 ? 2 : 3")
+	if err != nil {
+		t.Fatalf("1 ? 2 : 3: %v", err)
+	}
+	if res != 2 {
+		t.Errorf("1 ? 2 : 3 = %v, want 2", res)
+	}
+	res, err = parser.Evaluate("0 ? 2 : 3")
+	if err != nil {
+		t.Fatalf("0 ? 2 : 3: %v", err)
+	}
+	if res != 3 {
+		t.Errorf("0 ? 2 : 3 = %v, want 3", res)
+	}
+}
+
+// TestCompare verifies comparison operators return 1 (true) or 0 (false).
+func TestCompare(t *testing.T) {
+	cases := []struct{ expr string; want float64 }{
+		{"1<2", 1}, {"2>3", 0}, {"2>1", 1}, {"1<0", 0},
+		{"1<2 ? 10 : 20", 10}, {"2>3 ? 10 : 20", 20},
+	}
+	for _, c := range cases {
+		res, err := parser.Evaluate(c.expr)
+		if err != nil {
+			t.Fatalf("%s: %v", c.expr, err)
+		}
+		if res != c.want {
+			t.Errorf("%s = %v, want %v", c.expr, res, c.want)
+		}
+	}
+}
+
+// TestCompare2 verifies <= and >= comparisons.
+func TestCompare2(t *testing.T) {
+	cases := []struct{ expr string; want float64 }{
+		{"2<=2", 1}, {"3<=2", 0}, {"3>=4", 0}, {"4>=4", 1},
+		{"2<=2 ? 5 : 9", 5}, {"3>=4 ? 5 : 9", 9},
+	}
+	for _, c := range cases {
+		res, err := parser.Evaluate(c.expr)
+		if err != nil {
+			t.Fatalf("%s: %v", c.expr, err)
+		}
+		if res != c.want {
+			t.Errorf("%s = %v, want %v", c.expr, res, c.want)
+		}
+	}
+}
+
+// TestCompare3 verifies == and != comparisons.
+func TestCompare3(t *testing.T) {
+	cases := []struct{ expr string; want float64 }{
+		{"1==1", 1}, {"1==2", 0}, {"2!=1", 1}, {"2!=2", 0},
+		{"1==1 ? 3 : 4", 3}, {"5!", 120},
+	}
+	for _, c := range cases {
+		res, err := parser.Evaluate(c.expr)
+		if err != nil {
+			t.Fatalf("%s: %v", c.expr, err)
+		}
+		if res != c.want {
+			t.Errorf("%s = %v, want %v", c.expr, res, c.want)
+		}
+	}
+}
+
+// TestLogical verifies && and || operators.
+func TestLogical(t *testing.T) {
+	cases := []struct{ expr string; want float64 }{
+		{"1==1 && 2==2", 1}, {"1==1 && 1==2", 0}, {"1==1 || 1==2", 1}, {"1==2 || 1==3", 0},
+		{"1==1 && 1==2 ? 5 : 9", 9},
+	}
+	for _, c := range cases {
+		res, err := parser.Evaluate(c.expr)
+		if err != nil {
+			t.Fatalf("%s: %v", c.expr, err)
+		}
+		if res != c.want {
+			t.Errorf("%s = %v, want %v", c.expr, res, c.want)
+		}
+	}
+}
+
+// TestDegRad verifies deg(x) and rad(x) conversions.
+func TestDegRad(t *testing.T) {
+	res, err := parser.Evaluate("deg(pi)")
+	if err != nil {
+		t.Fatalf("deg(pi): %v", err)
+	}
+	if math.Abs(res-180) > 1e-12 {
+		t.Errorf("deg(pi) = %v, want 180", res)
+	}
+	res, err = parser.Evaluate("rad(180)")
+	if err != nil {
+		t.Fatalf("rad(180): %v", err)
+	}
+	if math.Abs(res-math.Pi) > 1e-12 {
+		t.Errorf("rad(180) = %v, want pi", res)
+	}
+}
+
+// TestRoot verifies the n-th root function.
+func TestRoot(t *testing.T) {
+	res, err := parser.Evaluate("root(8, 3)")
+	if err != nil {
+		t.Fatalf("root(8,3): %v", err)
+	}
+	if math.Abs(res-2) > 1e-12 {
+		t.Errorf("root(8,3) = %v, want 2", res)
+	}
+	res, err = parser.Evaluate("root(16, 2)")
+	if err != nil {
+		t.Fatalf("root(16,2): %v", err)
+	}
+	if math.Abs(res-4) > 1e-12 {
+		t.Errorf("root(16,2) = %v, want 4", res)
+	}
+}
+
+// TestFract verifies the fractional-part function.
+func TestFract(t *testing.T) {
+	cases := []struct{ expr string; want float64 }{
+		{"fract(3.5)", 0.5}, {"fract(3)", 0}, {"fract(-2.25)", 0.75},
+	}
+	for _, c := range cases {
+		res, err := parser.Evaluate(c.expr)
+		if err != nil {
+			t.Fatalf("%s: %v", c.expr, err)
+		}
+		if math.Abs(res-c.want) > 1e-12 {
+			t.Errorf("%s = %v, want %v", c.expr, res, c.want)
+		}
+	}
+}
+
+// TestSoftsign verifies the softsign activation function.
+func TestSoftsign(t *testing.T) {
+	cases := []struct{ expr string; want float64 }{
+		{"softsign(1)", 0.5}, {"softsign(0)", 0}, {"softsign(-2)", -2.0 / 3.0},
+	}
+	for _, c := range cases {
+		res, err := parser.Evaluate(c.expr)
+		if err != nil {
+			t.Fatalf("%s: %v", c.expr, err)
+		}
+		if math.Abs(res-c.want) > 1e-12 {
+			t.Errorf("%s = %v, want %v", c.expr, res, c.want)
+		}
+	}
+}
+
+// TestISqrt verifies the integer square root function.
+func TestISqrt(t *testing.T) {
+	res, err := parser.Evaluate("isqrt(10)")
+	if err != nil {
+		t.Fatalf("isqrt(10): %v", err)
+	}
+	if res != 3 {
+		t.Errorf("isqrt(10) = %v, want 3", res)
+	}
+	_, err = parser.Evaluate("isqrt(-1)")
+	if err == nil {
+		t.Errorf("isqrt(-1) should error")
+	}
+}
+
+// TestSwish verifies the swish activation function.
+func TestSwish(t *testing.T) {
+	res, err := parser.Evaluate("swish(0)")
+	if err != nil {
+		t.Fatalf("swish(0): %v", err)
+	}
+	if res != 0 {
+		t.Errorf("swish(0) = %v, want 0", res)
+	}
+	res, err = parser.Evaluate("swish(1)")
+	if err != nil {
+		t.Fatalf("swish(1): %v", err)
+	}
+	want := 1 / (1 + math.Exp(-1))
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("swish(1) = %v, want %v", res, want)
+	}
+}
+
+// TestIsFinite verifies the isfinite predicate.
+func TestIsFinite(t *testing.T) {
+	res, err := parser.Evaluate("isfinite(1)")
+	if err != nil {
+		t.Fatalf("isfinite(1): %v", err)
+	}
+	if res != 1 {
+		t.Errorf("isfinite(1) = %v, want 1", res)
+	}
+}
+
+// TestMish verifies the mish activation function.
+func TestMish(t *testing.T) {
+	res, err := parser.Evaluate("mish(0)")
+	if err != nil {
+		t.Fatalf("mish(0): %v", err)
+	}
+	if res != 0 {
+		t.Errorf("mish(0) = %v, want 0", res)
+	}
+	res, err = parser.Evaluate("mish(1)")
+	if err != nil {
+		t.Fatalf("mish(1): %v", err)
+	}
+	want := 1 * math.Tanh(math.Log(1+math.Exp(1)))
+	if math.Abs(res-want) > 1e-15 {
+		t.Errorf("mish(1) = %v, want %v", res, want)
+	}
+}

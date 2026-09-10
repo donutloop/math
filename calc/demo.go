@@ -1,0 +1,51 @@
+package calc
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strings"
+)
+
+// Demo runs a guided tour by driving a real calculator session and printing
+// the captured transcript, so the tour always reflects actual behavior.
+func Demo(w io.Writer) {
+	script := strings.Join([]string{
+		"# arithmetic, precedence, and the '^' operator",
+		"2 + 3 * 4",
+		"2 * 3 ^ 2",
+		"# functions and constants",
+		"pow(2, 10)",
+		"sin(pi / 2)",
+		"5!",
+		"200% + 10",
+		"# variables and ans",
+		"x = 3 + 2",
+		"x * 3",
+		"ans + 1",
+		"# memory and degrees",
+		"10",
+		"ms",
+		"deg",
+		"sin(30)",
+		"grad",
+		"sin(100)",
+		"rad",
+		"# display controls",
+		"12345",
+		"eng",
+		"12345",
+		"std",
+		"gcd(12, 18)",
+		"lgamma(5)",
+		"base hex",
+		"255",
+		"base dec",
+	}, "\n")
+
+	var out bytes.Buffer
+	New(strings.NewReader(script), &out).Run()
+	fmt.Fprintf(w, "Math Calculator - guided tour\n\n")
+	io.WriteString(w, out.String())
+	fmt.Fprintln(w, "\nCommands: help, vars, history, undo, redo, status, reset, quit")
+}
