@@ -1,3 +1,9 @@
+## [134] nextperfect(n)
+
+- New `nextperfect(n)`: the smallest perfect number >= n, scanning upward
+  with the aliquot-sum criterion. nextperfect(1)=6, nextperfect(7)=28,
+  nextperfect(29)=496.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [133] nextdeficient(n)
 
 - New `nextdeficient(n)`: the smallest deficient number >= n, scanning

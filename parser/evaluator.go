@@ -998,6 +998,15 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "nextdeficient requires n >= 1"}
 		}
 		return float64(nextDeficient(n)), nil
+	case "nextperfect":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 1 {
+			return 0, &EvalError{Err: ErrDomain, Message: "nextperfect requires n >= 1"}
+		}
+		return float64(nextPerfect(n)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1570,6 +1579,14 @@ func nextAbundant(n int64) int64 {
 func nextDeficient(n int64) int64 {
 	for ; ; n++ {
 		if sumProperDivisors(n) < n {
+			return n
+		}
+	}
+}
+
+func nextPerfect(n int64) int64 {
+	for ; ; n++ {
+		if sumProperDivisors(n) == n {
 			return n
 		}
 	}
