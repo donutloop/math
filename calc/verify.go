@@ -179,6 +179,8 @@ func Verify(w io.Writer) (passed, failed int) {
 		{"risingfact(1, 3)", "6"},
 		{"risingfact(2, 3)", "24"},
 		{"risingfact(5, 0)", "1"},
+		{"multinomial(5, 2, 3)", "10"},
+		{"multinomial(6, 2, 2, 2)", "90"},
 		{"gcd(12, 18, 24)", "6"},
 		{"lcm(4, 6, 10)", "60"},
 		{"gcd(36, 24)", "12"},

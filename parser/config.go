@@ -163,6 +163,7 @@ var SupportedFunctions = map[string]int{
 	"digitproduct": 1,
 	"doublefactorial": 1,
 	"risingfact": 2,
+	"multinomial": -1,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,

@@ -1,3 +1,9 @@
+## [128] multinomial(n, a, b, ...)
+
+- New variadic `multinomial(n, a, b, ...)`: n!/(a!b!...) via chained choose
+  coefficients; the groups must sum to n. multinomial(5, 2, 3)=10,
+  multinomial(6, 2, 2, 2)=90.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [127] risingfact(n, k)
 
 - New `risingfact(n, k)`: the rising factorial (Pochhammer symbol),

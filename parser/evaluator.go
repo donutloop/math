@@ -924,6 +924,42 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "risingfact requires k >= 0"}
 		}
 		return float64(risingFact(n, k)), nil
+	case "multinomial":
+		if len(args) < 2 {
+			return 0, &EvalError{Err: ErrBadArity, Message: "multinomial expects n and at least one group"}
+		}
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "multinomial requires n >= 0"}
+		}
+		sum := int64(0)
+		for _, a := range args[1:] {
+			v, err := checkIntArg(a)
+			if err != nil {
+				return 0, err
+			}
+			if v < 0 {
+				return 0, &EvalError{Err: ErrDomain, Message: "multinomial groups must be >= 0"}
+			}
+			sum += v
+		}
+		if sum != n {
+			return 0, &EvalError{Err: ErrDomain, Message: "multinomial groups must sum to n"}
+		}
+		res := int64(1)
+		rem := n
+		for _, a := range args[1:] {
+			v, err := checkIntArg(a)
+			if err != nil {
+				return 0, err
+			}
+			res *= choose(rem, v)
+			rem -= v
+		}
+		return float64(res), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
