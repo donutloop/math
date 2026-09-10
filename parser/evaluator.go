@@ -641,6 +641,24 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 		}
 		return float64(divCount(n)), nil
 
+	case "totient":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n <= 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "totient requires n >= 1"}
+		}
+		return float64(totient(n)), nil
+	case "sigma":
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		if n == 0 {
+			return 0, &EvalError{Err: ErrDomain, Message: "sigma requires n != 0"}
+		}
+		return float64(sigma(n)), nil
 	case "npr":
 		// permutations nPr(n, r) = n! / (n-r)! : npr(5, 2)=20, npr(10, 3)=720.
 		if len(args) != 2 {
@@ -661,6 +679,40 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 }
 
 // factorial computes n! for a non-negative integer argument.
+
+func totient(n int64) int64 {
+	if n <= 0 {
+		return 0
+	}
+	count := int64(0)
+	for k := int64(1); k <= n; k++ {
+		if gcd(float64(k), float64(n)) == 1 {
+			count++
+		}
+	}
+	return count
+}
+
+func sigma(n int64) int64 {
+	// sum of positive divisors
+	if n == 0 {
+		return 0
+	}
+	if n < 0 {
+		n = -n
+	}
+	sum := int64(0)
+	for d := int64(1); d*d <= n; d++ {
+		if n%d == 0 {
+			sum += d
+			if d != n/d {
+				sum += n / d
+			}
+		}
+	}
+	return sum
+}
+
 func gcd(a, b float64) float64 {
 	ia, ib := int64(a), int64(b)
 	if ia < 0 {

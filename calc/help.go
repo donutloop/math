@@ -58,6 +58,8 @@ var helpTopics = map[string]string{
 	"fib":       "fib(n): the n-th Fibonacci number (fib(0)=0, fib(1)=1)",
 	"powmod":    "powmod(a, b, m): (a^b) mod m via fast modular exponentiation",
 	"collatz":   "collatz(n): Collatz stopping time — steps to reach 1 (collatz(3)=7)",
+	"totient":   "totient(n): Euler\u2019s phi — count of integers 1..n coprime to n (totient(12)=4)",
+	"sigma":     "sigma(n): sum of positive divisors of n (sigma(6)=12)",
 	"let":       "let(x = e1, y = e2, body): local bindings — the last argument is the body; earlier args bind names that stay local (let(x = 2, x^2 + x) = 6)",
 	"asinh":     "asinh(x): inverse hyperbolic sine",
 	"acosh":     "acosh(x): inverse hyperbolic cosine (x >= 1)",

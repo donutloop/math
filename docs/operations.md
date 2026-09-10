@@ -340,6 +340,8 @@ Arity 1 (unary), unless noted. Trig functions take radians.
 | `fib(n)` | 1 | n-th Fibonacci number (fib(0)=0, fib(1)=1); exact for n ≤ 97 |
 | `powmod(a, b, m)` | 3 | (a^b) mod m via fast modular exponentiation |
 | `collatz(n)` | 1 | Collatz stopping time — steps to reach 1 (collatz(3)=7) |
+| `totient(n)` | 1 | Euler\u2019s phi — count of integers 1..n coprime to n (totient(12)=4) |
+| `sigma(n)` | 1 | sum of positive divisors of n (sigma(6)=12) |
 | `jn(n, x)` | 2 | Bessel J of order n |
 | `yn(n, x)` | 2 | Bessel Y of order n |
 

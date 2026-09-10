@@ -1,3 +1,10 @@
+## [93] Number theory: totient and sigma
+
+- New `totient(n)`: Euler\u2019s phi — count of integers 1..n coprime to n
+  (totient(12)=4, totient(9)=6).
+- New `sigma(n)`: sum of positive divisors of n (sigma(6)=12, sigma(28)=56).
+- Both reject non-positive / zero inputs with a typed domain error.
+- Updates parser dispatch, arity table, help text, docs, verify cases, ADR.
 ## [92] Variadic gcd/lcm
 
 - `gcd` and `lcm` now accept two or more arguments (like `min`/`max`/`avg`),
