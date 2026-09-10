@@ -157,6 +157,7 @@ var SupportedFunctions = map[string]int{
 	"nthdigit":   2,
 	"bell":      1,
 	"catalan":   1,
+	"stirling":  2,
 	"sumproperdivisors": 1,
 	"amicable": 2,
 	"bigomega":  1,

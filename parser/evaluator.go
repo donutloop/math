@@ -856,6 +856,22 @@ func (e *Evaluator) callFunction(n *FunctionNode) (float64, error) {
 			return 0, &EvalError{Err: ErrDomain, Message: "catalan requires n >= 0"}
 		}
 		return float64(catalan(n)), nil
+	case "stirling":
+		if len(args) != 2 {
+			return 0, &EvalError{Err: ErrBadArity, Message: "stirling expects 2 arguments (n, k)"}
+		}
+		n, err := checkIntArg(args[0])
+		if err != nil {
+			return 0, err
+		}
+		k, err := checkIntArg(args[1])
+		if err != nil {
+			return 0, err
+		}
+		if n < 0 || k < 0 || k > n {
+			return 0, &EvalError{Err: ErrDomain, Message: "stirling requires 0 <= k <= n"}
+		}
+		return float64(stirling(n, k)), nil
 	case "choose":
 		if len(args) != 2 {
 			return 0, &EvalError{Err: ErrBadArity, Message: "choose expects 2 arguments (n, k)"}
@@ -1286,6 +1302,25 @@ func bell(n int64) int64 {
 
 func catalan(n int64) int64 {
 	return choose(2*n, n) / (n + 1)
+}
+
+func stirling(n, k int64) int64 {
+	if n == 0 && k == 0 {
+		return 1
+	}
+	if n == 0 || k == 0 {
+		return 0
+	}
+	// recurrence S(n,k) = k*S(n-1,k) + S(n-1,k-1)
+	dp := make([]int64, k+1)
+	dp[0] = 0
+	dp[1] = 1 // S(1,1)
+	for i := int64(2); i <= n; i++ {
+		for j := k; j >= 1; j-- {
+			dp[j] = j*dp[j] + dp[j-1]
+		}
+	}
+	return dp[k]
 }
 func choose(n, k int64) int64 {
 	if k > n-k {

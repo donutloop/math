@@ -1,3 +1,9 @@
+## [122] stirling(n, k)
+
+- New `stirling(n, k)`: the Stirling number of the second kind, partitions
+  of n into k non-empty subsets, via the recurrence S(n,k)=k*S(n-1,k)+S(n-1,k-1).
+  stirling(3,2)=3, stirling(4,2)=7, stirling(4,3)=6, stirling(0,0)=1.
+- Updates parser dispatch, arity table, help, operations.md, verify, ADR.
 ## [121] catalan(n)
 
 - New `catalan(n)`: the Catalan number C_n = choose(2n,n)/(n+1).
