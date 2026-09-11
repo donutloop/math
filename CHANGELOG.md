@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [167] clear errors + nested-loop break/continue (math programming language)
+
+- Top-level `break`/`continue` outside a loop now report clear errors
+  ("break outside a loop" / "continue outside a loop") instead of a confusing
+  parse failure, by catching sentinels in evalExpanded.
+- Nested loops verified: an inner begin `break` exits only the inner loop;
+  inner `continue` skips only the inner body. Whole-program integration tests
+  cover both (sum 1..3 = 6 in both cases).
+
 ## [165] break / continue propagate through for and repeat loops (math programming language)
 
 - `for` and `repeat` loop bodies now split statements (paren-aware) and honor

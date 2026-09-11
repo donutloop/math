@@ -479,6 +479,12 @@ func (c *Calculator) eval(line string) (float64, error) {
 
 // evalExpanded evaluates an already substituted/expanded expression string.
 func (c *Calculator) evalExpanded(expanded string) (float64, error) {
+	if expanded == breakSentinel {
+		return 0, fmt.Errorf("break outside a loop")
+	}
+	if expanded == continueSentinel {
+		return 0, fmt.Errorf("continue outside a loop")
+	}
 	if c.degMode {
 		expanded = applyDeg(expanded)
 	} else if c.gradMode {

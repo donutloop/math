@@ -169,3 +169,41 @@ quit
 	got := runProgram(t, prog)
 	checkLine(t, got, "1")
 }
+
+func TestProgramTopLevelBreakError(t *testing.T) {
+	// break outside a loop is a clear program error, not a parse failure.
+	prog := `begin(x = 1; break)
+x
+quit
+`
+	got := runProgram(t, prog)
+	if !strings.Contains(got, "break outside a loop") {
+		t.Fatalf("expected break-outside-loop error in program output:\n%s", got)
+	}
+}
+
+func TestProgramNestedBreak(t *testing.T) {
+	// inner begin break exits only the inner while; the outer loop continues.
+	// inner runs once per outer step, so s = 1 + 2 + 3 = 6.
+	prog := `i = 0
+s = 0
+while(i < 3, begin(i = i + 1; j = 0; while(j < 5, begin(j = j + 1; break)); s = s + i))
+s
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "6")
+}
+
+func TestProgramNestedContinue(t *testing.T) {
+	// inner begin continue skips the inner body's skipped statement every
+	// inner iteration, but the outer accumulate still runs: s = 1 + 2 + 3.
+	prog := `i = 0
+s = 0
+while(i < 3, begin(i = i + 1; j = 0; while(j < 5, begin(j = j + 1; continue; s = s + 100)); s = s + i))
+s
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "6")
+}

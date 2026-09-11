@@ -52,3 +52,18 @@ func TestRepeatLoopBreakInsideBegin(t *testing.T) {
 		t.Fatalf("repeat begin break: expected s=1, got:\n%s", got)
 	}
 }
+
+func TestBreakOutsideLoopClearError(t *testing.T) {
+	got := runBatch(t, "begin(x = 1; break)\nquit\n")
+	// top-level break must report a clear error, not a parse failure.
+	if !strings.Contains(got, "break outside a loop") {
+		t.Fatalf("expected clear break-outside-loop error, got:\n%s", got)
+	}
+}
+
+func TestContinueOutsideLoopClearError(t *testing.T) {
+	got := runBatch(t, "begin(x = 1; continue)\nquit\n")
+	if !strings.Contains(got, "continue outside a loop") {
+		t.Fatalf("expected clear continue-outside-loop error, got:\n%s", got)
+	}
+}
