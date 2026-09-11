@@ -546,8 +546,34 @@ func parseAssignment(line string) (name, expr string, ok bool) {
 }
 
 // splitStatements splits a line on ';' into separate statements.
+// splitStatements splits a line into statements on ';', but only at paren
+// depth 0. A ';' inside parentheses (loop bodies, begin/end blocks) is part
+// of the enclosing statement, so while(cond, a = a+1; b = b*2) stays intact.
 func splitStatements(line string) []string {
-	return strings.Split(line, ";")
+	var stmts []string
+	var cur strings.Builder
+	depth := 0
+	for i := 0; i < len(line); i++ {
+		switch line[i] {
+		case '(', '[', '{':
+			depth++
+		case ')', ']', '}':
+			if depth > 0 {
+				depth--
+			}
+		case ';':
+			if depth == 0 {
+				stmts = append(stmts, strings.TrimSpace(cur.String()))
+				cur.Reset()
+				continue
+			}
+		}
+		cur.WriteByte(line[i])
+	}
+	if s := strings.TrimSpace(cur.String()); s != "" {
+		stmts = append(stmts, s)
+	}
+	return stmts
 }
 
 // prompt renders the interactive prompt with active modes, e.g. "deg> ".

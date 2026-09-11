@@ -174,17 +174,22 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 		if cv == 0 {
 			return last, nil
 		}
-		if name, expr, ok := parseAssignment(body); ok {
-			if err := c.assign(name, expr); err != nil {
-				return "", err
+		// Evaluate body as a sequence of statements (paren-aware split on ';'),
+		// so multi-step bodies like acc = acc + x; x = x + 1 mutate variables.
+		last = "0"
+		for _, st := range splitStatements(body) {
+			if name, expr, ok := parseAssignment(st); ok {
+				if err := c.assign(name, expr); err != nil {
+					return "", err
+				}
+				last = fmt.Sprintf("%g", c.vars[name])
+			} else {
+				bv, err := c.eval(st)
+				if err != nil {
+					return "", err
+				}
+				last = fmt.Sprintf("%g", bv)
 			}
-			last = fmt.Sprintf("%g", c.vars[name])
-		} else {
-			bv, err := c.eval(body)
-			if err != nil {
-				return "", err
-			}
-			last = fmt.Sprintf("%g", bv)
 		}
 	}
 }

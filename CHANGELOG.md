@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [158] paren-aware statement splitting + multi-step loop bodies
+
+- splitStatements now splits on ';' only at paren depth 0, so ';' inside
+  parentheses (loop bodies, blocks) stays part of the enclosing statement.
+- while bodies may now sequence multiple statements: while(x < 5, acc = acc + x; x = x + 1).
+- Tests: multi-statement while body (accumulate + increment).
+- Steer: toward a math programming language.
 ## [157] recursion in user-defined functions (math programming language)
 
 - Fix: user-function arguments now bind to their evaluated numeric values

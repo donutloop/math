@@ -37,3 +37,12 @@ func TestWhileInfiniteGuard(t *testing.T) {
 		t.Fatalf("expected infinite-loop guard:\n%s", got)
 	}
 }
+
+func TestWhileMultiStatementBody(t *testing.T) {
+	// Paren-aware statement splitting lets a while body sequence multiple
+	// updates: acc accumulates x and x increments each iteration.
+	got := runBatch(t, "x = 0\nacc = 0\nwhile(x < 5, acc = acc + x; x = x + 1)\nacc\nquit\n")
+	if !strings.Contains(got, "\n10\n") {
+		t.Fatalf("while multi-statement body failed:\n%s", got)
+	}
+}
