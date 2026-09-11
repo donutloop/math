@@ -2,6 +2,7 @@ package integration_test
 
 import (
 	"errors"
+	"prototype_kl/eval"
 	"prototype_kl/parser"
 	"testing"
 )
@@ -27,7 +28,7 @@ func TestEdgeCases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := parser.Evaluate(tt.input)
+			got, err := eval.Evaluate(tt.input)
 			if tt.wantErr != nil {
 				if err == nil {
 					t.Errorf("expected error %v, got nil", tt.wantErr)

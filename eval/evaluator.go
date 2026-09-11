@@ -1,9 +1,57 @@
-package parser
+package eval
 
 import (
 	"fmt"
 	"math"
+	"prototype_kl/parser"
 	"sort"
+)
+
+// error aliases so the evaluator body references the shared parser error
+// types/variables unchanged.
+type EvalError = parser.EvalError
+
+var (
+	ErrDomain         = parser.ErrDomain
+	ErrBadArity       = parser.ErrBadArity
+	ErrDivisionByZero = parser.ErrDivisionByZero
+	ErrSqrtNegative   = parser.ErrSqrtNegative
+	ErrOverflow       = parser.ErrOverflow
+	ErrFactorial      = parser.ErrFactorial
+)
+
+// AST type aliases so the evaluator body references parser node types
+// unchanged.
+type (
+	Node         = parser.Node
+	NumberNode   = parser.NumberNode
+	BinaryOpNode = parser.BinaryOpNode
+	UnaryOpNode  = parser.UnaryOpNode
+	FunctionNode = parser.FunctionNode
+	PostfixNode  = parser.PostfixNode
+	TernaryNode  = parser.TernaryNode
+)
+
+const (
+	OpAdd        = parser.OpAdd
+	OpSub        = parser.OpSub
+	OpMul        = parser.OpMul
+	OpDiv        = parser.OpDiv
+	OpMod        = parser.OpMod
+	OpPower      = parser.OpPower
+	OpEQ         = parser.OpEQ
+	OpNE         = parser.OpNE
+	OpLT         = parser.OpLT
+	OpLE         = parser.OpLE
+	OpGT         = parser.OpGT
+	OpGE         = parser.OpGE
+	OpAND        = parser.OpAND
+	OpOR         = parser.OpOR
+	OpANDAND     = parser.OpANDAND
+	OpOROR       = parser.OpOROR
+	OpShiftLeft  = parser.OpShiftLeft
+	OpShiftRight = parser.OpShiftRight
+	OpTilde      = parser.OpTilde
 )
 
 // Evaluator walks the AST and computes the numeric result.
@@ -1129,11 +1177,6 @@ func totient(n int64) int64 {
 	return count
 }
 
-
-
-
-
-
 func eta(x float64) float64 {
 	// eta(x) = (1 - 2^(1-x)) * zeta(x), with the analytic limit eta(1)=ln2
 	if x == 1 {
@@ -1153,9 +1196,6 @@ func zeta(x float64) float64 {
 	return sum
 }
 
-
-
-
 func trigamma(x float64) float64 {
 	// recurrence trigamma(x) = trigamma(x+1) + 1/x^2 pushes into large-x regime
 	res := 0.0
@@ -1164,7 +1204,7 @@ func trigamma(x float64) float64 {
 		x++
 	}
 	// asymptotic: trigamma(x) ~ 1/x + 1/(2x^2) + 1/(6x^3) - 1/(30x^5) + 1/(42x^7)
-	res += 1 / x + 1 / (2 * x * x) + 1 / (6 * x * x * x)
+	res += 1/x + 1/(2*x*x) + 1/(6*x*x*x)
 	res -= 1 / (30 * math.Pow(x, 5))
 	res += 1 / (42 * math.Pow(x, 7))
 	return res
@@ -1222,7 +1262,6 @@ func lambertw(x float64) float64 {
 	return w
 }
 
-
 func sumOfPrimes(n int64) int64 {
 	sum := int64(0)
 	count := int64(0)
@@ -1234,7 +1273,6 @@ func sumOfPrimes(n int64) int64 {
 	}
 	return sum
 }
-
 
 func omega(n int64) int64 {
 	count := int64(0)
@@ -1386,7 +1424,7 @@ func lnGamma(x float64) float64 {
 		x++
 	}
 	// Stirling: lnGamma(x) ~ (x-0.5)*ln(x) - x + 0.5*ln(2pi) + 1/(12x) - 1/(360x^3) + 1/(1260x^5)
-	res += (x - 0.5)*math.Log(x) - x + 0.5*math.Log(2*math.Pi)
+	res += (x-0.5)*math.Log(x) - x + 0.5*math.Log(2*math.Pi)
 	res += 1 / (12 * x)
 	res -= 1 / (360 * x * x * x)
 	res += 1 / (1260 * x * x * x * x * x)

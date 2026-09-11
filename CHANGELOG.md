@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [172] package refactor: divide by language-design concern
+
+- Split the monolithic calculator into focused packages:
+  - `parser` now contains only lexing/parsing and the AST (`Parse`, node types,
+    op constants).
+  - New `eval` package owns AST evaluation and all built-in math functions
+    (`Evaluate`), importing only `parser` (no evaluation inside the parser).
+  - `calc` keeps the language runtime: state, assignment, control-flow
+    expansion, user functions, REPL, and machine-readable output.
+- Error types (EvalError/ErrDomain/...) stay in `parser` and are aliased by
+  `eval` so evaluator bodies compile unchanged.
+- Moved the evaluation benchmark to `eval` (a parser test cannot import eval,
+  which imports parser).
+
 ## [167] clear errors + nested-loop break/continue (math programming language)
 
 - Top-level `break`/`continue` outside a loop now report clear errors

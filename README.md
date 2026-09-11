@@ -1,7 +1,17 @@
 # Math Calculator
 
-A full-featured math calculator in Go, built on a clean-architecture parser
-package plus an interactive read-evaluate-print (REPL) shell.
+A full-featured math programming language in Go, structured by language-design
+concern into focused packages:
+
+- `parser`  — tokenizing, parsing, and the AST (pure parsing, no evaluation).
+- `eval`    — AST evaluation and built-in math functions (depends only on parser).
+- `calc`    — the language runtime: state, assignment, control-flow expansion
+  (loops/conditionals), user functions, REPL, and machine-readable output.
+- `tests/`  — unit tests (`tests/unit`) and whole-program integration tests
+  (`tests/integration`).
+
+Parsing and evaluation are cleanly separated: `parser.Parse` builds an AST and
+`eval.Evaluate` interprets it, so the two concerns never share a package.
 
 ## Packages
 

@@ -1,7 +1,7 @@
 package integration_test
 
 import (
-	"prototype_kl/parser"
+	"prototype_kl/eval"
 	"testing"
 )
 
@@ -27,7 +27,7 @@ func TestEvalPipeline(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
-			got, err := parser.Evaluate(tt.input)
+			got, err := eval.Evaluate(tt.input)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

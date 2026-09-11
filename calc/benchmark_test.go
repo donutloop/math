@@ -1,10 +1,9 @@
 package calc
 
 import (
+	"prototype_kl/eval"
 	"strings"
 	"testing"
-
-	"prototype_kl/parser"
 )
 
 // BenchmarkSubstituteManyVars shows variable substitution stays fast even with
@@ -26,6 +25,6 @@ func BenchmarkEvaluate(b *testing.B) {
 	expr := "pow(2, 10) + sin(pi / 2) * 3 - 5! + 200%"
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = parser.Evaluate(expr)
+		_, _ = eval.Evaluate(expr)
 	}
 }

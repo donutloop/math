@@ -2,7 +2,7 @@ package parser_test
 
 import (
 	"math"
-	"prototype_kl/parser"
+	"prototype_kl/eval"
 	"testing"
 )
 
@@ -152,7 +152,7 @@ func TestEvaluator(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := parser.Evaluate(tt.input)
+			res, err := eval.Evaluate(tt.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Evaluate() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -166,7 +166,7 @@ func TestEvaluator(t *testing.T) {
 
 // TestSincNonZero verifies sinc(x) = sin(x)/x for nonzero x within tolerance.
 func TestSincNonZero(t *testing.T) {
-	res, err := parser.Evaluate("sinc(pi)")
+	res, err := eval.Evaluate("sinc(pi)")
 	if err != nil {
 		t.Fatalf("sinc(pi): %v", err)
 	}
@@ -178,7 +178,7 @@ func TestSincNonZero(t *testing.T) {
 
 // TestCot verifies cot(x) = 1/tan(x) within tolerance.
 func TestCot(t *testing.T) {
-	res, err := parser.Evaluate("cot(pi/4)")
+	res, err := eval.Evaluate("cot(pi/4)")
 	if err != nil {
 		t.Fatalf("cot(pi/4): %v", err)
 	}
@@ -190,7 +190,7 @@ func TestCot(t *testing.T) {
 
 // TestAsec verifies asec(x) = acos(1/x) within tolerance.
 func TestAsec(t *testing.T) {
-	res, err := parser.Evaluate("asec(2)")
+	res, err := eval.Evaluate("asec(2)")
 	if err != nil {
 		t.Fatalf("asec(2): %v", err)
 	}
@@ -202,7 +202,7 @@ func TestAsec(t *testing.T) {
 
 // TestCsch verifies csch(x) = 1/sinh(x) within tolerance.
 func TestCsch(t *testing.T) {
-	res, err := parser.Evaluate("csch(1)")
+	res, err := eval.Evaluate("csch(1)")
 	if err != nil {
 		t.Fatalf("csch(1): %v", err)
 	}
@@ -214,7 +214,7 @@ func TestCsch(t *testing.T) {
 
 // TestCoth verifies coth(x) = 1/tanh(x) within tolerance.
 func TestCoth(t *testing.T) {
-	res, err := parser.Evaluate("coth(1)")
+	res, err := eval.Evaluate("coth(1)")
 	if err != nil {
 		t.Fatalf("coth(1): %v", err)
 	}
@@ -226,7 +226,7 @@ func TestCoth(t *testing.T) {
 
 // TestAsech verifies asech(x) = acosh(1/x) within tolerance.
 func TestAsech(t *testing.T) {
-	res, err := parser.Evaluate("asech(0.5)")
+	res, err := eval.Evaluate("asech(0.5)")
 	if err != nil {
 		t.Fatalf("asech(0.5): %v", err)
 	}
@@ -238,7 +238,7 @@ func TestAsech(t *testing.T) {
 
 // TestAcsch verifies acsch(x) = asinh(1/x) within tolerance.
 func TestAcsch(t *testing.T) {
-	res, err := parser.Evaluate("acsch(1)")
+	res, err := eval.Evaluate("acsch(1)")
 	if err != nil {
 		t.Fatalf("acsch(1): %v", err)
 	}
@@ -250,7 +250,7 @@ func TestAcsch(t *testing.T) {
 
 // TestAcoth verifies acoth(x) = atanh(1/x) within tolerance.
 func TestAcoth(t *testing.T) {
-	res, err := parser.Evaluate("acoth(2)")
+	res, err := eval.Evaluate("acoth(2)")
 	if err != nil {
 		t.Fatalf("acoth(2): %v", err)
 	}
@@ -262,7 +262,7 @@ func TestAcoth(t *testing.T) {
 
 // TestLogisticPos verifies logistic(1) within tolerance.
 func TestLogisticPos(t *testing.T) {
-	res, err := parser.Evaluate("logistic(1)")
+	res, err := eval.Evaluate("logistic(1)")
 	if err != nil {
 		t.Fatalf("logistic(1): %v", err)
 	}
@@ -274,7 +274,7 @@ func TestLogisticPos(t *testing.T) {
 
 // TestSoftplusPos verifies softplus(1) = ln(1+e) within tolerance.
 func TestSoftplusPos(t *testing.T) {
-	res, err := parser.Evaluate("softplus(1)")
+	res, err := eval.Evaluate("softplus(1)")
 	if err != nil {
 		t.Fatalf("softplus(1): %v", err)
 	}
@@ -286,14 +286,14 @@ func TestSoftplusPos(t *testing.T) {
 
 // TestTernary verifies the conditional operator cond ? a : b.
 func TestTernary(t *testing.T) {
-	res, err := parser.Evaluate("1 ? 2 : 3")
+	res, err := eval.Evaluate("1 ? 2 : 3")
 	if err != nil {
 		t.Fatalf("1 ? 2 : 3: %v", err)
 	}
 	if res != 2 {
 		t.Errorf("1 ? 2 : 3 = %v, want 2", res)
 	}
-	res, err = parser.Evaluate("0 ? 2 : 3")
+	res, err = eval.Evaluate("0 ? 2 : 3")
 	if err != nil {
 		t.Fatalf("0 ? 2 : 3: %v", err)
 	}
@@ -304,12 +304,15 @@ func TestTernary(t *testing.T) {
 
 // TestCompare verifies comparison operators return 1 (true) or 0 (false).
 func TestCompare(t *testing.T) {
-	cases := []struct{ expr string; want float64 }{
+	cases := []struct {
+		expr string
+		want float64
+	}{
 		{"1<2", 1}, {"2>3", 0}, {"2>1", 1}, {"1<0", 0},
 		{"1<2 ? 10 : 20", 10}, {"2>3 ? 10 : 20", 20},
 	}
 	for _, c := range cases {
-		res, err := parser.Evaluate(c.expr)
+		res, err := eval.Evaluate(c.expr)
 		if err != nil {
 			t.Fatalf("%s: %v", c.expr, err)
 		}
@@ -321,12 +324,15 @@ func TestCompare(t *testing.T) {
 
 // TestCompare2 verifies <= and >= comparisons.
 func TestCompare2(t *testing.T) {
-	cases := []struct{ expr string; want float64 }{
+	cases := []struct {
+		expr string
+		want float64
+	}{
 		{"2<=2", 1}, {"3<=2", 0}, {"3>=4", 0}, {"4>=4", 1},
 		{"2<=2 ? 5 : 9", 5}, {"3>=4 ? 5 : 9", 9},
 	}
 	for _, c := range cases {
-		res, err := parser.Evaluate(c.expr)
+		res, err := eval.Evaluate(c.expr)
 		if err != nil {
 			t.Fatalf("%s: %v", c.expr, err)
 		}
@@ -338,12 +344,15 @@ func TestCompare2(t *testing.T) {
 
 // TestCompare3 verifies == and != comparisons.
 func TestCompare3(t *testing.T) {
-	cases := []struct{ expr string; want float64 }{
+	cases := []struct {
+		expr string
+		want float64
+	}{
 		{"1==1", 1}, {"1==2", 0}, {"2!=1", 1}, {"2!=2", 0},
 		{"1==1 ? 3 : 4", 3}, {"5!", 120},
 	}
 	for _, c := range cases {
-		res, err := parser.Evaluate(c.expr)
+		res, err := eval.Evaluate(c.expr)
 		if err != nil {
 			t.Fatalf("%s: %v", c.expr, err)
 		}
@@ -355,12 +364,15 @@ func TestCompare3(t *testing.T) {
 
 // TestLogical verifies && and || operators.
 func TestLogical(t *testing.T) {
-	cases := []struct{ expr string; want float64 }{
+	cases := []struct {
+		expr string
+		want float64
+	}{
 		{"1==1 && 2==2", 1}, {"1==1 && 1==2", 0}, {"1==1 || 1==2", 1}, {"1==2 || 1==3", 0},
 		{"1==1 && 1==2 ? 5 : 9", 9},
 	}
 	for _, c := range cases {
-		res, err := parser.Evaluate(c.expr)
+		res, err := eval.Evaluate(c.expr)
 		if err != nil {
 			t.Fatalf("%s: %v", c.expr, err)
 		}
@@ -372,14 +384,14 @@ func TestLogical(t *testing.T) {
 
 // TestDegRad verifies deg(x) and rad(x) conversions.
 func TestDegRad(t *testing.T) {
-	res, err := parser.Evaluate("deg(pi)")
+	res, err := eval.Evaluate("deg(pi)")
 	if err != nil {
 		t.Fatalf("deg(pi): %v", err)
 	}
 	if math.Abs(res-180) > 1e-12 {
 		t.Errorf("deg(pi) = %v, want 180", res)
 	}
-	res, err = parser.Evaluate("rad(180)")
+	res, err = eval.Evaluate("rad(180)")
 	if err != nil {
 		t.Fatalf("rad(180): %v", err)
 	}
@@ -390,14 +402,14 @@ func TestDegRad(t *testing.T) {
 
 // TestRoot verifies the n-th root function.
 func TestRoot(t *testing.T) {
-	res, err := parser.Evaluate("root(8, 3)")
+	res, err := eval.Evaluate("root(8, 3)")
 	if err != nil {
 		t.Fatalf("root(8,3): %v", err)
 	}
 	if math.Abs(res-2) > 1e-12 {
 		t.Errorf("root(8,3) = %v, want 2", res)
 	}
-	res, err = parser.Evaluate("root(16, 2)")
+	res, err = eval.Evaluate("root(16, 2)")
 	if err != nil {
 		t.Fatalf("root(16,2): %v", err)
 	}
@@ -408,11 +420,14 @@ func TestRoot(t *testing.T) {
 
 // TestFract verifies the fractional-part function.
 func TestFract(t *testing.T) {
-	cases := []struct{ expr string; want float64 }{
+	cases := []struct {
+		expr string
+		want float64
+	}{
 		{"fract(3.5)", 0.5}, {"fract(3)", 0}, {"fract(-2.25)", 0.75},
 	}
 	for _, c := range cases {
-		res, err := parser.Evaluate(c.expr)
+		res, err := eval.Evaluate(c.expr)
 		if err != nil {
 			t.Fatalf("%s: %v", c.expr, err)
 		}
@@ -424,11 +439,14 @@ func TestFract(t *testing.T) {
 
 // TestSoftsign verifies the softsign activation function.
 func TestSoftsign(t *testing.T) {
-	cases := []struct{ expr string; want float64 }{
+	cases := []struct {
+		expr string
+		want float64
+	}{
 		{"softsign(1)", 0.5}, {"softsign(0)", 0}, {"softsign(-2)", -2.0 / 3.0},
 	}
 	for _, c := range cases {
-		res, err := parser.Evaluate(c.expr)
+		res, err := eval.Evaluate(c.expr)
 		if err != nil {
 			t.Fatalf("%s: %v", c.expr, err)
 		}
@@ -440,14 +458,14 @@ func TestSoftsign(t *testing.T) {
 
 // TestISqrt verifies the integer square root function.
 func TestISqrt(t *testing.T) {
-	res, err := parser.Evaluate("isqrt(10)")
+	res, err := eval.Evaluate("isqrt(10)")
 	if err != nil {
 		t.Fatalf("isqrt(10): %v", err)
 	}
 	if res != 3 {
 		t.Errorf("isqrt(10) = %v, want 3", res)
 	}
-	_, err = parser.Evaluate("isqrt(-1)")
+	_, err = eval.Evaluate("isqrt(-1)")
 	if err == nil {
 		t.Errorf("isqrt(-1) should error")
 	}
@@ -455,14 +473,14 @@ func TestISqrt(t *testing.T) {
 
 // TestSwish verifies the swish activation function.
 func TestSwish(t *testing.T) {
-	res, err := parser.Evaluate("swish(0)")
+	res, err := eval.Evaluate("swish(0)")
 	if err != nil {
 		t.Fatalf("swish(0): %v", err)
 	}
 	if res != 0 {
 		t.Errorf("swish(0) = %v, want 0", res)
 	}
-	res, err = parser.Evaluate("swish(1)")
+	res, err = eval.Evaluate("swish(1)")
 	if err != nil {
 		t.Fatalf("swish(1): %v", err)
 	}
@@ -474,7 +492,7 @@ func TestSwish(t *testing.T) {
 
 // TestIsFinite verifies the isfinite predicate.
 func TestIsFinite(t *testing.T) {
-	res, err := parser.Evaluate("isfinite(1)")
+	res, err := eval.Evaluate("isfinite(1)")
 	if err != nil {
 		t.Fatalf("isfinite(1): %v", err)
 	}
@@ -485,14 +503,14 @@ func TestIsFinite(t *testing.T) {
 
 // TestMish verifies the mish activation function.
 func TestMish(t *testing.T) {
-	res, err := parser.Evaluate("mish(0)")
+	res, err := eval.Evaluate("mish(0)")
 	if err != nil {
 		t.Fatalf("mish(0): %v", err)
 	}
 	if res != 0 {
 		t.Errorf("mish(0) = %v, want 0", res)
 	}
-	res, err = parser.Evaluate("mish(1)")
+	res, err = eval.Evaluate("mish(1)")
 	if err != nil {
 		t.Fatalf("mish(1): %v", err)
 	}

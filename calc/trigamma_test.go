@@ -14,7 +14,7 @@ func TestTrigamma(t *testing.T) {
 		want float64
 	}{
 		{"trigamma(1)", math.Pi * math.Pi / 6},
-		{"trigamma(2)", math.Pi * math.Pi / 6 - 1},
+		{"trigamma(2)", math.Pi*math.Pi/6 - 1},
 	} {
 		got := strings.TrimSpace(runBatch(t, tc.in+"\nquit\n"))
 		val, err := strconv.ParseFloat(got, 64)

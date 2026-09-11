@@ -1,6 +1,8 @@
-package parser
+package eval
 
-import "testing"
+import (
+	"testing"
+)
 
 func BenchmarkEvaluate(b *testing.B) {
 	expr := "pow(2, 10) + sin(pi / 2) * 3 - 5! + 200%"

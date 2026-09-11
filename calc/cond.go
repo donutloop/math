@@ -3,7 +3,7 @@ package calc
 import (
 	"fmt"
 	"math"
-	"prototype_kl/parser"
+	"prototype_kl/eval"
 	"strconv"
 	"strings"
 )
@@ -22,7 +22,7 @@ func (c *Calculator) expandIf(inner string) (string, error) {
 		return "", err
 	}
 	// Lazy branch selection: evaluate cond numerically; expand only the taken branch.
-	if v, err := parser.Evaluate(condE); err == nil {
+	if v, err := eval.Evaluate(condE); err == nil {
 		if v != 0 {
 			return c.expandBranch(then)
 		}

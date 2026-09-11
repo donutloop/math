@@ -17,35 +17,6 @@ import (
 // or "ans" are rewritten to their numeric literals before the strict parser
 // package evaluates them. This keeps the parser's own lexer untouched while
 // giving the calculator first-class variables.
-type Calculator struct {
-	vars        map[string]float64
-	funcs        map[string]*funcDef
-	ans         float64
-	hasAns      bool
-	memory      float64
-	hasMem      bool
-	history     []string
-	results     []string
-	statePath   string
-	degMode     bool
-	gradMode    bool
-	sci         bool
-	prec        int
-	undoStack   []state
-	redoStack   []state
-	quiet       bool
-	quietAssign bool
-	jsonMode    bool
-	jsonlMode   bool
-	csvMode     bool
-	lastExpr    string
-	eng         bool
-	expandDepth int
-	errCount    int
-	base        int
-	in          *bufio.Reader
-	out         io.Writer
-}
 
 // New returns a Calculator reading lines from reader and writing to writer.
 func New(reader io.Reader, writer io.Writer) *Calculator {
@@ -206,11 +177,11 @@ func (c *Calculator) handle(line string) (bool, error) {
 		c.emitState("base", b)
 		return false, nil
 	}
-	
+
 	if strings.HasPrefix(strings.ToLower(line), "tree ") {
 		return true, c.tree(strings.TrimSpace(line[5:]))
 	}
-switch strings.ToLower(line) {
+	switch strings.ToLower(line) {
 	case "help", "?":
 		c.printHelp()
 		return false, nil
@@ -432,33 +403,6 @@ func (c *Calculator) AssignExpr(line string) (string, float64, error) {
 	return name, c.vars[name], nil
 }
 
-func (c *Calculator) assign(name, expr string) error {
-	if _, ok := parser.SupportedFunctions[name]; ok {
-		return fmt.Errorf("cannot assign to function name %q", name)
-	}
-	if _, ok := parser.SupportedConstants[name]; ok {
-		return fmt.Errorf("cannot assign to constant %q", name)
-	}
-	if name == "ans" {
-		return fmt.Errorf("'ans' is reserved")
-	}
-	expanded, err := c.substitute(expr)
-	if err != nil {
-		return err
-	}
-	expr = expanded
-	v, err := c.evalExpanded(expr)
-	if err != nil {
-		return err
-	}
-	c.vars[name] = v
-	c.results = append(c.results, name+" = "+c.format(v))
-	if !c.quietAssign {
-		fmt.Fprintf(c.out, "%s = %s\n", name, c.format(v))
-	}
-	return nil
-}
-
 // eval evaluates a single expression string after substituting variables.
 // EvalExpr evaluates a single expression (variables and ans substituted)
 // and returns its numeric value.
@@ -466,40 +410,9 @@ func (c *Calculator) EvalExpr(expr string) (float64, error) {
 	return c.eval(expr)
 }
 
-func (c *Calculator) eval(line string) (float64, error) {
-	if !c.hasAns && hasIdent(line, "ans") {
-		return 0, fmt.Errorf("no previous result yet")
-	}
-	expanded, err := c.substitute(line)
-	if err != nil {
-		return 0, err
-	}
-	return c.evalExpanded(expanded)
-}
-
 // evalExpanded evaluates an already substituted/expanded expression string.
-func (c *Calculator) evalExpanded(expanded string) (float64, error) {
-	if expanded == breakSentinel {
-		return 0, fmt.Errorf("break outside a loop")
-	}
-	if expanded == continueSentinel {
-		return 0, fmt.Errorf("continue outside a loop")
-	}
-	if c.degMode {
-		expanded = applyDeg(expanded)
-	} else if c.gradMode {
-		expanded = applyGrad(expanded)
-	}
-	return parser.Evaluate(expanded)
-}
 // substitute expands user-defined function calls and rewrites variable
 // identifiers ("ans", "mem") to their numeric literals.
-func (c *Calculator) substitute(expr string) (string, error) {
-	// User-defined functions are expanded inline; variables, "ans", and "mem"
-	// are substituted to their numeric literals.
-	return c.expand(expr)
-}
-
 
 // findAssignEq returns the index of the first '=' in s that is an assignment
 // operator (not part of ==, >=, <=, !=), or -1 if none.

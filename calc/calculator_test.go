@@ -942,14 +942,14 @@ func TestLazyIfSkipsUntakenBranch(t *testing.T) {
 
 func TestBitwiseOps(t *testing.T) {
 	cases := []struct{ in, want string }{
-		{"12 & 10", "8"},      // 1100 & 1010 = 1000
-		{"12 | 10", "14"},     // 1100 | 1010 = 1110
-		{"5 << 2", "20"},      // 101 << 2 = 10100
-		{"16 >> 3", "2"},      // 10000 >> 3 = 10
-		{"~5", "-6"},          // ~0101 = -0110
+		{"12 & 10", "8"},  // 1100 & 1010 = 1000
+		{"12 | 10", "14"}, // 1100 | 1010 = 1110
+		{"5 << 2", "20"},  // 101 << 2 = 10100
+		{"16 >> 3", "2"},  // 10000 >> 3 = 10
+		{"~5", "-6"},      // ~0101 = -0110
 		{"1 & 0", "0"},
 		{"3 | 4", "7"},
-		{"8 & 4", "0"},        // 1000 & 0100 = 0
+		{"8 & 4", "0"}, // 1000 & 0100 = 0
 		{"2 << 4", "32"},
 	}
 	for _, tc := range cases {
@@ -964,10 +964,10 @@ func TestRangeLoopExpressions(t *testing.T) {
 	// Generalized loop forms: sum(i, lo, hi[, step], expr), prod(...), count(...).
 	cases := []struct{ in, want string }{
 		{"sum(i, 1, 10, i)", "55"},
-		{"sum(i, 1, 10, i^2)", "385"},      // sum of squares = 1+4+...+100
-		{"sum(i, 1, 10, 2, i)", "25"},      // 1+3+5+7+9
-		{"prod(i, 1, 5, 2^i)", "32768"},    // 2^1 * ... * 2^5 = 2^15
-		{"prod(i, 1, 6, i)", "720"},        // 6!
+		{"sum(i, 1, 10, i^2)", "385"},   // sum of squares = 1+4+...+100
+		{"sum(i, 1, 10, 2, i)", "25"},   // 1+3+5+7+9
+		{"prod(i, 1, 5, 2^i)", "32768"}, // 2^1 * ... * 2^5 = 2^15
+		{"prod(i, 1, 6, i)", "720"},     // 6!
 		{"count(i, 1, 10, i % 2 == 0)", "5"},
 		{"min(i, 1, 4, i*i)", "1"},
 		{"max(i, 1, 4, i*i)", "16"},
@@ -977,8 +977,8 @@ func TestRangeLoopExpressions(t *testing.T) {
 		{"lcm(i, 2, 4, i)", "12"},
 		{"min(3, 1, 2)", "1"},
 		{"avg(1, 2, 3, 4)", "2.5"},
-		{"sum(i, 3, 1, i)", "0"},           // reversed range: sum identity
-		{"prod(i, 3, 1, i)", "1"},          // reversed range: product identity
+		{"sum(i, 3, 1, i)", "0"},  // reversed range: sum identity
+		{"prod(i, 3, 1, i)", "1"}, // reversed range: product identity
 	}
 	for _, tc := range cases {
 		got := run(t, tc.in+"\n")
@@ -1098,8 +1098,6 @@ func TestDigitDomain(t *testing.T) {
 	}
 }
 
-
-
 func TestREPLJSONL(t *testing.T) {
 	// 'jsonl' switches the REPL to NDJSON: every result becomes one
 	// parseable {expr,kind,value} object per line, for driving agents.
@@ -1155,7 +1153,6 @@ func TestREPLJSONLError(t *testing.T) {
 		t.Errorf("expected a structured error object in jsonl REPL output")
 	}
 }
-
 
 func TestSetMachineMode(t *testing.T) {
 	// SetMachineMode("jsonl") presets a machine REPL: banner suppressed, and

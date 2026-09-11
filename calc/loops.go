@@ -3,10 +3,9 @@ package calc
 import (
 	"fmt"
 	"math"
+	"prototype_kl/eval"
 	"strconv"
 	"strings"
-
-	"prototype_kl/parser"
 )
 
 // breakSentinel and continueSentinel are internal signals that expandBegin
@@ -79,15 +78,15 @@ func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	loNum, err := parser.Evaluate(loV)
+	loNum, err := eval.Evaluate(loV)
 	if err != nil {
 		return "", fmt.Errorf("%s lower bound must be numeric", kind)
 	}
-	hiNum, err := parser.Evaluate(hiV)
+	hiNum, err := eval.Evaluate(hiV)
 	if err != nil {
 		return "", fmt.Errorf("%s upper bound must be numeric", kind)
 	}
-	stepNum, err := parser.Evaluate(stepV)
+	stepNum, err := eval.Evaluate(stepV)
 	if err != nil {
 		return "", fmt.Errorf("%s step must be numeric", kind)
 	}

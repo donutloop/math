@@ -2,6 +2,7 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/eval"
 	"strconv"
 	"strings"
 
@@ -577,11 +578,11 @@ func (c *Calculator) expand(s string) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			loNum, err := parser.Evaluate(loE)
+			loNum, err := eval.Evaluate(loE)
 			if err != nil {
 				return "", fmt.Errorf("countif/sumif bounds must be numeric: %v", err)
 			}
-			hiNum, err := parser.Evaluate(hiE)
+			hiNum, err := eval.Evaluate(hiE)
 			if err != nil {
 				return "", fmt.Errorf("countif/sumif bounds must be numeric: %v", err)
 			}

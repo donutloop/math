@@ -2,6 +2,7 @@ package parser_test
 
 import (
 	"errors"
+	"prototype_kl/eval"
 	"prototype_kl/parser"
 	"testing"
 )
@@ -41,7 +42,7 @@ func TestErrors(t *testing.T) {
 
 	t.Run("SqrtNegativeError", func(t *testing.T) {
 		// ErrSqrtNegative should be returned by evaluator for sqrt of negative
-		_, err := parser.Evaluate("sqrt(-4)")
+		_, err := eval.Evaluate("sqrt(-4)")
 		if err == nil {
 			t.Errorf("expected error for sqrt of negative number")
 			return
