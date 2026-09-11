@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [165] break / continue propagate through for and repeat loops (math programming language)
+
+- `for` and `repeat` loop bodies now split statements (paren-aware) and honor
+  direct `break`/`continue` plus sentinels raised by `begin(...)` blocks.
+- `for(i, 1, 10, begin(s = s + i; break))` exits after the first iteration;
+  `repeat(5, n, begin(n; continue; s = s + 100))` skips the skipped statement.
+- Unit tests in calc/for_test.go and whole-program integration tests cover
+  both loops and both propagation paths.
+
+## [166] --file executes a whole program (verified)
+
+- CLI `--file <path>` runs a multi-statement program file end-to-end through
+  the calculator; verified with a factorial program (5!) in main_test.go.
+
 ## [164] break / continue propagate through begin(...) blocks (math programming language)
 
 - `begin(...)` blocks now raise internal break/continue sentinels when they

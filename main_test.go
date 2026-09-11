@@ -317,3 +317,18 @@ func TestEvalJSONLStructuredError(t *testing.T) {
 		t.Fatalf("error result must not carry value key: %v", m)
 	}
 }
+
+func TestRunProgramFile(t *testing.T) {
+	// A program file (multi-statement script) executes end-to-end via --file,
+	// computing 5! with a while loop and a begin block.
+	prog := "n = 5\nf = 1\nwhile(n > 1, begin(f = f * n; n = n - 1))\nf\n"
+	dir := t.TempDir()
+	path := filepath.Join(dir, "fact.math")
+	if err := os.WriteFile(path, []byte(prog), 0644); err != nil {
+		t.Fatal(err)
+	}
+	got := runMain(filepath.Join(dir, "state.json"), "-file", path)
+	if !strings.Contains(got, "\n120\n") {
+		t.Fatalf("expected factorial 120 from --file program, got:\n%s", got)
+	}
+}

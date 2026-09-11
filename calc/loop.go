@@ -2,7 +2,8 @@ package calc
 
 import (
 	"fmt"
-			"strings"
+	"strconv"
+	"strings"
 
 	"prototype_kl/parser"
 )
@@ -16,14 +17,13 @@ const (
 	continueSentinel = "__CONTINUE__"
 )
 
-
 // expandRangeLoop rewrites a generalized range loop into a flat arithmetic
 // expression by substituting the loop variable with each integer in the range.
 //
-//		sum(i, lo, hi, expr)         -> 0 + (expr@lo) + (expr@lo+1) + ...
-//		sum(i, lo, hi, step, expr)   -> same, stepping by step
-//		prod(i, lo, hi, expr)        -> 1 * (expr@lo) * (expr@lo+1) * ...
-//		count(i, lo, hi, cond)       -> 0 + (cond@lo) + (cond@lo+1) + ...
+//	sum(i, lo, hi, expr)         -> 0 + (expr@lo) + (expr@lo+1) + ...
+//	sum(i, lo, hi, step, expr)   -> same, stepping by step
+//	prod(i, lo, hi, expr)        -> 1 * (expr@lo) * (expr@lo+1) * ...
+//	count(i, lo, hi, cond)       -> 0 + (cond@lo) + (cond@lo+1) + ...
 //
 // count accumulates the condition values directly, since comparisons already
 // yield 1 (true) or 0 (false). This is a macro-level "for loop" over integers
@@ -130,33 +130,49 @@ func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
 	return "", fmt.Errorf("unknown range kind %q", kind)
 }
 
-
 // expandRepeat expands a repeat(n, var, body) macro: it evaluates body with
 // var bound to each integer 1..n and returns the LAST evaluated value.
-func (c *Calculator) expandRepeat(nArg, varName, body string) (string, error) {
-	if !isIdent(varName) {
-		return "", fmt.Errorf("repeat loop variable %q is not a valid identifier", varName)
-	}
-	nE, err := c.expand(nArg)
+func (c *Calculator) expandRepeat(countS, vname, body string) (string, error) {
+	count, err := c.eval(countS)
 	if err != nil {
 		return "", err
 	}
-	nNum, err := parser.Evaluate(nE)
-	if err != nil {
-		return "", fmt.Errorf("repeat count must be numeric: %v", err)
-	}
-	n := int(nNum)
-	if n < 1 {
-		return "", fmt.Errorf("repeat count must be >= 1")
-	}
 	last := "0"
-	for i := 1; i <= n; i++ {
-		term := replaceIdent(body, varName, fmt.Sprintf("%d", i))
-		te, err := c.expand(term)
-		if err != nil {
-			return "", err
+	for i := 1; i <= int(count); i++ {
+		for _, st := range splitStatements(body) {
+			b := replaceIdent(st, vname, strconv.Itoa(i))
+			t := strings.TrimSpace(b)
+			if t == "break" {
+				return last, nil
+			}
+			if t == "continue" {
+				break
+			}
+			if name, expr, ok := parseAssignment(b); ok {
+				if err := c.assign(name, expr); err != nil {
+					return "", err
+				}
+				last = fmt.Sprintf("%g", c.vars[name])
+			} else {
+				// Expand at string level so begin(...) blocks can raise
+				// break/continue sentinels that are caught before parsing.
+				expanded, err := c.substitute(b)
+				if err != nil {
+					return "", err
+				}
+				if expanded == breakSentinel {
+					return last, nil
+				}
+				if expanded == continueSentinel {
+					break
+				}
+				v, err := c.evalExpanded(expanded)
+				if err != nil {
+					return "", err
+				}
+				last = fmt.Sprintf("%g", v)
+			}
 		}
-		last = te
 	}
 	return last, nil
 }
@@ -266,26 +282,40 @@ func (c *Calculator) expandFor(vname, loS, hiS, body string) (string, error) {
 		return "", err
 	}
 	last := "0"
-	start := int(lo)
-	end := int(hi)
-	if hi < lo {
-		return "0", nil
-	}
-	for i := start; i <= end; i++ {
-		// substitute the loop var with the current integer, then evaluate body
-		// as a statement so assignments (s = s + i) mutate variables.
-		b := replaceIdent(body, vname, fmt.Sprintf("%d", i))
-		if name, expr, ok := parseAssignment(b); ok {
-			if err := c.assign(name, expr); err != nil {
-				return "", err
+	for i := int(lo); i <= int(hi); i++ {
+		for _, st := range splitStatements(body) {
+			b := replaceIdent(st, vname, strconv.Itoa(i))
+			t := strings.TrimSpace(b)
+			if t == "break" {
+				return last, nil
 			}
-			last = fmt.Sprintf("%g", c.vars[name])
-		} else {
-			v, err := c.eval(b)
-			if err != nil {
-				return "", err
+			if t == "continue" {
+				break
 			}
-			last = fmt.Sprintf("%g", v)
+			if name, expr, ok := parseAssignment(b); ok {
+				if err := c.assign(name, expr); err != nil {
+					return "", err
+				}
+				last = fmt.Sprintf("%g", c.vars[name])
+			} else {
+				// Expand at string level so begin(...) blocks can raise
+				// break/continue sentinels that are caught before parsing.
+				expanded, err := c.substitute(b)
+				if err != nil {
+					return "", err
+				}
+				if expanded == breakSentinel {
+					return last, nil
+				}
+				if expanded == continueSentinel {
+					break
+				}
+				v, err := c.evalExpanded(expanded)
+				if err != nil {
+					return "", err
+				}
+				last = fmt.Sprintf("%g", v)
+			}
 		}
 	}
 	return last, nil

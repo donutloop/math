@@ -134,3 +134,38 @@ quit
 	checkLine(t, got, "0")
 	checkLine(t, got, "5")
 }
+
+func TestProgramForLoopBreak(t *testing.T) {
+	// break inside a begin(...) block propagates to the enclosing for loop:
+	// only the first iteration executes, so the running sum is 1.
+	prog := `s = 0
+for(i, 1, 10, begin(s = s + i; break))
+s
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "1")
+}
+
+func TestProgramRepeatContinue(t *testing.T) {
+	// continue inside a begin(...) block skips the rest of the current repeat
+	// iteration: the skipped assignment never runs, so s stays 0.
+	prog := `s = 0
+repeat(5, n, begin(n; continue; s = s + 100))
+s
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "0")
+}
+
+func TestProgramRepeatBreak(t *testing.T) {
+	// break inside a begin(...) block exits the repeat loop after iteration 1.
+	prog := `s = 0
+repeat(5, n, begin(s = s + 1; break))
+s
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "1")
+}
