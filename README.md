@@ -107,8 +107,13 @@ self-describing access:
   operators, modes, and CLI flags.
 - `--json` emits one valid, parseable JSON document (an array of result objects)
   so agents can `json.load` the whole stdout at once.
-- `--json` / `--csv` emit parseable results; `--verify` gives deterministic exit
-  codes; `--eval`, `--file`, `--version` are stable scripting flags.
+- `--csv` emits one valid CSV document with a header row (`kind,key,value`).
+- `--version` emits one parseable JSON document (name, version, schema,
+  features, exit_codes) for agent compatibility checks.
+- Deterministic exit-code contract: `0` success, `1` usage/flag error, `2` IO
+  error, `3` evaluation error — documented in the schema's `exit_codes` and in
+  `docs/operations.md`. `--verify` self-checks the contract.
+- `--eval`, `--file`, `--schema`, `--verify` are stable scripting flags.
 
 ## Documentation
 

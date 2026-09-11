@@ -86,3 +86,19 @@ func contains(items []string, want string) bool {
 	}
 	return false
 }
+
+// TestSchemaExitCodes verifies the deterministic exit-code contract is exposed
+// to agents in the schema.
+func TestSchemaExitCodes(t *testing.T) {
+	b, err := SchemaJSON()
+	if err != nil {
+		t.Fatalf("SchemaJSON: %v", err)
+	}
+	var s Schema
+	if err := json.Unmarshal(b, &s); err != nil {
+		t.Fatalf("schema not parseable: %v", err)
+	}
+	if s.ExitCodes["ok"] != 0 || s.ExitCodes["usage"] != 1 || s.ExitCodes["io"] != 2 || s.ExitCodes["eval"] != 3 {
+		t.Errorf("exit-code contract wrong: %v", s.ExitCodes)
+	}
+}

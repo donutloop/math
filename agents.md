@@ -94,3 +94,11 @@ feels great to use.
 - Do **not** stop after step 8 or after a single feature — the loop must keep
   running. Every cycle must also keep the agentic interface honest: keep
   `schema`/JSON output current with every new feature added.
+
+## Architecture Decision Records (ADR)
+
+Every feature ships with an ADR in `docs/adr/` (e.g. `0004-json-single-doc.md`,
+`0006-exit-code-contract.md`). Each ADR records the decision, the agentic
+rationale, and the alternatives rejected — so future cycles and agents can
+reconstruct *why* the interface is shaped the way it is. Write the ADR for the
+feature *before* committing, and keep it one per feature.

@@ -312,5 +312,13 @@ func Verify(w io.Writer) (passed, failed int) {
 		fmt.Fprintf(w, "ok   schema: %d functions, %d constants, %d commands, %d operators, %d modes\n", len(s.Functions), len(s.Constants), len(s.Commands), len(s.Operators), len(s.Modes))
 		passed++
 	}
+	// Exit-code contract self-check: scripting agents depend on deterministic codes.
+	if s.ExitCodes["ok"] != 0 || s.ExitCodes["usage"] != 1 || s.ExitCodes["io"] != 2 || s.ExitCodes["eval"] != 3 {
+		fmt.Fprintf(w, "FAIL exit-code contract\n")
+		failed++
+	} else {
+		fmt.Fprintf(w, "ok   exit-codes: ok=%d usage=%d io=%d eval=%d\n", s.ExitCodes["ok"], s.ExitCodes["usage"], s.ExitCodes["io"], s.ExitCodes["eval"])
+		passed++
+	}
 	return
 }

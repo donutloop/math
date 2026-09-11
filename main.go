@@ -26,7 +26,23 @@ import (
 // Version is the calculator release version.
 const Version = "1.0.0"
 
+
+// Exit-code contract for scripting agents and CI. Deterministic and documented
+// in README/docs: 0=success, 1=usage/flag error, 2=IO error, 3=eval error.
+const (
+	ExitOK    = 0
+	ExitUsage = 1
+	ExitIO    = 2
+	ExitEval  = 3
+)
 func main() {
+
+	// Custom FlagSet with ContinueOnError so usage errors exit with the
+	// documented contract code (1) instead of Go's default os.Exit(2).
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	flag.CommandLine.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: calculator [flags]\n")
+	}
 	var evals []string
 	csv := flag.Bool("csv", false, "emit CSV results for --eval")
 	quiet := flag.Bool("quiet", false, "suppress assignment echoes")
@@ -47,24 +63,42 @@ func main() {
 	schemaFlag := flag.Bool("schema", false, "print the machine-readable JSON language schema and exit")
 	rad := flag.Bool("rad", false, "trig in radians (default)")
 	grad := flag.Bool("grad", false, "trig in gradians")
-	flag.Parse()
+	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
+		os.Exit(ExitUsage)
+	}
 	if *prec < 1 || *prec > 17 {
 		fmt.Fprintln(os.Stderr, "error: --prec must be 1..17")
-		os.Exit(1)
+		os.Exit(ExitUsage)
 	}
 	if *noState {
 		*state = ""
 	}
 
 	if *version {
-		fmt.Println("math calculator", Version)
+		// Machine-readable version for agent compatibility checks.
+		b, err := jsonenc.MarshalIndent(map[string]any{
+			"name":    "math-calculator",
+			"version": "1.0.0",
+			"schema":  "1.0.0",
+			"features": []string{
+				"schema", "json", "csv", "file", "verify", "version", "eval",
+			},
+			"exit_codes": map[string]int{
+				"ok": 0, "usage": 1, "io": 2, "eval": 3,
+			},
+		}, "", "  ")
+		if err != nil {
+			os.Exit(ExitIO)
+		}
+		fmt.Println(string(b))
 		return
 	}
+
 
 	if *schemaFlag {
 		if err := calc.SchemaToWriter(os.Stdout); err != nil {
 			fmt.Fprintln(os.Stderr, "error: schema:", err)
-			os.Exit(1)
+			os.Exit(ExitIO)
 		}
 		fmt.Println()
 		return
@@ -73,7 +107,7 @@ func main() {
 	if *verify {
 		passed, failed := calc.Verify(os.Stdout)
 		if failed > 0 {
-			os.Exit(1)
+			os.Exit(ExitEval)
 		}
 		fmt.Fprintf(os.Stderr, "verify: %d ok\n", passed)
 		return
@@ -88,7 +122,7 @@ func main() {
 		f, err := os.Open(*file)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
-			os.Exit(1)
+			os.Exit(ExitIO)
 		}
 		defer f.Close()
 		c := calc.NewBatch(f, os.Stdout)
@@ -107,7 +141,7 @@ func main() {
 		if *base != 0 {
 			if err := c.SetBase(*base); err != nil {
 				fmt.Fprintln(os.Stderr, err)
-				os.Exit(1)
+				os.Exit(ExitUsage)
 			}
 		}
 		c.SetQuietAssign(*quiet)
@@ -160,7 +194,7 @@ func main() {
 		if *base != 0 {
 			if err := c.SetBase(*base); err != nil {
 				fmt.Fprintln(os.Stderr, err)
-				os.Exit(1)
+				os.Exit(ExitEval)
 			}
 		}
 		c.SetQuietAssign(*quiet)
@@ -232,7 +266,7 @@ func main() {
 		b, err := jsonenc.MarshalIndent(results, "", "  ")
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "error: json:", err)
-			os.Exit(1)
+			os.Exit(ExitIO)
 		}
 		fmt.Println(string(b))
 		return
@@ -242,7 +276,7 @@ func main() {
 		c.Run()
 		if strings.TrimSpace(out.String()) == "" {
 			fmt.Fprintln(os.Stderr, "error: empty evaluation")
-			os.Exit(1)
+			os.Exit(ExitEval)
 		}
 		fmt.Print(out.String())
 		if *vars {
@@ -252,7 +286,7 @@ func main() {
 			_ = c.SaveState(*state)
 		}
 		if c.ErrorCount() > 0 {
-			os.Exit(1)
+			os.Exit(ExitEval)
 		}
 		return
 	}
@@ -265,7 +299,7 @@ func main() {
 	if *base != 0 {
 		if err := c.SetBase(*base); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			os.Exit(ExitUsage)
 		}
 	}
 	c.SetQuietAssign(*quiet)

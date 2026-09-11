@@ -23,6 +23,7 @@ type Schema struct {
 	Operators []string                   `json:"operators"`
 	Modes     []string                   `json:"modes"`
 	CLI       []string                   `json:"cli_flags"`
+	ExitCodes map[string]int              `json:"exit_codes"`
 }
 
 // FuncSchema describes a built-in function: its arity and one-line help.
@@ -61,6 +62,14 @@ var schemaModes = []string{
 	"fixed", "precision", "base", "quiet", "json", "csv",
 }
 
+// schemaExitCodes documents the deterministic scripting exit-code contract.
+var schemaExitCodes = map[string]int{
+	"ok":    0,
+	"usage": 1,
+	"io":    2,
+	"eval":  3,
+}
+
 // schemaCLI is the stable non-interactive CLI surface for agents and scripts.
 var schemaCLI = []string{
 	"--eval <expr>", "--file <path>", "--verify", "--version", "--help",
@@ -96,6 +105,7 @@ func BuildSchema() Schema {
 		Operators: schemaOperators,
 		Modes:     schemaModes,
 		CLI:       schemaCLI,
+		ExitCodes: schemaExitCodes,
 	}
 }
 

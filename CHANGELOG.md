@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [139] deterministic exit codes + machine-readable version (agentic)
+
+- Define a documented exit-code contract: 0=success, 1=usage/flag, 2=IO,
+  3=eval. Every os.Exit site is classified; the contract is exposed in the
+  schema (`exit_codes`) and self-checked by --verify.
+- --version now emits a single valid JSON document (name, version, schema,
+  features, exit_codes) for agent compatibility checks.
+- ADRs added: docs/adr/0053..0056 (schema, json, csv, exit-code contract).
+- agents.md now requires an ADR per feature.
 ## [138] single-document --csv output (agentic)
 
 - --csv now emits a single, valid CSV document with a header row

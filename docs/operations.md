@@ -38,6 +38,21 @@ user functions. A call with the wrong number of arguments is rejected, and
 reserved names (built-in functions, `pi`, `e`, `ans`, `mem`) cannot be
 redefined. Definitions persist across saves like variables.
 
+## Deterministic exit codes (scripting contract)
+
+Agents branch deterministically on exit codes:
+
+| code | meaning                       |
+|------|-------------------------------|
+| 0    | success                       |
+| 1    | usage / flag error            |
+| 2    | IO error (file, marshal/write)|
+| 3    | evaluation error              |
+
+Exposed to agents in the schema under `exit_codes` and self-checked by
+`--verify`. `--version` emits parseable JSON (name, version, schema, features,
+exit_codes) for compatibility checks.
+
 ## Schema (machine-readable language surface)
 
 Agents and scripts don't need to scrape prose help. `schema` (REPL) and
