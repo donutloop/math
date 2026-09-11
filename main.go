@@ -13,6 +13,7 @@
 package main
 
 import (
+	"errors"
 	"bytes"
 	"flag"
 	jsonenc "encoding/json"
@@ -47,6 +48,7 @@ func main() {
 	csv := flag.Bool("csv", false, "emit CSV results for --eval")
 	quiet := flag.Bool("quiet", false, "suppress assignment echoes")
 	json := flag.Bool("json", false, "emit JSON results for --eval")
+	calcHelp := flag.Bool("help", false, "print usage and exit 0")
 	vars := flag.Bool("vars", false, "list defined variables after evaluation")
 	base := flag.Int("base", 0, "output radix for integral results (2, 8, 16, or 0=decimal)")
 	flag.Var(&multiFlag{&evals}, "eval", "evaluate an expression and print the result; may be given multiple times")
@@ -64,6 +66,7 @@ func main() {
 	rad := flag.Bool("rad", false, "trig in radians (default)")
 	grad := flag.Bool("grad", false, "trig in gradians")
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
+		if errors.Is(err, flag.ErrHelp) { os.Exit(ExitOK) }
 		os.Exit(ExitUsage)
 	}
 	if *prec < 1 || *prec > 17 {
@@ -74,6 +77,13 @@ func main() {
 		*state = ""
 	}
 
+	if *calcHelp {
+		flag.CommandLine.SetOutput(os.Stdout)
+		flag.CommandLine.Usage()
+		fmt.Println("Machine outputs: --schema --json --jsonl --csv --version")
+		fmt.Println("Exit codes: 0=ok 1=usage 2=io 3=eval")
+		return
+	}
 	if *version {
 		// Machine-readable version for agent compatibility checks.
 		b, err := jsonenc.MarshalIndent(map[string]any{

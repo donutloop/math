@@ -95,6 +95,25 @@ x = 5
 | Operators    | `^` exponent; `!` factorial; `%` percent |
 | Scripting    | `--state` sharing, `--verify`, `make bench` |
 
+## Development setup
+
+This project is built iteratively by an AI coding agent (`pi`) running the
+DeepSeek V4 Flash model, served locally via vLLM.
+
+- Model: `deepseek-v4-flash` (OpenAI-compatible, 262144-token context)
+- Provider: `local-vllm` at `http://localhost:8000/v1` (OpenAI-compatible)
+- Hardware: an **NVIDIA DGX Spark** workstation (nvidia.com/en-us/products/
+  workstations/dgx-spark) hosts the inference server. The model runs locally
+  on the DGX Spark via vLLM (`localhost:8000`); the `pi` agent talks to it
+  over loopback.
+- Agent config: `setup/code_agent/pi_deepseekv4_flash.json`
+- Boot/install script: `setup/boot_deepseekv4_flash.sh` (curl-pipes the ds4v4
+  installer and starts the agent)
+
+The agent drives the feature loop from `agents.md` (read → implement → ADR →
+test → commit → push → repeat), with every feature focused on agentic
+programming support.
+
 ## Machine-readable schema
 
 This calculator is built for **both humans and agentic workflows**, and the

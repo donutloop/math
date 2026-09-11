@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [140] --help flag (agentic)
+
+- Register a real --help flag: prints usage to stdout and exits 0 (was a
+  schema-advertised-but-missing flag hazard). flag.ErrHelp handled to exit 0,
+  not usage=1.
+- Usage output documents machine-readable outputs and the exit-code contract.
+- ADR-0057 records the decision.
 ## [139] deterministic exit codes + machine-readable version (agentic)
 
 - Define a documented exit-code contract: 0=success, 1=usage/flag, 2=IO,
