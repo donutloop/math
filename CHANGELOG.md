@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [163] whole-program integration tests (math programming language)
+
+- New `tests/integration/programs_test.go` runs complete math programs
+  through the batch calculator runtime and asserts exact result lines.
+- Programs cover: factorial while-loop, range for-loop sum, recursive
+  fibonacci, function-local scope, sum of squares, and construct composition.
+
 ## [162] break / continue in while loops (math programming language)
 
 - New loop-control statements: a direct `break` body statement exits the loop
