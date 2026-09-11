@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [143] --output unified format selector (agentic)
+
+- Add --output text|json|jsonl|csv: one flag names the machine format, mapping
+  onto the existing json/jsonl/csv branches. Agents collapse flag discovery.
+- Unknown formats exit 1 (usage). Schema CLI list advertises --output.
+- TestOutputSelector proves --output equals the individual flags.
+- ADR-0060 records the decision.
 ## [142] --verify --json structured health report (agentic)
 
 - --verify --json emits a machine-readable JSON report: version, passed,

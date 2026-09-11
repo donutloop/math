@@ -89,6 +89,17 @@ instead of a single document. Each line has the stable shape
 `--vars` appends one `var` line per defined variable. Every line is valid JSON,
 so `json.loads(line)` works per line; the format is self-checked by `--verify`.
 
+## Output format selector (`--output`)
+
+Agents pick the machine format with one flag instead of probing several:
+
+    calculator --eval 1+1 --output json
+    calculator --eval 1+1 --output jsonl
+    calculator --eval 1+1 --output csv
+
+`text` (or omitted) is the default prose. It is equivalent to the individual
+`--json`, `--jsonl`, `--csv` flags; unknown formats exit `1`.
+
 ## Structured health report (`--verify --json`)
 
 For agents that need deterministic, parseable health signals beyond an exit

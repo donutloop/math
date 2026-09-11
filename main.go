@@ -45,6 +45,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "usage: calculator [flags]\n")
 	}
 	var evals []string
+	output := flag.String("output", "", "output format: text|json|jsonl|csv (unified selector)")
 	csv := flag.Bool("csv", false, "emit CSV results for --eval")
 	quiet := flag.Bool("quiet", false, "suppress assignment echoes")
 	json := flag.Bool("json", false, "emit JSON results for --eval")
@@ -68,6 +69,21 @@ func main() {
 	grad := flag.Bool("grad", false, "trig in gradians")
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		if errors.Is(err, flag.ErrHelp) { os.Exit(ExitOK) }
+		os.Exit(ExitUsage)
+	}
+	// --output is a unified format selector for agents: map it to the
+	// individual json/jsonl/csv flags so one flag replaces flag-discovery.
+	switch *output {
+	case "", "text":
+		// prose (default)
+	case "json":
+		*json = true
+	case "jsonl":
+		*jsonl = true
+	case "csv":
+		*csv = true
+	default:
+		fmt.Fprintf(os.Stderr, "error: unknown --output %q (want text|json|jsonl|csv)\n", *output)
 		os.Exit(ExitUsage)
 	}
 	if *prec < 1 || *prec > 17 {

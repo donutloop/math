@@ -156,3 +156,24 @@ func TestVerifyJSON(t *testing.T) {
 		}
 	}
 }
+
+func TestOutputSelector(t *testing.T) {
+	// --output json must equal --json for the same eval.
+	want := runMain(t.TempDir()+"/o.json", "--eval", "1+1", "--json")
+	got := runMain(t.TempDir()+"/o2.json", "--eval", "1+1", "--output", "json")
+	if got != want {
+		t.Errorf("--output json != --json:\n got %q\nwant %q", got, want)
+	}
+	// --output jsonl must equal --jsonl.
+	wantL := runMain(t.TempDir()+"/ol.json", "--eval", "1+1", "--jsonl")
+	gotL := runMain(t.TempDir()+"/ol2.json", "--eval", "1+1", "--output", "jsonl")
+	if gotL != wantL {
+		t.Errorf("--output jsonl != --jsonl:\n got %q\nwant %q", gotL, wantL)
+	}
+	// --output csv must equal --csv.
+	wantC := runMain(t.TempDir()+"/oc.json", "--eval", "1+1", "--csv")
+	gotC := runMain(t.TempDir()+"/oc2.json", "--eval", "1+1", "--output", "csv")
+	if gotC != wantC {
+		t.Errorf("--output csv != --csv:\n got %q\nwant %q", gotC, wantC)
+	}
+}

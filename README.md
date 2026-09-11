@@ -128,6 +128,8 @@ self-describing access:
   so agents can `json.load` the whole stdout at once.
 - `--jsonl` emits NDJSON — one JSON object per result line (`{expr,kind,value}`) —
   for streaming agents that ingest line-by-line without buffering a document.
+- `--output text|json|jsonl|csv` is one flag that names the machine format
+  (equivalent to `--json`/`--jsonl`/`--csv`) so agents collapse flag discovery.
 - `--csv` emits one valid CSV document with a header row (`kind,key,value`).
 - `--version` emits one parseable JSON document (name, version, schema,
   features, exit_codes) for agent compatibility checks.
