@@ -1241,3 +1241,30 @@ func TestREPLStateEchoes(t *testing.T) {
 		t.Errorf("expected >=3 structured state echoes, got %d", found)
 	}
 }
+
+func TestREPLHelpMachine(t *testing.T) {
+	// In machine modes, help must be a structured {kind:"help",commands}
+	// object so driving agents discover REPL commands programmatically.
+	got := run(t, "jsonl\nhelp\n")
+	found := false
+	for _, ln := range strings.Split(strings.TrimSpace(got), "\n") {
+		body := strings.TrimPrefix(strings.TrimSpace(ln), "> ")
+		if !strings.HasPrefix(body, "{") {
+			continue
+		}
+		var m map[string]any
+		if err := json.Unmarshal([]byte(body), &m); err != nil {
+			continue
+		}
+		if m["kind"] == "help" {
+			cmds, ok := m["commands"].([]any)
+			if !ok || len(cmds) == 0 {
+				t.Errorf("machine help missing commands: %q", ln)
+			}
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("machine help emitted no structured help:\n%s", got)
+	}
+}

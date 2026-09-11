@@ -604,22 +604,30 @@ func memName(c *Calculator) string {
 }
 
 func (c *Calculator) printHelp() {
-	fmt.Fprintln(c.out, `
-expressions  arithmetic with + - * / ^ ( ), constants pi/e, and functions
-postfix      ! factorial, % percent        (2 ^ 3 == 8, 5! == 120, 50% == 0.5)
-functions    sqrt cbrt abs floor ceil round trunc sin cos tan asin acos atan atan2
-             asinh acosh atanh sinh cosh tanh ln log log2 log10 log1p exp exp2 expm1
-             pow(x,y) hypot(x,y) min(a,...) max(a,...) gcd lcm gamma mod sign clamp lerp fma copysign erf erfc beta logb nextafter ldexp dim signbit jn yn lgamma fact(n)
-variables    name = expression    e.g. x = 3 + 2 ; then use x anywhere
-ans/mem      last result and memory, usable in expressions
-statements   separate with ';'   e.g. x = 2; x * 3
-history      @N recalls entry N; undo / redo revert and restore
-display      deg/rad, sci/fix, eng/std, prec <n>, base hex|dec|oct|bin, quiet, json, csv, status, last
-memory       ms, m+, m-, mr, mc
-commands     help, vars, history, status, reset, clear, quit/exit`)
+	if c.jsonlMode || c.jsonMode || c.csvMode {
+		cmds := []string{"help", "quit", "vars", "snapshot", "prec <n>", "base <n>", "deg", "rad", "grad", "json", "jsonl", "csv"}
+		if c.jsonlMode || c.jsonMode {
+			b, err := json.Marshal(map[string]any{"kind": "help", "commands": cmds})
+			if err == nil {
+				fmt.Fprintln(c.out, string(b))
+			}
+		} else {
+			fmt.Fprintln(c.out, "kind,help")
+			for _, cmd := range cmds {
+				fmt.Fprintf(c.out, "command,%s\n", cmd)
+			}
+		}
+		return
+	}
+	fmt.Fprintln(c.out, "Commands:")
+	fmt.Fprintln(c.out, "  help  quit  vars  snapshot")
+	fmt.Fprintln(c.out, "  prec <n>  base <n>")
+	fmt.Fprintln(c.out, "  deg  rad  grad  (angle mode)")
+	fmt.Fprintln(c.out, "  json  jsonl  csv  (machine output modes)")
+	fmt.Fprintln(c.out, "Enter an expression to evaluate it; 'x = 5' assigns a variable.")
+	fmt.Fprintln(c.out, "expressions support + - * / ^ ! % and functions")
 }
 
-// SetQuietAssign toggles whether assignment statements echo "name = value".
 func (c *Calculator) SetQuietAssign(quietAssign bool) {
 	c.quietAssign = quietAssign
 }

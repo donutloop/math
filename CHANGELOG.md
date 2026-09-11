@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [154] Structured REPL help in machine modes (agentic)
+
+- In jsonl/json/csv modes, printHelp emits {kind:"help",commands:[...]}
+  (CSV rows for csv); prose stays for text mode.
+- Driving agents discover REPL commands programmatically.
+- TestREPLHelpMachine drives jsonl+help and parses the object.
+- ADR-0071 records the decision.
 ## [153] Structured REPL state echoes (agentic)
 
 - emitState(name,value): prec/base/mode commands emit {state,value} in
