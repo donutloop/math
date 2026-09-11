@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [174] move the parser's expression tokenizer into the shared lexer package
+
+- `parser/config.go` (op constants, function/constant tables) moved to `lexer`.
+- `parser/lexer.go` (Token, TokenType, Lexer, Lex) moved to `lexer/expr.go`.
+- `parser/errors.go` (ParseError, EvalError, Err* vars) moved to `lexer`.
+- `parser` now contains only the AST and parsing; `parser/aliases.go` re-exports
+  the moved Token/TokenType/Op/error symbols so parser.go compiles unchanged.
+- `eval` aliases updated to reference `lexer` types/errors directly.
+- The two `Token` types were merged: the identifier tokenizer now returns
+  `lexer.IdentToken` to avoid colliding with the expression `lexer.Token`.
+
 ## [173] shared lexer package
 
 - New top-level `lexer` package owns the identifier tokenizer (`Lex`,

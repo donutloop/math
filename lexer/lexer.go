@@ -8,14 +8,14 @@ package lexer
 // Function and constant names (e.g. "sin", "pi") are never touched because
 // matching happens on whole tokens only.
 
-type Token struct {
+type IdentToken struct {
 	Text  string
 	Ident bool // true when this token is a complete identifier
 }
 
 // lexIdentifiers scans s and returns its tokens.
-func Lex(s string) []Token {
-	var toks []Token
+func Lex(s string) []IdentToken {
+	var toks []IdentToken
 	i := 0
 	for i < len(s) {
 		if IsIdentStart(s[i]) {
@@ -23,7 +23,7 @@ func Lex(s string) []Token {
 			for j < len(s) && IsIdentChar(s[j]) {
 				j++
 			}
-			toks = append(toks, Token{Text: s[i:j], Ident: true})
+			toks = append(toks, IdentToken{Text: s[i:j], Ident: true})
 			i = j
 			continue
 		}
@@ -31,7 +31,7 @@ func Lex(s string) []Token {
 		for j < len(s) && !IsIdentStart(s[j]) {
 			j++
 		}
-		toks = append(toks, Token{Text: s[i:j]})
+		toks = append(toks, IdentToken{Text: s[i:j]})
 		i = j
 	}
 	return toks

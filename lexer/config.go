@@ -1,0 +1,196 @@
+package lexer
+
+import "math"
+
+// Supported operators as constants to ensure consistency across lexer, parser, and evaluator.
+const (
+	OpAdd        = '+'
+	OpSub        = '-'
+	OpMul        = '*'
+	OpDiv        = '/'
+	OpLParen     = '('
+	OpRParen     = ')'
+	OpComma      = ','
+	OpQuestion   = '?'
+	OpColon      = ':'
+	OpLT         = '<'
+	OpGT         = '>'
+	OpLE         = 0x1E
+	OpGE         = 0x1F
+	OpEQ         = '='
+	OpNE         = '!'
+	OpAND        = '&'
+	OpOR         = '|'
+	OpANDAND     = 0x1C
+	OpOROR       = 0x1B
+	OpFactorial  = '!'
+	OpPercent    = '%'
+	OpMod        = 0x20 // binary modulo (distinct from postfix percent and other ops)
+	OpTilde      = '~'
+	OpShiftLeft  = 0x30
+	OpShiftRight = 0x31
+	OpPower      = '^'
+)
+
+// Supported functions for built-in math operations.
+//
+// Arity 1: unary functions taking exactly one argument.
+// Arity 2: functions taking exactly two arguments.
+// Arity -1 (variadic): functions taking one or more arguments.
+var SupportedFunctions = map[string]int{
+	"sqrt":              1,
+	"rsqrt":             1,
+	"isqrt":             1,
+	"cbrt":              1,
+	"abs":               1,
+	"floor":             1,
+	"fract":             1,
+	"ceil":              1,
+	"round":             -1, // round(x) or round(x, n) to n decimals
+	"trunc":             1,
+	"sin":               1,
+	"sinc":              1,
+	"deg":               1,
+	"rad":               1,
+	"cos":               1,
+	"tan":               1,
+	"sec":               1,
+	"csc":               1,
+	"cot":               1,
+	"asec":              1,
+	"acsc":              1,
+	"acot":              1,
+	"asin":              1,
+	"acos":              1,
+	"atan":              1,
+	"atan2":             2,
+	"gcd":               -1, // variadic (2+)
+	"lcm":               -1, // variadic (2+)
+	"log10":             1,
+	"log1p":             1,
+	"asinh":             1,
+	"acosh":             1,
+	"atanh":             1,
+	"expm1":             1,
+	"exp2":              1,
+	"exp10":             1,
+	"gamma":             1,
+	"mod":               2,
+	"sign":              1,
+	"clamp":             3,
+	"lerp":              3,
+	"fma":               3,
+	"copysign":          2,
+	"erf":               1,
+	"erfc":              1,
+	"beta":              2,
+	"logb":              1,
+	"nextafter":         2,
+	"ldexp":             2,
+	"dim":               2,
+	"signbit":           1,
+	"jn":                2,
+	"yn":                2,
+	"lgamma":            1,
+	"sinh":              1,
+	"cosh":              1,
+	"tanh":              1,
+	"logistic":          1,
+	"softplus":          1,
+	"softsign":          1,
+	"swish":             1,
+	"isfinite":          1,
+	"mish":              1,
+	"sech":              1,
+	"csch":              1,
+	"coth":              1,
+	"asech":             1,
+	"acsch":             1,
+	"acoth":             1,
+	"ln":                1,
+	"log":               1, // base-10 log
+	"log2":              1,
+	"exp":               1,
+	"fact":              1, // factorial
+	"pow":               2, // pow(x, y)
+	"hypot":             2, // hypot(x, y)
+	"root":              2,
+	"sum":               -1, // sum(a, b) or sum(a, b, step)
+	"count":             -1, // count(a, b) or count(a, b, step)
+	"avg":               -1, // variadic
+	"var":               -1, // variadic: population variance
+	"stddev":            -1, // variadic: population standard deviation
+	"median":            -1, // variadic: median of values
+	"mode":              -1, // variadic: most frequent value
+	"fix":               2,
+	"isprime":           1,
+	"prime":             1,
+	"nextprime":         1,
+	"divcount":          1,
+	"npr":               2, // permutations nPr(n, r)
+	"ncr":               2, // combinations nCr(n, r)
+	"sumdigits":         1, // sum of decimal digits
+	"rev":               1, // reverse decimal digits
+	"ispal":             1, // palindrome check
+	"fib":               1, // Fibonacci number
+	"powmod":            3, // modular exponentiation a^b mod m
+	"collatz":           1,
+	"totient":           1,
+	"sigma":             1,
+	"isperfect":         1,
+	"isabundant":        1,
+	"isdeficient":       1,
+	"digitsum":          1,
+	"primorial":         1,
+	"choose":            2,
+	"omega":             1,
+	"tau":               1,
+	"mobius":            1,
+	"mertens":           1,
+	"liouville":         1,
+	"carmichael":        1,
+	"loggamma":          1,
+	"besselj0":          1,
+	"besselj1":          1,
+	"harmonic":          1,
+	"digitalroot":       1,
+	"nthdigit":          2,
+	"bell":              1,
+	"catalan":           1,
+	"stirling":          2,
+	"derangements":      1,
+	"lucas":             1,
+	"digitproduct":      1,
+	"doublefactorial":   1,
+	"risingfact":        2,
+	"multinomial":       -1,
+	"partition":         1,
+	"collatzmax":        1,
+	"sumproperdivisors": 1,
+	"amicable":          2,
+	"bigomega":          1,
+	"sumofprimes":       1,
+	"lambertw":          1,
+	"zeta":              1,
+	"eta":               1,
+	"nextabundant":      1,
+	"nextdeficient":     1,
+	"nextperfect":       1,
+	"primecount":        1,
+	"digamma":           1,
+	"trigamma":          1,
+	"prevprime":         1,
+	"digitcount":        1, // Collatz stopping time
+	"prod":              -1,
+	"min":               -1, // variadic
+	"max":               -1, // variadic
+}
+
+// SupportedConstants maps constant names to their numeric values.
+var SupportedConstants = map[string]float64{
+	"pi": math.Pi,
+	"e":  math.E,
+}
+
+// Precision settings could be expanded here if rounding were required.
+const DefaultPrecision = 64

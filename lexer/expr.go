@@ -1,8 +1,7 @@
-package parser
+package lexer
 
 import (
 	"fmt"
-	"prototype_kl/lexer"
 	"unicode"
 )
 
@@ -168,11 +167,11 @@ func (l *Lexer) Tokenize() ([]Token, error) {
 				tokens = append(tokens, Token{Type: TokenNumber, Value: l.input[start:l.pos], Pos: start})
 				continue
 			}
-			if lexer.IsIdentStart(char) {
+			if IsIdentStart(char) {
 				start := l.pos
 				for l.pos < len(l.input) {
 					ch := l.input[l.pos]
-					if lexer.IsIdentChar(ch) {
+					if IsIdentChar(ch) {
 						l.pos++
 						continue
 					}
