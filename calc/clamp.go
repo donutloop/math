@@ -2,13 +2,14 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
 	"strings"
 )
 
 // expandClamp rewrites clamp(x, lo, hi) into min(max(x, lo), hi), expanding
 // each argument. Uses the existing min/max built-ins.
 func (c *Calculator) expandClamp(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 3 {
 		return "", fmt.Errorf("clamp expects 3 argument(s) (x, lo, hi), got %d", len(args))
 	}

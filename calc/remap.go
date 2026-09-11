@@ -2,6 +2,7 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
 	"strings"
 )
 
@@ -9,7 +10,7 @@ import (
 // nlo + (x - lo) * (nhi - nlo) / (hi - lo), mapping x from [lo, hi] to
 // [nlo, nhi].
 func (c *Calculator) expandRemap(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 5 {
 		return "", fmt.Errorf("remap expects 5 argument(s) (x, lo, hi, nlo, nhi), got %d", len(args))
 	}

@@ -2,6 +2,7 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
 	"prototype_kl/eval"
 	"prototype_kl/lexer"
 	"strconv"
@@ -75,7 +76,7 @@ func parseFuncDef(line string) (name string, params []string, body string, ok bo
 // entry to be a valid identifier.
 func parseParams(inner string) ([]string, bool) {
 	var params []string
-	for _, p := range splitArgs(inner) {
+	for _, p := range control.SplitArgs(inner) {
 		p = strings.TrimSpace(p)
 		if p == "" {
 			continue
@@ -121,36 +122,13 @@ func findMatchingParen(s string, openIdx int) int {
 
 // splitArgs splits a comma-separated argument list at top-level commas,
 // respecting nested parentheses.
-func splitArgs(s string) []string {
-	var args []string
-	depth := 0
-	start := 0
-	for i := 0; i < len(s); i++ {
-		switch s[i] {
-		case '(':
-			depth++
-		case ')':
-			depth--
-		case ',':
-			if depth == 0 {
-				args = append(args, s[start:i])
-				start = i + 1
-			}
-		}
-	}
-	args = append(args, s[start:])
-	return args
-}
-
-// replaceIdent replaces every whole-word occurrence of the identifier target
-// in s with replacement.
 
 // expandLet implements local bindings: let(x = e1, y = e2, ..., body).
 // The last argument is the body expression; every preceding argument must be
 // a binding of the form name = expr. Bindings are substituted into the body
 // (and into later bindings) so names stay local and never touch global state.
 func (c *Calculator) expandLet(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) < 2 {
 		return "", fmt.Errorf("let expects at least one binding (name = expr) and a body expression")
 	}
@@ -174,7 +152,7 @@ func (c *Calculator) expandLet(inner string) (string, error) {
 		}
 		// Substitute earlier bindings into this binding's expression.
 		for _, sb := range subs {
-			expr = replaceIdent(expr, sb.name, sb.expr)
+			expr = control.ReplaceIdent(expr, sb.name, sb.expr)
 		}
 		ex, err := c.expand(expr)
 		if err != nil {
@@ -184,7 +162,7 @@ func (c *Calculator) expandLet(inner string) (string, error) {
 	}
 	// Apply all bindings to the body, then evaluate it.
 	for _, sb := range subs {
-		body = replaceIdent(body, sb.name, sb.expr)
+		body = control.ReplaceIdent(body, sb.name, sb.expr)
 	}
 	eb, err := c.expand(body)
 	if err != nil {
@@ -197,29 +175,6 @@ func (c *Calculator) expandLet(inner string) (string, error) {
 type subst struct {
 	name string
 	expr string
-}
-
-func replaceIdent(s, target, replacement string) string {
-	var b strings.Builder
-	i := 0
-	for i < len(s) {
-		if lexer.IsIdentStart(s[i]) {
-			j := i + 1
-			for j < len(s) && lexer.IsIdentChar(s[j]) {
-				j++
-			}
-			if s[i:j] == target {
-				b.WriteString(replacement)
-			} else {
-				b.WriteString(s[i:j])
-			}
-			i = j
-			continue
-		}
-		b.WriteByte(s[i])
-		i++
-	}
-	return b.String()
 }
 
 // defineFunc validates and stores a user-defined function.
@@ -407,7 +362,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to round")
 			}
-			args := splitArgs(s[k+1 : end])
+			args := control.SplitArgs(s[k+1 : end])
 			if len(args) == 2 {
 				x, digits := strings.TrimSpace(args[0]), strings.TrimSpace(args[1])
 				xE, err := c.expand(x)
@@ -437,7 +392,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to %s", ident)
 			}
-			args := splitArgs(s[k+1 : end])
+			args := control.SplitArgs(s[k+1 : end])
 			if len(args) == 2 {
 				x, digits := strings.TrimSpace(args[0]), strings.TrimSpace(args[1])
 				xE, err := c.expand(x)
@@ -468,7 +423,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if parenEnd < 0 {
 				rangeOK = false
 			} else {
-				args := splitArgs(s[k+1 : parenEnd])
+				args := control.SplitArgs(s[k+1 : parenEnd])
 				if len(args) != 4 && len(args) != 5 {
 					rangeOK = false
 				} else if !isIdent(strings.TrimSpace(args[0])) {
@@ -494,7 +449,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to repeat")
 			}
-			args := splitArgs(s[k+1 : end])
+			args := control.SplitArgs(s[k+1 : end])
 			if len(args) != 3 {
 				return "", fmt.Errorf("repeat expects 3 arguments (n, var, body), got %d", len(args))
 			}
@@ -511,7 +466,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to for")
 			}
-			args := splitArgs(s[k+1 : end])
+			args := control.SplitArgs(s[k+1 : end])
 			if len(args) != 4 && len(args) != 5 {
 				return "", fmt.Errorf("for requires 4 or 5 arguments (var, lo, hi[, step], body)")
 			}
@@ -536,7 +491,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to while")
 			}
-			args := splitArgs(s[k+1 : end])
+			args := control.SplitArgs(s[k+1 : end])
 			if len(args) != 2 {
 				return "", fmt.Errorf("while expects 2 arguments (cond, body), got %d", len(args))
 			}
@@ -566,7 +521,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to %s", ident)
 			}
-			args := splitArgs(s[k+1 : end])
+			args := control.SplitArgs(s[k+1 : end])
 			if len(args) != 3 {
 				return "", fmt.Errorf("%s expects 3 argument(s) (cond, a, b), got %d", ident, len(args))
 			}
@@ -603,7 +558,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			inner := s[k+1 : end]
 			var args []string
 			if inner != "" {
-				args = splitArgs(inner)
+				args = control.SplitArgs(inner)
 			}
 			def := c.funcs[ident]
 			if len(args) != len(def.Params) {
@@ -622,7 +577,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			}
 			body := def.Body
 			for pi, p := range def.Params {
-				body = replaceIdent(body, p, vals[pi])
+				body = control.ReplaceIdent(body, p, vals[pi])
 			}
 			// Function-local scope: snapshot variables so assignments inside the
 			// body (e.g. acc = ...) do not leak to the caller or between calls.

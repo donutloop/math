@@ -3,40 +3,16 @@ package calc
 import (
 	"fmt"
 	"math"
+	"prototype_kl/calc/control"
 	"prototype_kl/eval"
 	"strconv"
 	"strings"
 )
 
-// breakSentinel and continueSentinel are internal signals that expandBegin
+// control.BreakSentinel and control.ContinueSentinel are internal signals that expandBegin
 // raises when a begin(...) block encounters a break/continue statement. The
 // enclosing loop (expandWhile) catches them at the string-expansion level
 // before the value is parsed, so break/continue work inside begin blocks.
-const (
-	breakSentinel    = "__BREAK__"
-	continueSentinel = "__CONTINUE__"
-)
-
-// breakValue parses a "break <expr>" statement: it returns the value
-// expression to return from the loop on early exit. A bare "break"
-// (no value) returns ok=false so the loop falls back to its last value.
-// breakValuePrefix marks a begin(...) block that raised "break <expr>", so
-// the enclosing loop can return expr as the loop value.
-const breakValuePrefix = "__BREAK_VALUE__:"
-
-func breakValue(t string) (string, bool) {
-	if t == "break" {
-		return "", false
-	}
-	if !strings.HasPrefix(t, "break") {
-		return "", false
-	}
-	rest := strings.TrimSpace(t[len("break"):])
-	if rest == "" {
-		return "", false
-	}
-	return rest, true
-}
 
 // expandRangeLoop rewrites a generalized range loop into a flat arithmetic
 // expression by substituting the loop variable with each integer in the range.
@@ -50,7 +26,7 @@ func breakValue(t string) (string, bool) {
 // yield 1 (true) or 0 (false). This is a macro-level "for loop" over integers
 // with a running variable, generalizing the plain numeric sum/prod/count forms.
 func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 4 && len(args) != 5 {
 		return "", fmt.Errorf("%s expects 4 or 5 arguments (var, lo, hi[, step], body)", kind)
 	}
@@ -98,7 +74,7 @@ func (c *Calculator) expandRangeLoop(inner, kind string) (string, error) {
 	}
 	terms := []string{}
 	for i := loN; i <= hiN; i += stepN {
-		term := replaceIdent(bodyArg, varName, fmt.Sprintf("%d", i))
+		term := control.ReplaceIdent(bodyArg, varName, fmt.Sprintf("%d", i))
 		te, err := c.expand(term)
 		if err != nil {
 			return "", err
@@ -161,12 +137,12 @@ func (c *Calculator) expandRepeat(countS, vname, body string) (string, error) {
 	last := "0"
 	for i := 1; i <= int(count); i++ {
 		for _, st := range splitStatements(body) {
-			b := replaceIdent(st, vname, strconv.Itoa(i))
+			b := control.ReplaceIdent(st, vname, strconv.Itoa(i))
 			t := strings.TrimSpace(b)
 			if t == "break" {
 				return last, nil
 			}
-			if expr, ok := breakValue(t); ok {
+			if expr, ok := control.BreakValue(t); ok {
 				v, err := c.eval(expr)
 				if err != nil {
 					return "", err
@@ -188,17 +164,17 @@ func (c *Calculator) expandRepeat(countS, vname, body string) (string, error) {
 				if err != nil {
 					return "", err
 				}
-				if expanded == breakSentinel {
+				if expanded == control.BreakSentinel {
 					return last, nil
 				}
-				if strings.HasPrefix(expanded, breakValuePrefix) {
-					v, err := c.eval(expanded[len(breakValuePrefix):])
+				if strings.HasPrefix(expanded, control.BreakValuePrefix) {
+					v, err := c.eval(expanded[len(control.BreakValuePrefix):])
 					if err != nil {
 						return "", err
 					}
 					return fmt.Sprintf("%g", v), nil
 				}
-				if expanded == continueSentinel {
+				if expanded == control.ContinueSentinel {
 					break
 				}
 				v, err := c.evalExpanded(expanded)
@@ -244,7 +220,7 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 			if t == "break" {
 				return last, nil
 			}
-			if expr, ok := breakValue(t); ok {
+			if expr, ok := control.BreakValue(t); ok {
 				v, err := c.eval(expr)
 				if err != nil {
 					return "", err
@@ -266,17 +242,17 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 				if err != nil {
 					return "", err
 				}
-				if expanded == breakSentinel {
+				if expanded == control.BreakSentinel {
 					return last, nil
 				}
-				if strings.HasPrefix(expanded, breakValuePrefix) {
-					v, err := c.eval(expanded[len(breakValuePrefix):])
+				if strings.HasPrefix(expanded, control.BreakValuePrefix) {
+					v, err := c.eval(expanded[len(control.BreakValuePrefix):])
 					if err != nil {
 						return "", err
 					}
 					return fmt.Sprintf("%g", v), nil
 				}
-				if expanded == continueSentinel {
+				if expanded == control.ContinueSentinel {
 					break
 				}
 				bv, err := c.evalExpanded(expanded)
@@ -297,13 +273,13 @@ func (c *Calculator) expandBegin(body string) (string, error) {
 	for _, st := range splitStatements(body) {
 		t := strings.TrimSpace(st)
 		if t == "break" {
-			return breakSentinel, nil
+			return control.BreakSentinel, nil
 		}
-		if expr, ok := breakValue(t); ok {
-			return breakValuePrefix + expr, nil
+		if expr, ok := control.BreakValue(t); ok {
+			return control.BreakValuePrefix + expr, nil
 		}
 		if t == "continue" {
-			return continueSentinel, nil
+			return control.ContinueSentinel, nil
 		}
 		if name, expr, ok := parseAssignment(st); ok {
 			if err := c.assign(name, expr); err != nil {
@@ -317,8 +293,8 @@ func (c *Calculator) expandBegin(body string) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			if expanded == breakSentinel || expanded == continueSentinel ||
-				strings.HasPrefix(expanded, breakValuePrefix) {
+			if expanded == control.BreakSentinel || expanded == control.ContinueSentinel ||
+				strings.HasPrefix(expanded, control.BreakValuePrefix) {
 				return expanded, nil
 			}
 			bv, err := c.evalExpanded(expanded)
@@ -353,12 +329,12 @@ func (c *Calculator) expandFor(vname, loS, hiS, stepS, body string) (string, err
 	}
 	for i := int(lo); i <= int(hi); i += int(math.Abs(step)) {
 		for _, st := range splitStatements(body) {
-			b := replaceIdent(st, vname, strconv.Itoa(i))
+			b := control.ReplaceIdent(st, vname, strconv.Itoa(i))
 			t := strings.TrimSpace(b)
 			if t == "break" {
 				return last, nil
 			}
-			if expr, ok := breakValue(t); ok {
+			if expr, ok := control.BreakValue(t); ok {
 				v, err := c.eval(expr)
 				if err != nil {
 					return "", err
@@ -380,17 +356,17 @@ func (c *Calculator) expandFor(vname, loS, hiS, stepS, body string) (string, err
 				if err != nil {
 					return "", err
 				}
-				if expanded == breakSentinel {
+				if expanded == control.BreakSentinel {
 					return last, nil
 				}
-				if strings.HasPrefix(expanded, breakValuePrefix) {
-					v, err := c.eval(expanded[len(breakValuePrefix):])
+				if strings.HasPrefix(expanded, control.BreakValuePrefix) {
+					v, err := c.eval(expanded[len(control.BreakValuePrefix):])
 					if err != nil {
 						return "", err
 					}
 					return fmt.Sprintf("%g", v), nil
 				}
-				if expanded == continueSentinel {
+				if expanded == control.ContinueSentinel {
 					break
 				}
 				v, err := c.evalExpanded(expanded)

@@ -2,6 +2,8 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
+	"prototype_kl/calc/degrees"
 	"prototype_kl/eval"
 	"prototype_kl/lexer"
 	"prototype_kl/parser"
@@ -48,16 +50,16 @@ func (c *Calculator) eval(line string) (float64, error) {
 }
 
 func (c *Calculator) evalExpanded(expanded string) (float64, error) {
-	if expanded == breakSentinel {
+	if expanded == control.BreakSentinel {
 		return 0, fmt.Errorf("break outside a loop")
 	}
-	if expanded == continueSentinel {
+	if expanded == control.ContinueSentinel {
 		return 0, fmt.Errorf("continue outside a loop")
 	}
 	if c.degMode {
-		expanded = applyDeg(expanded)
+		expanded = degrees.ApplyDeg(expanded)
 	} else if c.gradMode {
-		expanded = applyGrad(expanded)
+		expanded = degrees.ApplyGrad(expanded)
 	}
 	return eval.Evaluate(expanded)
 }

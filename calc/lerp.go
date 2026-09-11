@@ -2,13 +2,14 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
 	"strings"
 )
 
 // expandLerp rewrites lerp(a, b, t) into a + (b - a) * t, expanding each
 // argument. Linear interpolation between a and b at fraction t.
 func (c *Calculator) expandLerp(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 3 {
 		return "", fmt.Errorf("lerp expects 3 argument(s) (a, b, t), got %d", len(args))
 	}

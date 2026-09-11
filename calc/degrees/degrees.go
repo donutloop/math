@@ -1,4 +1,4 @@
-package calc
+package degrees
 
 import (
 	"prototype_kl/lexer"

@@ -2,6 +2,7 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
 	"strings"
 )
 
@@ -9,7 +10,7 @@ import (
 // formula: t = clamp((x-e0)/(e1-e0), 0, 1); result = t*t*(3-2*t).
 // Uses min/max (parser built-ins) for the clamp.
 func (c *Calculator) expandSmoothstep(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 3 {
 		return "", fmt.Errorf("smoothstep expects 3 argument(s) (x, e0, e1), got %d", len(args))
 	}

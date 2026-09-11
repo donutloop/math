@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [175] split calc further: degrees + control sub-packages
+
+- `calc/degrees.go` -> `calc/degrees`: ApplyDeg/ApplyGrad (pure).
+- New `calc/control`: pure control-flow helpers SplitArgs, ReplaceIdent,
+  BreakValue and the loop sentinels (BreakValuePrefix, BreakSentinel,
+  ContinueSentinel), moved out of func.go/loops.go.
+- `calc` methods now call `control.SplitArgs`, `control.ReplaceIdent`,
+  `control.BreakValue` and the `control.*` sentinels.
+
 ## [174] move the parser's expression tokenizer into the shared lexer package
 
 - `parser/config.go` (op constants, function/constant tables) moved to `lexer`.

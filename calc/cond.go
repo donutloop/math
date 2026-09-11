@@ -3,6 +3,7 @@ package calc
 import (
 	"fmt"
 	"math"
+	"prototype_kl/calc/control"
 	"prototype_kl/eval"
 	"strconv"
 	"strings"
@@ -12,7 +13,7 @@ import (
 // (cond) ? (then) : (else), expanding each argument. The ternary evaluates
 // lazily, so only the selected branch is computed.
 func (c *Calculator) expandIf(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 3 {
 		return "", fmt.Errorf("if expects 3 arguments (cond, then, else)")
 	}
@@ -38,13 +39,13 @@ func (c *Calculator) expandIf(inner string) (string, error) {
 func (c *Calculator) expandBranch(branch string) (string, error) {
 	t := strings.TrimSpace(branch)
 	if t == "break" {
-		return breakSentinel, nil
+		return control.BreakSentinel, nil
 	}
 	if t == "continue" {
-		return continueSentinel, nil
+		return control.ContinueSentinel, nil
 	}
-	if expr, ok := breakValue(t); ok {
-		return breakValuePrefix + expr, nil
+	if expr, ok := control.BreakValue(t); ok {
+		return control.BreakValuePrefix + expr, nil
 	}
 	return c.expand(branch)
 }
@@ -52,7 +53,7 @@ func (c *Calculator) expandBranch(branch string) (string, error) {
 // expandAndOr rewrites and(a, b) into (a) && (b) and or(a, b) into (a) || (b),
 // relying on the parser's logical operators.
 func (c *Calculator) expandAndOr(inner, op string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 2 {
 		return "", fmt.Errorf("%s expects 2 argument(s), got %d", op, len(args))
 	}

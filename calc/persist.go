@@ -7,43 +7,43 @@ import (
 
 // state is the JSON-persisted session: variables, memory, last result, history.
 type state struct {
-	Vars    map[string]float64 `json:"vars"`
-	Funcs   map[string]funcDef `json:"funcs"`
-	Memory  float64            `json:"memory"`
-	HasMem  bool               `json:"has_mem"`
-	Ans     float64            `json:"ans"`
-	HasAns  bool               `json:"has_ans"`
-	History []string           `json:"history"`
-	DegMode bool               `json:"deg_mode"`
-	GradMode bool              `json:"grad_mode"`
-	Sci     bool               `json:"sci"`
-	Eng     bool               `json:"eng"`
-	Prec    int                `json:"prec"`
-	Base    int                `json:"base"`
-	Quiet   bool               `json:"quiet"`
-	JSON    bool               `json:"json"`
-	CSV     bool               `json:"csv"`
+	Vars     map[string]float64 `json:"vars"`
+	Funcs    map[string]funcDef `json:"funcs"`
+	Memory   float64            `json:"memory"`
+	HasMem   bool               `json:"has_mem"`
+	Ans      float64            `json:"ans"`
+	HasAns   bool               `json:"has_ans"`
+	History  []string           `json:"history"`
+	DegMode  bool               `json:"deg_mode"`
+	GradMode bool               `json:"grad_mode"`
+	Sci      bool               `json:"sci"`
+	Eng      bool               `json:"eng"`
+	Prec     int                `json:"prec"`
+	Base     int                `json:"base"`
+	Quiet    bool               `json:"quiet"`
+	JSON     bool               `json:"json"`
+	CSV      bool               `json:"csv"`
 }
 
 // saveState writes the calculator session to path.
 func (c *Calculator) saveState(path string) error {
 	st := state{
-		Vars:    c.vars,
-		Funcs:   c.funcsState(),
-		Memory:  c.memory,
-		HasMem:  c.hasMem,
-		Ans:     c.ans,
-		HasAns:  c.hasAns,
-		History: c.history,
-		DegMode: c.degMode,
+		Vars:     c.vars,
+		Funcs:    c.funcsState(),
+		Memory:   c.memory,
+		HasMem:   c.hasMem,
+		Ans:      c.ans,
+		HasAns:   c.hasAns,
+		History:  c.history,
+		DegMode:  c.degMode,
 		GradMode: c.gradMode,
-		Sci:     c.sci,
-		Eng:     c.eng,
-		Prec:    c.prec,
-		Base:    c.base,
-		Quiet:   c.quietAssign,
-		JSON:    c.jsonMode,
-		CSV:     c.csvMode,
+		Sci:      c.sci,
+		Eng:      c.eng,
+		Prec:     c.prec,
+		Base:     c.base,
+		Quiet:    c.quietAssign,
+		JSON:     c.jsonMode,
+		CSV:      c.csvMode,
 	}
 	data, err := json.MarshalIndent(&st, "", "  ")
 	if err != nil {
@@ -68,7 +68,7 @@ func (c *Calculator) loadState(path string) error {
 	}
 	if st.Vars != nil {
 		c.vars = st.Vars
-	c.setFuncs(st.Funcs)
+		c.setFuncs(st.Funcs)
 	}
 	c.memory = st.Memory
 	c.hasMem = st.HasMem

@@ -2,13 +2,14 @@ package calc
 
 import (
 	"fmt"
+	"prototype_kl/calc/control"
 	"strings"
 )
 
 // expandStep rewrites step(x, edge) into x >= edge ? 1 : 0, expanding x and
 // edge. Heaviside step function: 1 when x >= edge, else 0.
 func (c *Calculator) expandStep(inner string) (string, error) {
-	args := splitArgs(inner)
+	args := control.SplitArgs(inner)
 	if len(args) != 2 {
 		return "", fmt.Errorf("step expects 2 argument(s) (x, edge), got %d", len(args))
 	}

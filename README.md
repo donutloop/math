@@ -8,8 +8,11 @@ concern into focused packages:
 - `parser`  — the AST and parsing only (`Parse`, `Node` types); imports lexer.
   No tokenizing or scanning lives here anymore.
 - `eval`    — AST evaluation and built-in math functions (depends only on parser).
-- `calc`    — the language runtime: state, assignment, control-flow expansion
-  (loops/conditionals), user functions, REPL, and machine-readable output.
+- `calc`    — the language runtime: state, assignment, user functions, REPL,
+  machine-readable output.
+  - `calc/degrees` — pure degree/grade conversion helpers.
+  - `calc/control` — pure control-flow helpers (SplitArgs, ReplaceIdent,
+    BreakValue, loop sentinels).
 - `tests/`  — unit tests (`tests/unit`) and whole-program integration tests
   (`tests/integration`).
 
