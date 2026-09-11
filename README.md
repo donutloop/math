@@ -3,6 +3,8 @@
 A full-featured math programming language in Go, structured by language-design
 concern into focused packages:
 
+- `lexer`   — shared identifier tokenizer (`Lex`, `FirstIdent`, `HasIdent`,
+  `IsIdentStart`, `IsIdentChar`) used by both the parser and calc.
 - `parser`  — tokenizing, parsing, and the AST (pure parsing, no evaluation).
 - `eval`    — AST evaluation and built-in math functions (depends only on parser).
 - `calc`    — the language runtime: state, assignment, control-flow expansion

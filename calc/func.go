@@ -3,6 +3,7 @@ package calc
 import (
 	"fmt"
 	"prototype_kl/eval"
+	"prototype_kl/lexer"
 	"strconv"
 	"strings"
 
@@ -26,11 +27,11 @@ func parseFuncDef(line string) (name string, params []string, body string, ok bo
 	i, n := 0, len(line)
 
 	// First token must be an identifier (the function name).
-	if i >= n || !isIdentStart(line[i]) {
+	if i >= n || !lexer.IsIdentStart(line[i]) {
 		return "", nil, "", false
 	}
 	j := i + 1
-	for j < n && isIdentChar(line[j]) {
+	for j < n && lexer.IsIdentChar(line[j]) {
 		j++
 	}
 	name = line[i:j]
@@ -89,11 +90,11 @@ func parseParams(inner string) ([]string, bool) {
 
 // isIdent reports whether s is a complete identifier token.
 func isIdent(s string) bool {
-	if s == "" || !isIdentStart(s[0]) {
+	if s == "" || !lexer.IsIdentStart(s[0]) {
 		return false
 	}
 	for i := 1; i < len(s); i++ {
-		if !isIdentChar(s[i]) {
+		if !lexer.IsIdentChar(s[i]) {
 			return false
 		}
 	}
@@ -202,9 +203,9 @@ func replaceIdent(s, target, replacement string) string {
 	var b strings.Builder
 	i := 0
 	for i < len(s) {
-		if isIdentStart(s[i]) {
+		if lexer.IsIdentStart(s[i]) {
 			j := i + 1
-			for j < len(s) && isIdentChar(s[j]) {
+			for j < len(s) && lexer.IsIdentChar(s[j]) {
 				j++
 			}
 			if s[i:j] == target {
@@ -260,13 +261,13 @@ func (c *Calculator) expand(s string) (string, error) {
 	i := 0
 	n := len(s)
 	for i < n {
-		if !isIdentStart(s[i]) {
+		if !lexer.IsIdentStart(s[i]) {
 			b.WriteByte(s[i])
 			i++
 			continue
 		}
 		j := i + 1
-		for j < n && isIdentChar(s[j]) {
+		for j < n && lexer.IsIdentChar(s[j]) {
 			j++
 		}
 		ident := s[i:j]

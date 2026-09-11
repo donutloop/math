@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"prototype_kl/lexer"
 	"unicode"
 )
 
@@ -89,7 +90,7 @@ func (l *Lexer) Tokenize() ([]Token, error) {
 			}
 		case OpOR:
 			if l.pos+1 < len(l.input) && l.input[l.pos+1] == '|' {
-			tokens = append(tokens, Token{Type: TokenOR, Value: "||", Pos: l.pos})
+				tokens = append(tokens, Token{Type: TokenOR, Value: "||", Pos: l.pos})
 				l.pos++
 			} else {
 				tokens = append(tokens, Token{Type: TokenBitOR, Value: string(char), Pos: l.pos})
@@ -167,11 +168,11 @@ func (l *Lexer) Tokenize() ([]Token, error) {
 				tokens = append(tokens, Token{Type: TokenNumber, Value: l.input[start:l.pos], Pos: start})
 				continue
 			}
-			if unicode.IsLetter(rune(char)) {
+			if lexer.IsIdentStart(char) {
 				start := l.pos
 				for l.pos < len(l.input) {
 					ch := l.input[l.pos]
-					if unicode.IsLetter(rune(ch)) || unicode.IsDigit(rune(ch)) || ch == '_' {
+					if lexer.IsIdentChar(ch) {
 						l.pos++
 						continue
 					}

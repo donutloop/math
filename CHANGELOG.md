@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [173] shared lexer package
+
+- New top-level `lexer` package owns the identifier tokenizer (`Lex`,
+  `FirstIdent`, `HasIdent`, `IsIdentStart`, `IsIdentChar`, `Token`), moved out
+  of `calc`.
+- The parser's expression tokenizer now uses the shared `lexer.IsIdentStart`
+  / `lexer.IsIdentChar` helpers for identifier scanning, so identifier rules
+  live in exactly one place instead of being duplicated across parser and calc.
+
 ## [172] package refactor: divide by language-design concern
 
 - Split the monolithic calculator into focused packages:

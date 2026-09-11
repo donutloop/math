@@ -1,4 +1,4 @@
-package calc
+package lexer
 
 // lexer is a tiny single-purpose tokenizer for variable substitution.
 //
@@ -8,59 +8,59 @@ package calc
 // Function and constant names (e.g. "sin", "pi") are never touched because
 // matching happens on whole tokens only.
 
-type token struct {
-	text  string
-	ident bool // true when this token is a complete identifier
+type Token struct {
+	Text  string
+	Ident bool // true when this token is a complete identifier
 }
 
 // lexIdentifiers scans s and returns its tokens.
-func lexIdentifiers(s string) []token {
-	var toks []token
+func Lex(s string) []Token {
+	var toks []Token
 	i := 0
 	for i < len(s) {
-		if isIdentStart(s[i]) {
+		if IsIdentStart(s[i]) {
 			j := i + 1
-			for j < len(s) && isIdentChar(s[j]) {
+			for j < len(s) && IsIdentChar(s[j]) {
 				j++
 			}
-			toks = append(toks, token{text: s[i:j], ident: true})
+			toks = append(toks, Token{Text: s[i:j], Ident: true})
 			i = j
 			continue
 		}
 		j := i + 1
-		for j < len(s) && !isIdentStart(s[j]) {
+		for j < len(s) && !IsIdentStart(s[j]) {
 			j++
 		}
-		toks = append(toks, token{text: s[i:j]})
+		toks = append(toks, Token{Text: s[i:j]})
 		i = j
 	}
 	return toks
 }
 
 // firstIdent returns the first identifier token in s, or "" if none.
-func firstIdent(s string) string {
-	for _, t := range lexIdentifiers(s) {
-		if t.ident {
-			return t.text
+func FirstIdent(s string) string {
+	for _, t := range Lex(s) {
+		if t.Ident {
+			return t.Text
 		}
 	}
 	return ""
 }
 
 // hasIdent reports whether s contains the standalone identifier w.
-func hasIdent(s, w string) bool {
-	for _, t := range lexIdentifiers(s) {
-		if t.ident && t.text == w {
+func HasIdent(s, w string) bool {
+	for _, t := range Lex(s) {
+		if t.Ident && t.Text == w {
 			return true
 		}
 	}
 	return false
 }
 
-func isIdentStart(ch byte) bool {
+func IsIdentStart(ch byte) bool {
 	return ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
 }
 
-func isIdentChar(ch byte) bool {
-	return isIdentStart(ch) || (ch >= '0' && ch <= '9')
+func IsIdentChar(ch byte) bool {
+	return IsIdentStart(ch) || (ch >= '0' && ch <= '9')
 }

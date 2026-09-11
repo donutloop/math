@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"prototype_kl/calc/schema"
+	"prototype_kl/lexer"
 	"strings"
 
 	"prototype_kl/parser"
@@ -451,11 +452,11 @@ func findAssignEq(s string) int {
 // token, then an '=' literal, then the remainder. It returns ok=false for any
 // other form (e.g. bare expressions).
 func parseAssignment(line string) (name, expr string, ok bool) {
-	toks := lexIdentifiers(line)
-	if len(toks) == 0 || !toks[0].ident {
+	toks := lexer.Lex(line)
+	if len(toks) == 0 || !toks[0].Ident {
 		return "", "", false
 	}
-	name = toks[0].text
+	name = toks[0].Text
 
 	rest := line[len(name):]
 	eq := findAssignEq(rest)

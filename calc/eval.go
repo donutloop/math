@@ -3,6 +3,7 @@ package calc
 import (
 	"fmt"
 	"prototype_kl/eval"
+	"prototype_kl/lexer"
 	"prototype_kl/parser"
 )
 
@@ -36,7 +37,7 @@ func (c *Calculator) assign(name, expr string) error {
 }
 
 func (c *Calculator) eval(line string) (float64, error) {
-	if !c.hasAns && hasIdent(line, "ans") {
+	if !c.hasAns && lexer.HasIdent(line, "ans") {
 		return 0, fmt.Errorf("no previous result yet")
 	}
 	expanded, err := c.substitute(line)

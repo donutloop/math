@@ -1,6 +1,7 @@
 package calc
 
 import (
+	"prototype_kl/lexer"
 	"strings"
 )
 
@@ -24,9 +25,9 @@ func applyTrig(expr, factor string) string {
 
 	i := 0
 	for i < len(expr) {
-		if isIdentStart(expr[i]) {
+		if lexer.IsIdentStart(expr[i]) {
 			j := i + 1
-			for j < len(expr) && isIdentChar(expr[j]) {
+			for j < len(expr) && lexer.IsIdentChar(expr[j]) {
 				j++
 			}
 			name := expr[i:j]

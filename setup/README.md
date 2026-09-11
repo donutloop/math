@@ -10,8 +10,10 @@ The Prompt is located in `agents.md` in root.
 A fully working Go **math programming language** structured by language-design
 concern into focused packages:
 
+- `lexer`   — shared identifier tokenizer (`Lex`, `FirstIdent`, `HasIdent`,
+  `IsIdentStart`, `IsIdentChar`, `Token`).
 - `parser`  — tokenizing, parsing, and the AST only (`Parse`, node types, op
-  constants). No evaluation lives here.
+  constants). No evaluation lives here; its lexer uses `lexer` for identifiers.
 - `eval`    — AST evaluation and all built-in math functions (`Evaluate`),
   importing only `parser`. Error and AST types are aliased so the evaluator body
   compiles unchanged.
@@ -40,6 +42,7 @@ concern into focused packages:
 ## Layout
 
 ```
+lexer/      shared identifier tokenizer
 parser/      AST + parsing (no evaluation)
 eval/        AST evaluation + math functions
 calc/        language runtime
