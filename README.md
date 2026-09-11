@@ -134,6 +134,9 @@ self-describing access:
 - Deterministic exit-code contract: `0` success, `1` usage/flag error, `2` IO
   error, `3` evaluation error — documented in the schema's `exit_codes` and in
   `docs/operations.md`. `--verify` self-checks the contract.
+- `--verify --json` emits a structured health report (`version`, `passed`,
+  `failed`, one `{check,pass,detail}` per self-check) so agents can parse the
+  result instead of scraping prose.
 - `--eval`, `--file`, `--schema`, `--verify` are stable scripting flags.
 
 ## Documentation

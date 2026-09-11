@@ -88,6 +88,22 @@ instead of a single document. Each line has the stable shape
 
 `--vars` appends one `var` line per defined variable. Every line is valid JSON,
 so `json.loads(line)` works per line; the format is self-checked by `--verify`.
+
+## Structured health report (`--verify --json`)
+
+For agents that need deterministic, parseable health signals beyond an exit
+code, `--verify --json` emits a machine-readable report on stdout:
+
+    calculator --verify --json
+    {
+      "version": "1.0.0",
+      "passed": 264,
+      "failed": 0,
+      "checks": [ {"check": "2 + 3", "pass": true, "detail": "= 5"}, ... ]
+    }
+
+`checks` is one `{check, pass, detail}` object per self-check; `failed > 0`
+still exits `3` (eval-error contract). Prose `--verify` is unchanged.
 ```
 
 ## Units & conversion

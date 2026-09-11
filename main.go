@@ -116,6 +116,20 @@ func main() {
 	}
 
 	if *verify {
+		// --verify --json emits a machine-readable health report so agents can
+		// parse passed/failed counts and each check without scraping prose.
+		if *json {
+			b, err := jsonenc.MarshalIndent(calc.VerifyJSON(), "", "  ")
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "verify: json:", err)
+				os.Exit(ExitIO)
+			}
+			fmt.Println(string(b))
+			if calc.VerifyJSON()["failed"].(int) > 0 {
+				os.Exit(ExitEval)
+			}
+			return
+		}
 		passed, failed := calc.Verify(os.Stdout)
 		if failed > 0 {
 			os.Exit(ExitEval)

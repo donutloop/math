@@ -8,9 +8,17 @@ import (
 	"prototype_kl/parser"
 )
 
-// Verify runs a battery of known-good expressions and reports pass/fail.
-func Verify(w io.Writer) (passed, failed int) {
-	cases := []struct{ expr, want string }{
+// CheckResult is one self-check outcome, machine-readable for --verify --json.
+type CheckResult struct {
+	Check  string `json:"check"`
+	Pass   bool   `json:"pass"`
+	Detail string `json:"detail,omitempty"`
+}
+
+// verifyCases is the expression/want self-test battery shared by Verify and
+// VerifyJSON so both prose and JSON reports stay in lockstep.
+var verifyCases = []struct{ expr, want string }{
+
 		{"2 + 3", "5"},
 		{"2 * 3 ^ 2", "18"},
 		{"pow(2, 10)", "1024"},
@@ -271,71 +279,95 @@ func Verify(w io.Writer) (passed, failed int) {
 		{"signbit(-0.0)", "1"},
 		{"jn(0, 1)", "0.765197686557967"},
 		{"yn(1, 1)", "-0.781212821300289"},
-		{"lgamma(5)", "3.17805383034795"},
-	}
-	for _, c := range cases {
+		{"lgamma(5)", "3.17805383034795"},}
+
+func runChecks() []CheckResult {
+	var res []CheckResult
+	for _, c := range verifyCases {
 		v, err := parser.Evaluate(c.expr)
 		if err != nil {
-			fmt.Fprintf(w, "FAIL %s: %v\n", c.expr, err)
-			failed++
+			res = append(res, CheckResult{Check: c.expr, Pass: false, Detail: err.Error()})
 			continue
 		}
 		got := Format(v)
-		if got == c.want {
-			fmt.Fprintf(w, "ok   %s = %s\n", c.expr, got)
-			passed++
-		} else {
-			fmt.Fprintf(w, "FAIL %s = %s (want %s)\n", c.expr, got, c.want)
-			failed++
+		detail := fmt.Sprintf("= %s", got)
+		if got != c.want {
+			detail = fmt.Sprintf("= %s (want %s)", got, c.want)
 		}
+		res = append(res, CheckResult{Check: c.expr, Pass: got == c.want, Detail: detail})
 	}
-	fmt.Fprintf(w, "%d passed, %d failed\n", passed, failed)
-
-	// Schema self-check: the machine-readable language surface must be valid
-	// JSON and expose functions, constants, commands, operators, and modes.
+	// Schema self-check: the machine-readable language surface must expose the
+	// stable feature lists agents depend on.
 	schemaBytes, err := SchemaJSON()
 	if err != nil {
-		fmt.Fprintf(w, "FAIL schema JSON: %v\n", err)
-		failed++
-	}
-	var s Schema
-	if json.Unmarshal(schemaBytes, &s) != nil {
-		fmt.Fprintf(w, "FAIL schema parse\n")
-		failed++
-	} else if s.Name != "math-calculator" || s.Version == "" {
-		fmt.Fprintf(w, "FAIL schema identity\n")
-		failed++
-	} else if len(s.Functions) == 0 || len(s.Constants) == 0 || len(s.Commands) == 0 || len(s.Operators) == 0 || len(s.Modes) == 0 {
-		fmt.Fprintf(w, "FAIL schema surface incomplete\n")
-		failed++
+		res = append(res, CheckResult{Check: "schema", Pass: false, Detail: err.Error()})
 	} else {
-		fmt.Fprintf(w, "ok   schema: %d functions, %d constants, %d commands, %d operators, %d modes\n", len(s.Functions), len(s.Constants), len(s.Commands), len(s.Operators), len(s.Modes))
-		passed++
+		var s Schema
+		schemaPass := json.Unmarshal(schemaBytes, &s) == nil && s.Name == "math-calculator" &&
+			len(s.Functions) > 0 && len(s.Constants) > 0 && len(s.Commands) > 0 &&
+			len(s.Operators) > 0 && len(s.Modes) > 0 && len(s.CLI) > 0
+		detail := ""
+		if schemaPass {
+			detail = fmt.Sprintf("%d functions, %d constants, %d commands, %d operators, %d modes, %d cli_flags", len(s.Functions), len(s.Constants), len(s.Commands), len(s.Operators), len(s.Modes), len(s.CLI))
+		}
+		res = append(res, CheckResult{Check: "schema", Pass: schemaPass, Detail: detail})
 	}
-	// Exit-code contract self-check: scripting agents depend on deterministic codes.
-	if s.ExitCodes["ok"] != 0 || s.ExitCodes["usage"] != 1 || s.ExitCodes["io"] != 2 || s.ExitCodes["eval"] != 3 {
-		fmt.Fprintf(w, "FAIL exit-code contract\n")
-		failed++
+	// Exit-code contract self-check: 0=ok, 1=usage, 2=io, 3=eval.
+	// main.go enforces these; here we confirm the schema's contract is intact.
+	schemaBytes2, err2 := SchemaJSON()
+	if err2 != nil {
+		res = append(res, CheckResult{Check: "exit-codes", Pass: false, Detail: err2.Error()})
 	} else {
-		fmt.Fprintf(w, "ok   exit-codes: ok=%d usage=%d io=%d eval=%d\n", s.ExitCodes["ok"], s.ExitCodes["usage"], s.ExitCodes["io"], s.ExitCodes["eval"])
-		passed++
+		var s2 Schema
+		_ = json.Unmarshal(schemaBytes2, &s2)
+		exitPass := s2.ExitCodes["ok"] == 0 && s2.ExitCodes["usage"] == 1 && s2.ExitCodes["io"] == 2 && s2.ExitCodes["eval"] == 3
+		res = append(res, CheckResult{Check: "exit-codes", Pass: exitPass, Detail: "ok=0 usage=1 io=2 eval=3"})
 	}
 	// NDJSON self-check: each --jsonl line must be one parseable JSON object
 	// with the stable {expr,kind,value} shape, so streaming agents can ingest
 	// one line at a time without a document-level parser.
 	b, err := json.Marshal(map[string]any{"expr": "1+1", "kind": "value", "value": 2})
 	if err != nil {
-		fmt.Fprintf(w, "FAIL jsonl marshal: %v\n", err)
-		failed++
+		res = append(res, CheckResult{Check: "jsonl", Pass: false, Detail: err.Error()})
 	} else {
 		var m map[string]any
-		if json.Unmarshal(b, &m) != nil || m["kind"] != "value" || m["expr"] != "1+1" {
-			fmt.Fprintf(w, "FAIL jsonl shape\n")
-			failed++
-		} else {
-			fmt.Fprintf(w, "ok   jsonl: single-line JSON object shape\n")
+		ok := json.Unmarshal(b, &m) == nil && m["kind"] == "value" && m["expr"] == "1+1"
+		res = append(res, CheckResult{Check: "jsonl", Pass: ok, Detail: "single-line JSON object shape"})
+	}
+	return res
+}
+
+// Verify runs the self-test battery and prints human-readable prose lines.
+func Verify(w io.Writer) (passed, failed int) {
+	for _, r := range runChecks() {
+		if r.Pass {
+			fmt.Fprintf(w, "ok   %s %s\n", r.Check, r.Detail)
 			passed++
+		} else {
+			fmt.Fprintf(w, "FAIL %s %s\n", r.Check, r.Detail)
+			failed++
 		}
 	}
-	return
+	fmt.Fprintf(w, "%d passed, %d failed\n", passed, failed)
+	return passed, failed
+}
+
+// VerifyJSON runs the same battery and returns a machine-readable report so
+// agents can parse the health check (passed/failed counts + each outcome).
+func VerifyJSON() map[string]any {
+	checks := runChecks()
+	passed, failed := 0, 0
+	for _, r := range checks {
+		if r.Pass {
+			passed++
+		} else {
+			failed++
+		}
+	}
+	return map[string]any{
+		"version": schemaVersion,
+		"passed":  passed,
+		"failed":  failed,
+		"checks":  checks,
+	}
 }

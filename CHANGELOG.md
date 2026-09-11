@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [142] --verify --json structured health report (agentic)
+
+- --verify --json emits a machine-readable JSON report: version, passed,
+  failed counts, and one {check,pass,detail} object per self-check.
+- Agents parse the health check programmatically instead of scraping prose.
+- verify.go refactored: runChecks() shared by prose Verify and VerifyJSON.
+- TestVerifyJSON parses the report and validates every check object.
 ## [141] --jsonl NDJSON output (agentic)
 
 - Add --jsonl: one JSON object per line with stable {expr,kind,value} shape

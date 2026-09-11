@@ -134,3 +134,25 @@ func TestJSONLEvalOutput(t *testing.T) {
 		t.Errorf("JSONL kinds missing:\n%s", got)
 	}
 }
+
+func TestVerifyJSON(t *testing.T) {
+	got := runMain(t.TempDir()+"/v.json", "--verify", "--json")
+	var d map[string]any
+	if err := json.Unmarshal([]byte(got), &d); err != nil {
+		t.Fatalf("--verify --json not parseable JSON: %v\n%s", err, got)
+	}
+	if d["failed"].(float64) != 0 || d["passed"].(float64) <= 0 {
+		t.Errorf("verify report should have 0 failures, got passed=%v failed=%v", d["passed"], d["failed"])
+	}
+	checks, ok := d["checks"].([]any)
+	if !ok || len(checks) == 0 {
+		t.Errorf("verify report missing checks array")
+	}
+	// every check must be a structured {check,pass} object.
+	for i, c := range checks {
+		m, ok := c.(map[string]any)
+		if !ok || m["pass"] == nil || m["check"] == nil {
+			t.Errorf("check %d not structured {check,pass}: %v", i, c)
+		}
+	}
+}
