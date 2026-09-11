@@ -74,3 +74,24 @@ func TestBreakBlockAsAssignmentValue(t *testing.T) {
 		t.Fatalf("expected clear error when a break block is an assignment value, got:\n%s", got)
 	}
 }
+
+func TestWhileBreakValue(t *testing.T) {
+	got := runBatch(t, "x = 0\nwhile(x < 100, begin(x = x + 1; break x))\nquit\n")
+	if !strings.Contains(got, "\n1\n") {
+		t.Fatalf("while break value: expected 1, got:\n%s", got)
+	}
+}
+
+func TestForBreakValue(t *testing.T) {
+	got := runBatch(t, "for(i, 1, 10, begin(i; break i * 100))\nquit\n")
+	if !strings.Contains(got, "100") {
+		t.Fatalf("for break value: expected 100, got:\n%s", got)
+	}
+}
+
+func TestRepeatBreakValue(t *testing.T) {
+	got := runBatch(t, "repeat(5, n, begin(n; break n * 1000))\nquit\n")
+	if !strings.Contains(got, "1000") {
+		t.Fatalf("repeat break value: expected 1000, got:\n%s", got)
+	}
+}

@@ -207,3 +207,15 @@ quit
 	got := runProgram(t, prog)
 	checkLine(t, got, "6")
 }
+
+func TestProgramBreakValue(t *testing.T) {
+	// break <value> returns an explicit result from a while loop on early
+	// exit: the loop stops after the first iteration and returns i * 10.
+	prog := `i = 0
+r = while(i < 3, begin(i = i + 1; break i * 10))
+r
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "10")
+}

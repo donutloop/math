@@ -9,6 +9,15 @@
   inner `continue` skips only the inner body. Whole-program integration tests
   cover both (sum 1..3 = 6 in both cases).
 
+## [168] break <value> returns an explicit loop result (math programming language)
+
+- `break <expr>` exits a while/for/repeat loop and returns the value of
+  <expr> (loop variable already substituted) instead of the last body value.
+- Works as a direct body statement and inside begin(...) blocks (via a
+  prefixed sentinel propagated by expandBegin).
+- Unit tests (calc/for_test.go) and whole-program integration tests cover
+  while/for/repeat and the begin-wrapped form.
+
 ## [165] break / continue propagate through for and repeat loops (math programming language)
 
 - `for` and `repeat` loop bodies now split statements (paren-aware) and honor
