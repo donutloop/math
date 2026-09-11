@@ -7,6 +7,16 @@ import (
 	"prototype_kl/parser"
 )
 
+// breakSentinel and continueSentinel are internal signals that expandBegin
+// raises when a begin(...) block encounters a break/continue statement. The
+// enclosing loop (expandWhile) catches them at the string-expansion level
+// before the value is parsed, so break/continue work inside begin blocks.
+const (
+	breakSentinel    = "__BREAK__"
+	continueSentinel = "__CONTINUE__"
+)
+
+
 // expandRangeLoop rewrites a generalized range loop into a flat arithmetic
 // expression by substituting the loop variable with each integer in the range.
 //
@@ -192,7 +202,19 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 				}
 				last = fmt.Sprintf("%g", c.vars[name])
 			} else {
-				bv, err := c.eval(st)
+				// Expand at string level so begin(...) blocks can raise
+				// break/continue sentinels that are caught before parsing.
+				expanded, err := c.substitute(st)
+				if err != nil {
+					return "", err
+				}
+				if expanded == breakSentinel {
+					return last, nil
+				}
+				if expanded == continueSentinel {
+					break
+				}
+				bv, err := c.evalExpanded(expanded)
 				if err != nil {
 					return "", err
 				}
@@ -210,10 +232,10 @@ func (c *Calculator) expandBegin(body string) (string, error) {
 	for _, st := range splitStatements(body) {
 		t := strings.TrimSpace(st)
 		if t == "break" {
-			return "0", nil
+			return breakSentinel, nil
 		}
 		if t == "continue" {
-			break
+			return continueSentinel, nil
 		}
 		if name, expr, ok := parseAssignment(st); ok {
 			if err := c.assign(name, expr); err != nil {

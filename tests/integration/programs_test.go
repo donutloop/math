@@ -107,3 +107,30 @@ quit
 	got := runProgram(t, prog)
 	checkLine(t, got, "61")
 }
+
+func TestProgramBreakInsideBegin(t *testing.T) {
+	// break raised inside a begin(...) block propagates to the enclosing
+	// while loop: the loop exits after the first iteration.
+	prog := `x = 0
+while(x < 100, begin(x = x + 1; break))
+x
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "1")
+}
+
+func TestProgramContinueInsideBegin(t *testing.T) {
+	// continue raised inside a begin(...) block skips the rest of the current
+	// while iteration: the skipped statement never executes.
+	prog := `i = 0
+s = 0
+while(i < 5, begin(i = i + 1; continue; s = s + 100))
+s
+i
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "0")
+	checkLine(t, got, "5")
+}

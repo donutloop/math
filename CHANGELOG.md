@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [164] break / continue propagate through begin(...) blocks (math programming language)
+
+- `begin(...)` blocks now raise internal break/continue sentinels when they
+  encounter a direct `break`/`continue` statement.
+- `while` loop bodies catch those sentinels at string-expansion level, so
+  `while(cond, begin(...; break))` exits early and `begin(...; continue; ...)`
+  skips the rest of the current iteration.
+- Whole-program integration tests cover both cases.
+
 ## [163] whole-program integration tests (math programming language)
 
 - New `tests/integration/programs_test.go` runs complete math programs

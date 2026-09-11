@@ -474,13 +474,17 @@ func (c *Calculator) eval(line string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	line = expanded
+	return c.evalExpanded(expanded)
+}
+
+// evalExpanded evaluates an already substituted/expanded expression string.
+func (c *Calculator) evalExpanded(expanded string) (float64, error) {
 	if c.degMode {
-		line = applyDeg(line)
+		expanded = applyDeg(expanded)
 	} else if c.gradMode {
-		line = applyGrad(line)
+		expanded = applyGrad(expanded)
 	}
-	return parser.Evaluate(line)
+	return parser.Evaluate(expanded)
 }
 // substitute expands user-defined function calls and rewrites variable
 // identifiers ("ans", "mem") to their numeric literals.
