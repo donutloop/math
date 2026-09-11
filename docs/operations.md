@@ -100,23 +100,21 @@ Agents pick the machine format with one flag instead of probing several:
 `text` (or omitted) is the default prose. It is equivalent to the individual
 `--json`, `--jsonl`, `--csv` flags; unknown formats exit `1`.
 
-In the interactive REPL, the `jsonl` command switches to NDJSON: every result
-is one `{expr,kind,value}` object per line (matching `--jsonl`). `json` and
-`csv` remain available; `jsonl` disables both.
+## Spawn a machine REPL (`--jsonl` / `--json` / `--csv` / `--output`)
 
-Agents can spawn an interactive machine session in one command: pass a format
-flag (`--jsonl`, `--json`, `--csv`, `--output`) without `--eval` to start the
-REPL directly in that mode with the prose banner suppressed:
+Agents can start an interactive machine session in one command: pass a format
+flag **without** `--eval` to start the REPL directly in that mode, with the
+prose banner suppressed:
 
     calculator --jsonl
     > 1+1
     > {"expr":"1+1","kind":"value","value":2}
 
-For agents, `--help --json` emits the CLI contract as a structured document:
-`{version, flags:[{name,type,help}], exit_codes:{ok,usage,io,eval}}`.
-
-In the REPL, the `snapshot` command emits the full runtime state as one JSON
-object (`{vars, mode, prec, base}`), mirroring CLI `--snapshot`.
+Inside the REPL, the `jsonl` command switches to NDJSON (one `{expr,kind,value}`
+object per line), `json` to one JSON object per result, and `csv` to CSV rows.
+In machine modes an eval error is emitted as a structured object
+(`{expr,kind:"error",error}` for jsonl, `{error}` for json, `expr,error,msg`
+for csv), so driving agents parse failures instead of scraping prose.
 
 ## Structured health report (`--verify --json`)
 
@@ -125,7 +123,7 @@ code, `--verify --json` emits a machine-readable report on stdout:
 
     calculator --verify --json
     {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "passed": 264,
       "failed": 0,
       "checks": [ {"check": "2 + 3", "pass": true, "detail": "= 5"}, ... ]
@@ -133,7 +131,28 @@ code, `--verify --json` emits a machine-readable report on stdout:
 
 `checks` is one `{check, pass, detail}` object per self-check; `failed > 0`
 still exits `3` (eval-error contract). Prose `--verify` is unchanged.
-```
+
+## Runtime state introspection (`--snapshot`)
+
+`--snapshot` dumps the REPL runtime state as one JSON object
+(`{vars, mode, prec, base}`). With `--eval`, it suppresses the eval-result
+print and emits ONLY the clean post-eval state:
+
+    calculator --eval x=5 --snapshot
+    {"vars":{"x":5},"mode":"rad","prec":15,"base":0}
+
+The REPL `snapshot` command emits the same object interactively.
+
+## Structured flag contract (`--help --json`)
+
+`--help --json` emits the CLI contract as a structured document:
+
+    calculator --help --json
+    { "version": "1.1.0",
+      "flags": [ {"name":"json","type":"*bool","help":"structured JSON output"}, ... ],
+      "exit_codes": {"ok":0,"usage":1,"io":2,"eval":3} }
+
+Prose `--help` is unchanged.
 
 ## Units & conversion
 ## Range loops
