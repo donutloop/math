@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [157] recursion in user-defined functions (math programming language)
+
+- Fix: user-function arguments now bind to their evaluated numeric values
+  instead of raw expanded strings. Recursive calls like f(n-1) substitute a
+  number, keeping bodies (e.g. if(n <= 1, ...)) well-formed at every level.
+- Correct recursive factorial f(n) = if(n <= 1, 1, n * f(n-1)): f(5)=120,
+  f(10)=3628800. Fibonacci fib(n) also verified.
+- Existing recursion depth guard (500) still prevents runaway recursion.
+- Tests: recursive factorial + fibonacci.
+- Steer: toward a math programming language.
 ## [156] while loop — general control flow (math programming language)
 
 - New language construct: while(cond, body). cond is evaluated with the

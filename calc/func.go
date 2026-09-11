@@ -569,13 +569,16 @@ func (c *Calculator) expand(s string) (string, error) {
 			if len(args) != len(def.Params) {
 				return "", fmt.Errorf("%s expects %d argument(s), got %d", ident, len(def.Params), len(args))
 			}
+			// Bind each argument to its evaluated numeric value so recursive calls
+			// (e.g. f(n-1)) substitute a number, not a raw expression string. This
+			// keeps bodies like if(n <= 1, ...) well-formed at every recursion.
 			vals := make([]string, len(args))
 			for ai, a := range args {
-				ea, err := c.expand(strings.TrimSpace(a))
+				av, err := c.eval(strings.TrimSpace(a))
 				if err != nil {
 					return "", err
 				}
-				vals[ai] = ea
+				vals[ai] = fmt.Sprintf("%g", av)
 			}
 			body := def.Body
 			for pi, p := range def.Params {
