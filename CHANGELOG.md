@@ -36,6 +36,14 @@
 - Unit tests (calc/for_test.go) and whole-program integration tests cover
   even and odd stepping.
 
+## [171] comprehensive program-composition integration tests
+
+- New whole-program tests combine for-step, break-value, if-branch loop
+  control, and nested loops in one program:
+  - odd squares via step with break-value -> 165
+  - nested for loops with inner break -> 18
+  - min/max/count range functions verified with explicit step.
+
 ## [165] break / continue propagate through for and repeat loops (math programming language)
 
 - `for` and `repeat` loop bodies now split statements (paren-aware) and honor

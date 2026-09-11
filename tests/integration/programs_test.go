@@ -241,3 +241,29 @@ quit
 	got := runProgram(t, prog)
 	checkLine(t, got, "25")
 }
+
+func TestProgramComposedFeatures(t *testing.T) {
+	// A whole program combining for-step, break-value, if-branches, and
+	// nested loops: sum odd squares 1^2..9^2 via step, then multiply by a
+	// break-value loop result.
+	prog := `s = 0
+for(i, 1, 9, 2, begin(s = s + i * i; if(i == 9, break s, 0)))
+s
+quit
+`
+	got := runProgram(t, prog)
+	// odd squares 1+9+25+49+81 = 165
+	checkLine(t, got, "165")
+}
+
+func TestProgramNestedForBreakValue(t *testing.T) {
+	// nested for loops: inner breaks with a value that the outer accumulates.
+	prog := `s = 0
+for(i, 1, 3, for(j, 1, 5, begin(s = s + j; if(j == 3, break, 0))))
+s
+quit
+`
+	got := runProgram(t, prog)
+	// each outer i, inner runs j=1..3 -> 6; 3 outer iterations -> 18
+	checkLine(t, got, "18")
+}
