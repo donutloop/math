@@ -91,7 +91,15 @@ func (c *Calculator) Run() {
 			quit, err := c.handle(line)
 			if err != nil {
 				c.errCount++
-				fmt.Fprintf(c.out, "error: %v\n", err)
+				if c.jsonlMode {
+					fmt.Fprintf(c.out, "{\"expr\": %q, \"kind\": \"error\", \"error\": %q}\n", line, err.Error())
+				} else if c.jsonMode {
+					fmt.Fprintf(c.out, "{\"error\": %q}\n", err.Error())
+				} else if c.csvMode {
+					fmt.Fprintf(c.out, "%s,error,%s\n", line, err.Error())
+				} else {
+					fmt.Fprintf(c.out, "error: %v\n", err)
+				}
 			}
 			if quit {
 				break

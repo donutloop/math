@@ -1127,3 +1127,31 @@ func TestREPLJSONL(t *testing.T) {
 		t.Errorf("expected jsonl results, got %d", jsonl)
 	}
 }
+
+func TestREPLJSONLError(t *testing.T) {
+	// In jsonl mode, eval errors must be structured {expr,kind:"error",error}
+	// objects so driving agents can parse failures, not scrape prose.
+	got := run(t, "jsonl\n1/0\n")
+	lines := strings.Split(strings.TrimSpace(got), "\n")
+	foundErr := false
+	for _, ln := range lines {
+		body := strings.TrimPrefix(strings.TrimSpace(ln), "> ")
+		if !strings.HasPrefix(body, "{") {
+			continue
+		}
+		var m map[string]any
+		if err := json.Unmarshal([]byte(body), &m); err != nil {
+			t.Errorf("REPL jsonl error line not parseable JSON: %q (%v)", ln, err)
+			continue
+		}
+		if m["kind"] == "error" {
+			if m["expr"] == nil || m["error"] == nil {
+				t.Errorf("REPL jsonl error missing {expr,error}: %q", ln)
+			}
+			foundErr = true
+		}
+	}
+	if !foundErr {
+		t.Errorf("expected a structured error object in jsonl REPL output")
+	}
+}

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [146] Structured errors in REPL machine modes (agentic)
+
+- REPL jsonl/json/csv modes emit parseable error objects on eval failure
+  (jsonl {expr,kind:"error",error}, json {error}, csv expr,error,msg).
+- Driving agents parse failures instead of scraping prose.
+- TestREPLJSONLError asserts a structured error object.
+- ADR-0063 records the decision.
 ## [145] REPL jsonl (NDJSON) mode (agentic)
 
 - Add 'jsonl' REPL command + jsonlMode: every result is one {expr,kind,value}
