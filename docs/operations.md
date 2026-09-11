@@ -75,6 +75,21 @@ operators, display/angle modes, and the stable CLI flag surface.
 }
 ```
 
+## NDJSON output (`--jsonl`)
+
+For streaming agents that ingest one line at a time (log-style consumers,
+line-oriented pipelines), `--jsonl` emits **one JSON object per result line**
+instead of a single document. Each line has the stable shape
+`{expr, kind, value}` where `kind` is `value`, `assign`, `var`, or `error`:
+
+    calculator --eval 1+1 --eval 2+3 --jsonl
+    {"expr":"1+1","kind":"value","value":2}
+    {"expr":"2+3","kind":"value","value":5}
+
+`--vars` appends one `var` line per defined variable. Every line is valid JSON,
+so `json.loads(line)` works per line; the format is self-checked by `--verify`.
+```
+
 ## Units & conversion
 ## Range loops
 ## Conditionals

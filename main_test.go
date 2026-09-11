@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"io"
 	"os"
@@ -110,5 +111,26 @@ func TestCSVEvalOutput(t *testing.T) {
 	got := runMain(t.TempDir()+"/c.json", "-eval", "x=5", "-eval", "x*2", "--csv", "--no-state")
 	if !strings.Contains(got, "assign,x,5") || !strings.Contains(got, "expr,x*2,10") {
 		t.Errorf("CSV eval output missing:\n%s", got)
+	}
+}
+
+func TestJSONLEvalOutput(t *testing.T) {
+	got := runMain(t.TempDir()+"/jl.json", "-eval", "1+1", "-eval", "x=5", "--jsonl", "--no-state")
+	lines := strings.Split(strings.TrimSpace(got), "\n")
+	if len(lines) != 2 {
+		t.Fatalf("JSONL should emit one object per line, got %d lines:\n%s", len(lines), got)
+	}
+	// every line must be a single parseable JSON object with the stable shape.
+	for i, ln := range lines {
+		var m map[string]any
+		if err := json.Unmarshal([]byte(ln), &m); err != nil {
+			t.Errorf("line %d not parseable JSON: %v", i+1, err)
+		}
+		if _, ok := m["kind"]; !ok {
+			t.Errorf("line %d missing kind:\n%s", i+1, ln)
+		}
+	}
+	if !strings.Contains(got, `"kind":"value"`) || !strings.Contains(got, `"kind":"assign"`) {
+		t.Errorf("JSONL kinds missing:\n%s", got)
 	}
 }

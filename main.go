@@ -48,6 +48,7 @@ func main() {
 	csv := flag.Bool("csv", false, "emit CSV results for --eval")
 	quiet := flag.Bool("quiet", false, "suppress assignment echoes")
 	json := flag.Bool("json", false, "emit JSON results for --eval")
+	jsonl := flag.Bool("jsonl", false, "emit NDJSON: one JSON object per result line")
 	calcHelp := flag.Bool("help", false, "print usage and exit 0")
 	vars := flag.Bool("vars", false, "list defined variables after evaluation")
 	base := flag.Int("base", 0, "output radix for integral results (2, 8, 16, or 0=decimal)")
@@ -243,6 +244,34 @@ func main() {
 		return
 	}
 
+	if *jsonl {
+		for _, e := range evals {
+			if strings.Contains(e, "=") {
+				name, v, err := c.AssignExpr(e)
+				if err != nil {
+					printJSONL(e, "error", err.Error())
+					continue
+				}
+				printJSONL(e, "assign", name+"="+c.FormatValue(v))
+				continue
+			}
+			v, err := c.EvalExpr(e)
+			if err != nil {
+				printJSONL(e, "error", err.Error())
+				continue
+			}
+			printJSONL(e, "value", v)
+		}
+		if *vars {
+			for name, v := range c.Vars() {
+				printJSONL("", "var", name+"="+c.FormatValue(v))
+			}
+		}
+		if *state != "" {
+			_ = c.SaveState(*state)
+		}
+		return
+	}
 		if *json {
 	if *json {
 		// Emit a single, parseable JSON document (array) so agents can consume
@@ -327,3 +356,20 @@ func (m multiFlag) Set(v string) error {
 	*m.list = append(*m.list, v)
 	return nil
 }
+
+// printJSONL writes one NDJSON object per line for streaming agents.
+func printJSONL(expr, kind, value any) {
+	b, err := jsonenc.Marshal(map[string]any{
+		"expr":  expr,
+		"kind":  kind,
+		"value": value,
+	})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: jsonl: %v\n", err)
+		os.Exit(ExitIO)
+	}
+	fmt.Println(string(b))
+}
+
+
+// printJSONL writes one NDJSON object per line for streaming agents.

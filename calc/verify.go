@@ -320,5 +320,22 @@ func Verify(w io.Writer) (passed, failed int) {
 		fmt.Fprintf(w, "ok   exit-codes: ok=%d usage=%d io=%d eval=%d\n", s.ExitCodes["ok"], s.ExitCodes["usage"], s.ExitCodes["io"], s.ExitCodes["eval"])
 		passed++
 	}
+	// NDJSON self-check: each --jsonl line must be one parseable JSON object
+	// with the stable {expr,kind,value} shape, so streaming agents can ingest
+	// one line at a time without a document-level parser.
+	b, err := json.Marshal(map[string]any{"expr": "1+1", "kind": "value", "value": 2})
+	if err != nil {
+		fmt.Fprintf(w, "FAIL jsonl marshal: %v\n", err)
+		failed++
+	} else {
+		var m map[string]any
+		if json.Unmarshal(b, &m) != nil || m["kind"] != "value" || m["expr"] != "1+1" {
+			fmt.Fprintf(w, "FAIL jsonl shape\n")
+			failed++
+		} else {
+			fmt.Fprintf(w, "ok   jsonl: single-line JSON object shape\n")
+			passed++
+		}
+	}
 	return
 }

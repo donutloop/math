@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [141] --jsonl NDJSON output (agentic)
+
+- Add --jsonl: one JSON object per line with stable {expr,kind,value} shape
+  (value|assign|var|error). Streaming agents ingest per line, no document
+  parser needed.
+- printJSONL helper marshals each result; --vars emits one var line per var.
+- Schema CLI list advertises --jsonl; --verify adds an NDJSON self-check.
+- main_test.go: TestJSONLEvalOutput parses every line as JSON.
+- ADR-0058 records the decision.
 ## [140] --help flag (agentic)
 
 - Register a real --help flag: prints usage to stdout and exits 0 (was a

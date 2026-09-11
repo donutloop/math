@@ -126,6 +126,8 @@ self-describing access:
   operators, modes, and CLI flags.
 - `--json` emits one valid, parseable JSON document (an array of result objects)
   so agents can `json.load` the whole stdout at once.
+- `--jsonl` emits NDJSON — one JSON object per result line (`{expr,kind,value}`) —
+  for streaming agents that ingest line-by-line without buffering a document.
 - `--csv` emits one valid CSV document with a header row (`kind,key,value`).
 - `--version` emits one parseable JSON document (name, version, schema,
   features, exit_codes) for agent compatibility checks.
