@@ -105,11 +105,9 @@ func main() {
 		// Machine-readable version for agent compatibility checks.
 		b, err := jsonenc.MarshalIndent(map[string]any{
 			"name":    "math-calculator",
-			"version": "1.0.0",
+			"version": calc.SchemaVersion(),
 			"schema":  "1.0.0",
-			"features": []string{
-				"schema", "json", "csv", "file", "verify", "version", "eval",
-			},
+			"features": []string{"schema", "json", "jsonl", "csv", "output", "verify", "verify-json", "eval", "vars", "file", "help"},
 			"exit_codes": map[string]int{
 				"ok": 0, "usage": 1, "io": 2, "eval": 3,
 			},

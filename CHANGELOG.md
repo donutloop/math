@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [144] Schema version pinning (agentic)
+
+- Bump schemaVersion to 1.1.0 reflecting the expanded machine surface
+  (--jsonl, --output, --verify --json). Export calc.SchemaVersion().
+- --version and --schema report the pinned version; --version features list
+  advertises every machine format (json, jsonl, csv, output, verify-json).
+- TestSchemaVersion pins version and checks features.
+- ADR-0061 records the decision.
 ## [143] --output unified format selector (agentic)
 
 - Add --output text|json|jsonl|csv: one flag names the machine format, mapping

@@ -177,3 +177,35 @@ func TestOutputSelector(t *testing.T) {
 		t.Errorf("--output csv != --csv:\n got %q\nwant %q", gotC, wantC)
 	}
 }
+
+func TestSchemaVersion(t *testing.T) {
+	got := runMain(t.TempDir()+"/v.json", "--schema")
+	var d map[string]any
+	if err := json.Unmarshal([]byte(got), &d); err != nil {
+		t.Fatalf("--schema not parseable JSON: %v\n%s", err, got)
+	}
+	if d["version"] != "1.1.0" {
+		t.Errorf("schema version should be 1.1.0, got %v", d["version"])
+	}
+	// --version features must advertise the full machine surface.
+	gotV := runMain(t.TempDir()+"/v2.json", "--version")
+	var d2 map[string]any
+	if err := json.Unmarshal([]byte(gotV), &d2); err != nil {
+		t.Fatalf("--version not parseable JSON: %v\n%s", err, gotV)
+	}
+	feat, ok := d2["features"].([]any)
+	if !ok {
+		t.Fatalf("--version missing features array: %v", gotV)
+	}
+	for _, want := range []string{"jsonl", "output", "verify-json"} {
+		found := false
+		for _, f := range feat {
+			if f == want {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("--version features missing %q", want)
+		}
+	}
+}

@@ -39,7 +39,11 @@ type ConstantSchema struct {
 }
 
 // schemaVersion is the calculator release version exposed to agents.
-const schemaVersion = "1.0.0"
+const schemaVersion = "1.1.0"
+
+// SchemaVersion returns the machine-surface version so agents can pin
+// compatibility and detect breaking changes across releases.
+func SchemaVersion() string { return schemaVersion }
 
 // schemaCommands is the full interactive REPL command surface.
 var schemaCommands = []string{
