@@ -627,6 +627,23 @@ func (c *Calculator) Vars() map[string]float64 {
 	return out
 }
 
+// Snapshot returns the full runtime state for agents: variables, angle mode,
+// precision, and radix, as one machine-readable object.
+func (c *Calculator) Snapshot() map[string]any {
+	mode := "rad"
+	if c.degMode {
+		mode = "deg"
+	} else if c.gradMode {
+		mode = "grad"
+	}
+	return map[string]any{
+		"vars": c.Vars(),
+		"mode": mode,
+		"prec": c.prec,
+		"base": c.base,
+	}
+}
+
 // PrintVars writes each defined variable to the output writer.
 func (c *Calculator) PrintVars() {
 	c.printVars()

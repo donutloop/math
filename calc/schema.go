@@ -77,7 +77,7 @@ var schemaExitCodes = map[string]int{
 // schemaCLI is the stable non-interactive CLI surface for agents and scripts.
 var schemaCLI = []string{
 	"--eval <expr>", "--file <path>", "--verify", "--version", "--help",
-	"--json", "--jsonl", "--csv", "--output <format>", "--vars", "--base <radix>", "--prec <n>", "--sci",
+	"--json", "--jsonl", "--csv", "--output <format>", "--vars", "--snapshot", "--base <radix>", "--prec <n>", "--sci",
 	"--eng", "--deg", "--rad", "--grad", "--demo", "--state <path>",
 	"--no-state", "--quiet", "--schema",
 }

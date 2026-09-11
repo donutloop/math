@@ -52,6 +52,7 @@ func main() {
 	jsonl := flag.Bool("jsonl", false, "emit NDJSON: one JSON object per result line")
 	calcHelp := flag.Bool("help", false, "print usage and exit 0")
 	vars := flag.Bool("vars", false, "list defined variables after evaluation")
+	snapshot := flag.Bool("snapshot", false, "dump REPL runtime state as JSON")
 	base := flag.Int("base", 0, "output radix for integral results (2, 8, 16, or 0=decimal)")
 	flag.Var(&multiFlag{&evals}, "eval", "evaluate an expression and print the result; may be given multiple times")
 	state := flag.String("state", ".calc-state.json", "persist variables/history across sessions")
@@ -349,6 +350,15 @@ func main() {
 		if *vars {
 			c.PrintVars()
 		}
+		if *snapshot {
+			b, err := jsonenc.MarshalIndent(c.Snapshot(), "", "  ")
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "snapshot: json:", err)
+				os.Exit(ExitIO)
+			}
+			fmt.Println(string(b))
+			return
+		}
 		if *state != "" {
 			_ = c.SaveState(*state)
 		}
@@ -370,6 +380,15 @@ func main() {
 		}
 	}
 	c.SetQuietAssign(*quiet)
+	if *snapshot {
+		b, err := jsonenc.MarshalIndent(c.Snapshot(), "", "  ")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "snapshot: json:", err)
+			os.Exit(ExitIO)
+		}
+		fmt.Println(string(b))
+		return
+	}
 	// Spawn a machine REPL session directly when a format flag is given
 	// without --eval: presets the mode and suppresses the prose banner so a
 	// driving agent gets clean parseable output from the first line.

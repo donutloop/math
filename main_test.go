@@ -210,3 +210,16 @@ func TestSchemaVersion(t *testing.T) {
 	}
 }
 
+
+func TestSnapshot(t *testing.T) {
+	got := runMain(t.TempDir()+"/s.json", "--snapshot")
+	var d map[string]any
+	if err := json.Unmarshal([]byte(got), &d); err != nil {
+		t.Fatalf("--snapshot not parseable JSON: %v\n%s", err, got)
+	}
+	for _, k := range []string{"vars", "mode", "prec", "base"} {
+		if d[k] == nil {
+			t.Errorf("--snapshot missing %q: %v", k, got)
+		}
+	}
+}

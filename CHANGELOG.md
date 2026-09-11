@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [148] --snapshot runtime state dump (agentic)
+
+- --snapshot emits calc.Snapshot() as JSON: {vars, mode, prec, base}.
+- Valid in the shared construction path (with or without --eval).
+- Schema CLI list advertises it; TestSnapshot parses the keys.
+- ADR-0065 records the decision.
 ## [147] Spawn a machine REPL from the CLI (agentic)
 
 - A format flag (--jsonl/--json/--csv/--output) without --eval starts the
