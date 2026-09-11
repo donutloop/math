@@ -1,9 +1,11 @@
-package calc
+package verify
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"prototype_kl/calc/format"
+	"prototype_kl/calc/schema"
 	"prototype_kl/eval"
 )
 
@@ -288,7 +290,7 @@ func runChecks() []CheckResult {
 			res = append(res, CheckResult{Check: c.expr, Pass: false, Detail: err.Error()})
 			continue
 		}
-		got := Format(v)
+		got := format.Format(v)
 		detail := fmt.Sprintf("= %s", got)
 		if got != c.want {
 			detail = fmt.Sprintf("= %s (want %s)", got, c.want)
@@ -297,11 +299,11 @@ func runChecks() []CheckResult {
 	}
 	// Schema self-check: the machine-readable language surface must expose the
 	// stable feature lists agents depend on.
-	schemaBytes, err := SchemaJSON()
+	schemaBytes, err := schema.SchemaJSON()
 	if err != nil {
 		res = append(res, CheckResult{Check: "schema", Pass: false, Detail: err.Error()})
 	} else {
-		var s Schema
+		var s schema.Schema
 		schemaPass := json.Unmarshal(schemaBytes, &s) == nil && s.Name == "math-calculator" &&
 			len(s.Functions) > 0 && len(s.Constants) > 0 && len(s.Commands) > 0 &&
 			len(s.Operators) > 0 && len(s.Modes) > 0 && len(s.CLI) > 0
@@ -313,11 +315,11 @@ func runChecks() []CheckResult {
 	}
 	// Exit-code contract self-check: 0=ok, 1=usage, 2=io, 3=eval.
 	// main.go enforces these; here we confirm the schema's contract is intact.
-	schemaBytes2, err2 := SchemaJSON()
+	schemaBytes2, err2 := schema.SchemaJSON()
 	if err2 != nil {
 		res = append(res, CheckResult{Check: "exit-codes", Pass: false, Detail: err2.Error()})
 	} else {
-		var s2 Schema
+		var s2 schema.Schema
 		_ = json.Unmarshal(schemaBytes2, &s2)
 		exitPass := s2.ExitCodes["ok"] == 0 && s2.ExitCodes["usage"] == 1 && s2.ExitCodes["io"] == 2 && s2.ExitCodes["eval"] == 3
 		res = append(res, CheckResult{Check: "exit-codes", Pass: exitPass, Detail: "ok=0 usage=1 io=2 eval=3"})
@@ -364,7 +366,7 @@ func VerifyJSON() map[string]any {
 		}
 	}
 	return map[string]any{
-		"version": schemaVersion,
+		"version": schema.SchemaVersion(),
 		"passed":  passed,
 		"failed":  failed,
 		"checks":  checks,

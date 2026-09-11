@@ -1,4 +1,4 @@
-package calc
+package schema
 
 import (
 	"encoding/json"
@@ -15,16 +15,16 @@ import (
 // discover every function, constant, command, operator, display mode, and CLI
 // flag — without scraping prose help.
 type Schema struct {
-	Version   string                     `json:"version"`
-	Name      string                     `json:"name"`
-	Functions map[string]FuncSchema      `json:"functions"`
-	Constants map[string]ConstantSchema  `json:"constants"`
-	Commands  []string                   `json:"commands"`
-	Operators []string                   `json:"operators"`
-	Modes     []string                   `json:"modes"`
-	CLI       []string                   `json:"cli_flags"`
-	Formats   []string                 `json:"formats"`
-	ExitCodes map[string]int              `json:"exit_codes"`
+	Version   string                    `json:"version"`
+	Name      string                    `json:"name"`
+	Functions map[string]FuncSchema     `json:"functions"`
+	Constants map[string]ConstantSchema `json:"constants"`
+	Commands  []string                  `json:"commands"`
+	Operators []string                  `json:"operators"`
+	Modes     []string                  `json:"modes"`
+	CLI       []string                  `json:"cli_flags"`
+	Formats   []string                  `json:"formats"`
+	ExitCodes map[string]int            `json:"exit_codes"`
 }
 
 // FuncSchema describes a built-in function: its arity and one-line help.
@@ -87,7 +87,7 @@ var schemaCLI = []string{
 func BuildSchema() Schema {
 	fns := make(map[string]FuncSchema, len(parser.SupportedFunctions))
 	for name, arity := range parser.SupportedFunctions {
-		help := helpTopics[strings.ToLower(name)]
+		help := Topics[strings.ToLower(name)]
 		if help == "" {
 			help = fmt.Sprintf("%s(...): built-in function", name)
 		}
@@ -95,7 +95,7 @@ func BuildSchema() Schema {
 	}
 	consts := make(map[string]ConstantSchema, len(parser.SupportedConstants))
 	for name, v := range parser.SupportedConstants {
-		help := helpTopics[strings.ToLower(name)]
+		help := Topics[strings.ToLower(name)]
 		if help == "" {
 			help = fmt.Sprintf("%s: constant", name)
 		}
@@ -122,12 +122,12 @@ func SchemaJSON() ([]byte, error) {
 }
 
 // PrintSchema writes the schema JSON to w.
-func (c *Calculator) PrintSchema() error {
+func PrintSchema(w io.Writer) error {
 	out, err := SchemaJSON()
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(c.out, string(out))
+	fmt.Fprintln(w, string(out))
 	return nil
 }
 

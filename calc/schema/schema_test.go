@@ -1,4 +1,4 @@
-package calc
+package schema
 
 import (
 	"encoding/json"
@@ -66,8 +66,7 @@ func TestSchemaJSON(t *testing.T) {
 // TestPrintSchema exercises the REPL printer.
 func TestPrintSchema(t *testing.T) {
 	var out strings.Builder
-	c := New(strings.NewReader(""), &out)
-	if err := c.PrintSchema(); err != nil {
+	if err := PrintSchema(&out); err != nil {
 		t.Fatalf("PrintSchema: %v", err)
 	}
 	if !strings.Contains(out.String(), "\"name\": \"math-calculator\"") {

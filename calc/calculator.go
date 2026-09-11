@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"prototype_kl/calc/schema"
 	"strings"
 
 	"prototype_kl/parser"
@@ -292,7 +293,7 @@ func (c *Calculator) handle(line string) (bool, error) {
 		fmt.Fprintf(c.out, "csv = %v\n", c.csvMode)
 		return false, nil
 	case "schema":
-		return false, c.PrintSchema()
+		return false, schema.PrintSchema(c.out)
 	case "json":
 		c.jsonMode = !c.jsonMode
 		fmt.Fprintf(c.out, "json = %v\n", c.jsonMode)

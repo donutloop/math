@@ -13,12 +13,14 @@
 package main
 
 import (
-	"errors"
 	"bytes"
-	"flag"
 	jsonenc "encoding/json"
+	"errors"
+	"flag"
 	"fmt"
 	"os"
+	"prototype_kl/calc/schema"
+	verifypkg "prototype_kl/calc/verify"
 	"strings"
 
 	"prototype_kl/calc"
@@ -28,7 +30,6 @@ import (
 // Version is the calculator release version.
 const Version = "1.0.0"
 
-
 // Exit-code contract for scripting agents and CI. Deterministic and documented
 // in README/docs: 0=success, 1=usage/flag error, 2=IO error, 3=eval error.
 const (
@@ -37,6 +38,7 @@ const (
 	ExitIO    = 2
 	ExitEval  = 3
 )
+
 func main() {
 
 	// Custom FlagSet with ContinueOnError so usage errors exit with the
@@ -70,7 +72,9 @@ func main() {
 	rad := flag.Bool("rad", false, "trig in radians (default)")
 	grad := flag.Bool("grad", false, "trig in gradians")
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
-		if errors.Is(err, flag.ErrHelp) { os.Exit(ExitOK) }
+		if errors.Is(err, flag.ErrHelp) {
+			os.Exit(ExitOK)
+		}
 		os.Exit(ExitUsage)
 	}
 	// --output is a unified format selector for agents: map it to the
@@ -103,8 +107,8 @@ func main() {
 				flags = append(flags, map[string]any{"name": f.Name, "type": reflect.TypeOf(f.Value).String(), "help": f.Usage})
 			})
 			b, err := jsonenc.MarshalIndent(map[string]any{
-				"version":   calc.SchemaVersion(),
-				"flags":     flags,
+				"version":    schema.SchemaVersion(),
+				"flags":      flags,
 				"exit_codes": map[string]int{"ok": ExitOK, "usage": ExitUsage, "io": ExitIO, "eval": ExitEval},
 			}, "", "  ")
 			if err != nil {
@@ -123,9 +127,9 @@ func main() {
 	if *version {
 		// Machine-readable version for agent compatibility checks.
 		b, err := jsonenc.MarshalIndent(map[string]any{
-			"name":    "math-calculator",
-			"version": calc.SchemaVersion(),
-			"schema":  "1.0.0",
+			"name":     "math-calculator",
+			"version":  schema.SchemaVersion(),
+			"schema":   "1.0.0",
 			"features": []string{"schema", "json", "jsonl", "csv", "output", "verify", "verify-json", "eval", "vars", "file", "help"},
 			"exit_codes": map[string]int{
 				"ok": 0, "usage": 1, "io": 2, "eval": 3,
@@ -138,9 +142,8 @@ func main() {
 		return
 	}
 
-
 	if *schemaFlag {
-		if err := calc.SchemaToWriter(os.Stdout); err != nil {
+		if err := schema.SchemaToWriter(os.Stdout); err != nil {
 			fmt.Fprintln(os.Stderr, "error: schema:", err)
 			os.Exit(ExitIO)
 		}
@@ -152,18 +155,18 @@ func main() {
 		// --verify --json emits a machine-readable health report so agents can
 		// parse passed/failed counts and each check without scraping prose.
 		if *json {
-			b, err := jsonenc.MarshalIndent(calc.VerifyJSON(), "", "  ")
+			b, err := jsonenc.MarshalIndent(verifypkg.VerifyJSON(), "", "  ")
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "verify: json:", err)
 				os.Exit(ExitIO)
 			}
 			fmt.Println(string(b))
-			if calc.VerifyJSON()["failed"].(int) > 0 {
+			if verifypkg.VerifyJSON()["failed"].(int) > 0 {
 				os.Exit(ExitEval)
 			}
 			return
 		}
-		passed, failed := calc.Verify(os.Stdout)
+		passed, failed := verifypkg.Verify(os.Stdout)
 		if failed > 0 {
 			os.Exit(ExitEval)
 		}
@@ -256,113 +259,113 @@ func main() {
 			}
 		}
 		c.SetQuietAssign(*quiet)
-	if *csv {
-		// Emit a single, valid CSV document with a header row so agents can parse
-		// the whole stdout at once (csv.reader / pandas.read_csv).
-		rows := []string{"kind,key,value"} // header row
-		for _, e := range evals {
-			if strings.Contains(e, "=") {
-				name, v, err := c.AssignExpr(e)
+		if *csv {
+			// Emit a single, valid CSV document with a header row so agents can parse
+			// the whole stdout at once (csv.reader / pandas.read_csv).
+			rows := []string{"kind,key,value"} // header row
+			for _, e := range evals {
+				if strings.Contains(e, "=") {
+					name, v, err := c.AssignExpr(e)
+					if err != nil {
+						rows = append(rows, fmt.Sprintf("error,%s,%s", e, err.Error()))
+						continue
+					}
+					rows = append(rows, fmt.Sprintf("assign,%s,%s", name, c.FormatValue(v)))
+					continue
+				}
+				v, err := c.EvalExpr(e)
 				if err != nil {
 					rows = append(rows, fmt.Sprintf("error,%s,%s", e, err.Error()))
 					continue
 				}
-				rows = append(rows, fmt.Sprintf("assign,%s,%s", name, c.FormatValue(v)))
-				continue
+				rows = append(rows, fmt.Sprintf("expr,%s,%s", e, c.FormatValue(v)))
 			}
-			v, err := c.EvalExpr(e)
-			if err != nil {
-				rows = append(rows, fmt.Sprintf("error,%s,%s", e, err.Error()))
-				continue
+			if *vars {
+				for name, v := range c.Vars() {
+					rows = append(rows, fmt.Sprintf("var,%s,%s", name, c.FormatValue(v)))
+				}
 			}
-			rows = append(rows, fmt.Sprintf("expr,%s,%s", e, c.FormatValue(v)))
-		}
-		if *vars {
-			for name, v := range c.Vars() {
-				rows = append(rows, fmt.Sprintf("var,%s,%s", name, c.FormatValue(v)))
+			if *state != "" {
+				_ = c.SaveState(*state)
 			}
+			for _, r := range rows {
+				fmt.Println(r)
+			}
+			return
 		}
-		if *state != "" {
-			_ = c.SaveState(*state)
-		}
-		for _, r := range rows {
-			fmt.Println(r)
-		}
-		return
-	}
 
-	if *jsonl {
-		evalFailed := false
-		for _, e := range evals {
-			if strings.Contains(e, "=") {
-				name, v, err := c.AssignExpr(e)
+		if *jsonl {
+			evalFailed := false
+			for _, e := range evals {
+				if strings.Contains(e, "=") {
+					name, v, err := c.AssignExpr(e)
+					if err != nil {
+						printJSONL(e, "error", err.Error())
+						evalFailed = true
+						continue
+					}
+					printJSONL(e, "assign", name+"="+c.FormatValue(v))
+					continue
+				}
+				v, err := c.EvalExpr(e)
 				if err != nil {
 					printJSONL(e, "error", err.Error())
 					evalFailed = true
 					continue
 				}
-				printJSONL(e, "assign", name+"="+c.FormatValue(v))
-				continue
+				printJSONL(e, "value", v)
 			}
-			v, err := c.EvalExpr(e)
-			if err != nil {
-				printJSONL(e, "error", err.Error())
-				evalFailed = true
-				continue
-			}
-			printJSONL(e, "value", v)
-		}
-		if *vars {
-			for name, v := range c.Vars() {
-				printJSONL("", "var", name+"="+c.FormatValue(v))
-			}
-		}
-		if *state != "" {
-			_ = c.SaveState(*state)
-		}
-		if evalFailed {
-			os.Exit(ExitEval)
-		}
-		return
-	}
-		if *json {
-	if *json {
-		// Emit a single, parseable JSON document (array) so agents can consume
-		// it without scraping line-delimited fragments.
-		results := make([]map[string]any, 0, len(evals)+4)
-		for _, e := range evals {
-			if strings.Contains(e, "=") {
-				name, v, err := c.AssignExpr(e)
-				if err != nil {
-					results = append(results, map[string]any{"expr": e, "error": err.Error()})
-					continue
+			if *vars {
+				for name, v := range c.Vars() {
+					printJSONL("", "var", name+"="+c.FormatValue(v))
 				}
-				results = append(results, map[string]any{"expr": e, "assign": name, "value": v})
-				continue
 			}
-			v, err := c.EvalExpr(e)
-			if err != nil {
-				results = append(results, map[string]any{"expr": e, "error": err.Error()})
-				continue
+			if *state != "" {
+				_ = c.SaveState(*state)
 			}
-			results = append(results, map[string]any{"expr": e, "value": v})
-		}
-		if *vars {
-			for name, v := range c.Vars() {
-				results = append(results, map[string]any{"var": name, "value": v})
+			if evalFailed {
+				os.Exit(ExitEval)
 			}
+			return
 		}
-		if *state != "" {
-			_ = c.SaveState(*state)
-		}
-		b, err := jsonenc.MarshalIndent(results, "", "  ")
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "error: json:", err)
-			os.Exit(ExitIO)
-		}
-		fmt.Println(string(b))
-		return
-	}
+		if *json {
+			if *json {
+				// Emit a single, parseable JSON document (array) so agents can consume
+				// it without scraping line-delimited fragments.
+				results := make([]map[string]any, 0, len(evals)+4)
+				for _, e := range evals {
+					if strings.Contains(e, "=") {
+						name, v, err := c.AssignExpr(e)
+						if err != nil {
+							results = append(results, map[string]any{"expr": e, "error": err.Error()})
+							continue
+						}
+						results = append(results, map[string]any{"expr": e, "assign": name, "value": v})
+						continue
+					}
+					v, err := c.EvalExpr(e)
+					if err != nil {
+						results = append(results, map[string]any{"expr": e, "error": err.Error()})
+						continue
+					}
+					results = append(results, map[string]any{"expr": e, "value": v})
+				}
+				if *vars {
+					for name, v := range c.Vars() {
+						results = append(results, map[string]any{"var": name, "value": v})
+					}
+				}
+				if *state != "" {
+					_ = c.SaveState(*state)
+				}
+				b, err := jsonenc.MarshalIndent(results, "", "  ")
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "error: json:", err)
+					os.Exit(ExitIO)
+				}
+				fmt.Println(string(b))
+				return
+			}
 
 		}
 		c.Run()
@@ -466,9 +469,9 @@ func printJSONL(expr, kind, value any) {
 		key = "error"
 	}
 	b, err := jsonenc.Marshal(map[string]any{
-		"expr":  expr,
-		"kind":  kind,
-		key:     value,
+		"expr": expr,
+		"kind": kind,
+		key:    value,
 	})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: jsonl: %v\n", err)
@@ -476,6 +479,5 @@ func printJSONL(expr, kind, value any) {
 	}
 	fmt.Println(string(b))
 }
-
 
 // printJSONL writes one NDJSON object per line for streaming agents.

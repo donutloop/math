@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"prototype_kl/calc/format"
 	"strings"
 	"testing"
 )
@@ -29,7 +30,7 @@ func TestFormat(t *testing.T) {
 		{-2.5, "-2.5"},
 	}
 	for _, tc := range cases {
-		if got := Format(tc.in); got != tc.want {
+		if got := format.Format(tc.in); got != tc.want {
 			t.Errorf("Format(%v) = %q, want %q", tc.in, got, tc.want)
 		}
 	}
