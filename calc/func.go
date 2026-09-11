@@ -504,6 +504,23 @@ func (c *Calculator) expand(s string) (string, error) {
 			i = end + 1
 			continue
 		}
+		if k < n && s[k] == '(' && ident == "for" {
+			end := findMatchingParen(s, k)
+			if end < 0 {
+				return "", fmt.Errorf("unmatched '(' in call to for")
+			}
+			args := splitArgs(s[k+1 : end])
+			if len(args) != 4 {
+				return "", fmt.Errorf("for expects 4 arguments (var, lo, hi, body), got %d", len(args))
+			}
+			r, err := c.expandFor(strings.TrimSpace(args[0]), strings.TrimSpace(args[1]), strings.TrimSpace(args[2]), strings.TrimSpace(args[3]))
+			if err != nil {
+				return "", err
+			}
+			b.WriteString(r)
+			i = end + 1
+			continue
+		}
 		if k < n && s[k] == '(' && ident == "while" {
 			end := findMatchingParen(s, k)
 			if end < 0 {

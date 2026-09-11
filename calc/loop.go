@@ -215,3 +215,41 @@ func (c *Calculator) expandBegin(body string) (string, error) {
 	}
 	return last, nil
 }
+
+// expandFor implements for(var, lo, hi, body): bind var to each integer in
+// [lo, hi] inclusive and evaluate body (substituting var), returning the last
+// body value. lo/hi are evaluated first so the range is fixed up front.
+func (c *Calculator) expandFor(vname, loS, hiS, body string) (string, error) {
+	lo, err := c.eval(loS)
+	if err != nil {
+		return "", err
+	}
+	hi, err := c.eval(hiS)
+	if err != nil {
+		return "", err
+	}
+	last := "0"
+	start := int(lo)
+	end := int(hi)
+	if hi < lo {
+		return "0", nil
+	}
+	for i := start; i <= end; i++ {
+		// substitute the loop var with the current integer, then evaluate body
+		// as a statement so assignments (s = s + i) mutate variables.
+		b := replaceIdent(body, vname, fmt.Sprintf("%d", i))
+		if name, expr, ok := parseAssignment(b); ok {
+			if err := c.assign(name, expr); err != nil {
+				return "", err
+			}
+			last = fmt.Sprintf("%g", c.vars[name])
+		} else {
+			v, err := c.eval(b)
+			if err != nil {
+				return "", err
+			}
+			last = fmt.Sprintf("%g", v)
+		}
+	}
+	return last, nil
+}

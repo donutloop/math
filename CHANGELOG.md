@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [160] for(var, lo, hi, body) range loop (math programming language)
+
+- New construct: binds var to each integer in [lo, hi] inclusive, evaluates
+  body (as a statement, so assignments mutate variables), returns last value.
+- lo/hi evaluated up front; empty range returns 0.
+- s = 0; for(i, 1, 5, s = s + i) -> s=15; for(i, 2, 4, i * i) -> 16.
+- Tests: for-loop sum + value.
+- Steer: toward a math programming language.
 ## [159] begin(...) statement blocks (math programming language)
 
 - New construct: begin(...) sequences statements (paren-aware split on ';')
