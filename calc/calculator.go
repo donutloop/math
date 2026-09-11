@@ -190,7 +190,7 @@ func (c *Calculator) handle(line string) (bool, error) {
 			return false, fmt.Errorf("prec must be 1..17")
 		}
 		c.prec = n
-		fmt.Fprintf(c.out, "precision = %d\n", n)
+		c.emitState("prec", n)
 		return false, nil
 	}
 	if b, ok, err := parseBase(line); ok {
@@ -203,7 +203,7 @@ func (c *Calculator) handle(line string) (bool, error) {
 			return false, nil
 		}
 		c.base = b
-		fmt.Fprintf(c.out, "base = %d\n", b)
+		c.emitState("base", b)
 		return false, nil
 	}
 	
@@ -260,17 +260,17 @@ switch strings.ToLower(line) {
 	case "deg":
 		c.degMode = true
 		c.gradMode = false
-		fmt.Fprintln(c.out, "trig in degrees")
+		c.emitState("mode", "deg")
 		return false, nil
 	case "rad":
 		c.degMode = false
 		c.gradMode = false
-		fmt.Fprintln(c.out, "trig in radians")
+		c.emitState("mode", "rad")
 		return false, nil
 	case "grad":
 		c.degMode = false
 		c.gradMode = true
-		fmt.Fprintln(c.out, "trig in gradians")
+		c.emitState("mode", "grad")
 		return false, nil
 	case "last":
 		if c.lastExpr == "" {
@@ -640,6 +640,29 @@ func (c *Calculator) Vars() map[string]float64 {
 
 // Snapshot returns the full runtime state for agents: variables, angle mode,
 // precision, and radix, as one machine-readable object.
+// emitState prints a state value (prec, base, mode) as structured JSON in
+// machine modes (jsonl/json/csv) so driving agents parse REPL state changes,
+// or prose in text mode.
+func (c *Calculator) emitState(name string, value any) {
+	if c.jsonlMode {
+		if s, ok := value.(string); ok {
+			fmt.Fprintf(c.out, "{\"state\": %q, \"value\": %q}\n", name, s)
+		} else {
+			fmt.Fprintf(c.out, "{\"state\": %q, \"value\": %v}\n", name, value)
+		}
+	} else if c.jsonMode {
+		if s, ok := value.(string); ok {
+			fmt.Fprintf(c.out, "{\"state\": %q, \"value\": %q}\n", name, s)
+		} else {
+			fmt.Fprintf(c.out, "{\"state\": %q, \"value\": %v}\n", name, value)
+		}
+	} else if c.csvMode {
+		fmt.Fprintf(c.out, "state,%s,%v\n", name, value)
+	} else {
+		fmt.Fprintf(c.out, "%s = %v\n", name, value)
+	}
+}
+
 func (c *Calculator) Snapshot() map[string]any {
 	mode := "rad"
 	if c.degMode {

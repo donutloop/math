@@ -1216,3 +1216,28 @@ func TestREPLSnapshot(t *testing.T) {
 		t.Errorf("snapshot vars should include x=5: %v", d["vars"])
 	}
 }
+
+func TestREPLStateEchoes(t *testing.T) {
+	// In machine modes, prec/base/mode echoes must be structured JSON so
+	// driving agents parse REPL state changes, not prose.
+	got := run(t, "prec 3\njsonl\nprec 5\nbase 2\ndeg\n")
+	found := 0
+	for _, ln := range strings.Split(strings.TrimSpace(got), "\n") {
+		body := strings.TrimPrefix(strings.TrimSpace(ln), "> ")
+		if !strings.HasPrefix(body, "{") {
+			continue
+		}
+		var m map[string]any
+		if err := json.Unmarshal([]byte(body), &m); err != nil {
+			t.Errorf("state echo not parseable JSON: %q (%v)", ln, err)
+			continue
+		}
+		if m["state"] == nil || m["value"] == nil {
+			t.Errorf("state echo missing {state,value}: %q", ln)
+		}
+		found++
+	}
+	if found < 3 {
+		t.Errorf("expected >=3 structured state echoes, got %d", found)
+	}
+}

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [153] Structured REPL state echoes (agentic)
+
+- emitState(name,value): prec/base/mode commands emit {state,value} in
+  json/jsonl, state,<name>,<v> in csv; prose stays for text mode.
+- Driving agents parse REPL state changes, not prose.
+- TestREPLStateEchoes drives prec/base/deg in jsonl and parses the objects.
+- ADR-0070 records the decision.
 ## [152] schema formats field (agentic)
 
 - Schema JSON adds "formats": ["text", "json", "jsonl", "csv"] so agents
