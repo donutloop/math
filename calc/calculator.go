@@ -447,7 +447,7 @@ func (c *Calculator) assign(name, expr string) error {
 		return err
 	}
 	expr = expanded
-	v, err := c.eval(expr)
+	v, err := c.evalExpanded(expr)
 	if err != nil {
 		return err
 	}

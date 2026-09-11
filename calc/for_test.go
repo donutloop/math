@@ -67,3 +67,10 @@ func TestContinueOutsideLoopClearError(t *testing.T) {
 		t.Fatalf("expected clear continue-outside-loop error, got:\n%s", got)
 	}
 }
+
+func TestBreakBlockAsAssignmentValue(t *testing.T) {
+	got := runBatch(t, "x = begin(1; break)\nquit\n")
+	if !strings.Contains(got, "break outside a loop") {
+		t.Fatalf("expected clear error when a break block is an assignment value, got:\n%s", got)
+	}
+}
