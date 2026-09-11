@@ -504,6 +504,23 @@ func (c *Calculator) expand(s string) (string, error) {
 			i = end + 1
 			continue
 		}
+		if k < n && s[k] == '(' && ident == "while" {
+			end := findMatchingParen(s, k)
+			if end < 0 {
+				return "", fmt.Errorf("unmatched '(' in call to while")
+			}
+			args := splitArgs(s[k+1 : end])
+			if len(args) != 2 {
+				return "", fmt.Errorf("while expects 2 arguments (cond, body), got %d", len(args))
+			}
+			r, err := c.expandWhile(strings.TrimSpace(args[0]), strings.TrimSpace(args[1]))
+			if err != nil {
+				return "", err
+			}
+			b.WriteString(r)
+			i = end + 1
+			continue
+		}
 		if k < n && s[k] == '(' && (ident == "countif" || ident == "sumif") {
 			end := findMatchingParen(s, k)
 			if end < 0 {

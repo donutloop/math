@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [156] while loop — general control flow (math programming language)
+
+- New language construct: while(cond, body). cond is evaluated with the
+  current variable bindings; while nonzero, body is evaluated as a statement
+  so assignments (x = x + 1) mutate variables between iterations. Returns the
+  last body value.
+- Hard 10000-iteration bound returns an error instead of hanging on
+  non-progressing bodies.
+- Dispatched alongside repeat/range loops in expression expansion; cond may
+  use comparison operators (<, >, <=, >=, ==, !=).
+- Tests: count, accumulate, immediate-false, infinite-guard.
+- Steer: toward a math programming language.
 ## [155] CLI --eval --jsonl structured error contract (agentic)
 
 - printJSONL emits the error key (not value) for kind:"error", matching the

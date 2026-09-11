@@ -105,6 +105,7 @@ var helpTopics = map[string]string{
 	"digamma":    "digamma(x): psi digamma function (digamma(1)=-gamma 0.5772)",
 	"trigamma":  "trigamma(x): psi prime (trigamma(1)=1.6449)",
 	"repeat":     "repeat(n, var, body): evaluate body with var=1..n, return last value (repeat(5, i, i*i)=25)",
+	"while":      "while(cond, body): general loop — while cond is nonzero, evaluate body as a statement so assignments (e.g. x = x + 1) mutate variables; return the last body value (hard 10000-iteration bound)",
 	"let":       "let(x = e1, y = e2, body): local bindings — the last argument is the body; earlier args bind names that stay local (let(x = 2, x^2 + x) = 6)",
 	"asinh":     "asinh(x): inverse hyperbolic sine",
 	"acosh":     "acosh(x): inverse hyperbolic cosine (x >= 1)",

@@ -150,3 +150,41 @@ func (c *Calculator) expandRepeat(nArg, varName, body string) (string, error) {
 	}
 	return last, nil
 }
+
+// expandWhile implements a while(cond, body) loop — a general control-flow
+// construct for the math programming language. cond is evaluated with the
+// current variable bindings; while it is nonzero, body is evaluated as a
+// statement (so an assignment like x = x + 1 mutates variables between
+// iterations). A hard iteration bound prevents runaway/infinite programs.
+// It returns the value of the last body evaluation (or the loop variable's
+// final value when body is an assignment).
+func (c *Calculator) expandWhile(cond, body string) (string, error) {
+	const maxIters = 10000
+	last := "0"
+	iters := 0
+	for {
+		if iters >= maxIters {
+			return "", fmt.Errorf("while loop exceeded %d iterations", maxIters)
+		}
+		iters++
+		cv, err := c.eval(cond)
+		if err != nil {
+			return "", err
+		}
+		if cv == 0 {
+			return last, nil
+		}
+		if name, expr, ok := parseAssignment(body); ok {
+			if err := c.assign(name, expr); err != nil {
+				return "", err
+			}
+			last = fmt.Sprintf("%g", c.vars[name])
+		} else {
+			bv, err := c.eval(body)
+			if err != nil {
+				return "", err
+			}
+			last = fmt.Sprintf("%g", bv)
+		}
+	}
+}
