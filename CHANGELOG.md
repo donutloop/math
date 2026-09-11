@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [137] single-document --json output
+
+- --json now emits one valid, parseable JSON document (an array of result
+  objects) instead of line-delimited fragments, so agents can json.load the
+  whole stdout at once. Errors are captured inline per-expression rather than
+  aborting the run; --vars appends variable entries to the same document.
 ## [136] machine-readable JSON schema
 
 - New `schema` REPL command and `--schema` CLI flag emit a self-describing

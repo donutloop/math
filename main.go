@@ -15,6 +15,7 @@ package main
 import (
 	"bytes"
 	"flag"
+	jsonenc "encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -195,35 +196,44 @@ func main() {
 			return
 		}
 		if *json {
-			for _, e := range evals {
-				if strings.Contains(e, "=") {
-					name, v, err := c.AssignExpr(e)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "{\"expr\": %q, \"error\": %q}\n", e, err.Error())
-						os.Exit(1)
-					}
-					fmt.Printf("{\"expr\": %q, \"assign\": %q, \"value\": %s}\n", e, name, c.FormatValue(v))
+	if *json {
+		// Emit a single, parseable JSON document (array) so agents can consume
+		// it without scraping line-delimited fragments.
+		results := make([]map[string]any, 0, len(evals)+4)
+		for _, e := range evals {
+			if strings.Contains(e, "=") {
+				name, v, err := c.AssignExpr(e)
+				if err != nil {
+					results = append(results, map[string]any{"expr": e, "error": err.Error()})
 					continue
 				}
-				v, err := c.EvalExpr(e)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "{\"expr\": %q, \"error\": %q}\n", e, err.Error())
-					os.Exit(1)
-				}
-				fmt.Printf("{\"expr\": %q, \"value\": %s}\n", e, c.FormatValue(v))
+				results = append(results, map[string]any{"expr": e, "assign": name, "value": v})
+				continue
 			}
-			if *vars {
-				for name, v := range c.Vars() {
-					fmt.Printf("{\"var\": %q, \"value\": %s}\n", name, c.FormatValue(v))
-				}
+			v, err := c.EvalExpr(e)
+			if err != nil {
+				results = append(results, map[string]any{"expr": e, "error": err.Error()})
+				continue
 			}
-			if *state != "" {
-				if err := c.SaveState(*state); err != nil {
-					fmt.Fprintln(os.Stderr, err)
-					os.Exit(1)
-				}
+			results = append(results, map[string]any{"expr": e, "value": v})
+		}
+		if *vars {
+			for name, v := range c.Vars() {
+				results = append(results, map[string]any{"var": name, "value": v})
 			}
-			return
+		}
+		if *state != "" {
+			_ = c.SaveState(*state)
+		}
+		b, err := jsonenc.MarshalIndent(results, "", "  ")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: json:", err)
+			os.Exit(1)
+		}
+		fmt.Println(string(b))
+		return
+	}
+
 		}
 		c.Run()
 		if strings.TrimSpace(out.String()) == "" {
