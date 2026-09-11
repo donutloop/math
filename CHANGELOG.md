@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [138] single-document --csv output (agentic)
+
+- --csv now emits a single, valid CSV document with a header row
+  (kind,key,value) instead of bare line-delimited rows, so agents can
+  csv.reader / pandas.read_csv the whole stdout at once. Errors are captured
+  inline per expression rather than aborting; --vars appends var rows to the
+  same document.
 ## [137] single-document --json output
 
 - --json now emits one valid, parseable JSON document (an array of result

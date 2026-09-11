@@ -164,37 +164,41 @@ func main() {
 			}
 		}
 		c.SetQuietAssign(*quiet)
-		if *csv {
-			for _, e := range evals {
-				if strings.Contains(e, "=") {
-					name, v, err := c.AssignExpr(e)
-					if err != nil {
-						fmt.Fprintln(os.Stderr, err)
-						os.Exit(1)
-					}
-					fmt.Printf("assign,%s,%s\n", name, c.FormatValue(v))
+	if *csv {
+		// Emit a single, valid CSV document with a header row so agents can parse
+		// the whole stdout at once (csv.reader / pandas.read_csv).
+		rows := []string{"kind,key,value"} // header row
+		for _, e := range evals {
+			if strings.Contains(e, "=") {
+				name, v, err := c.AssignExpr(e)
+				if err != nil {
+					rows = append(rows, fmt.Sprintf("error,%s,%s", e, err.Error()))
 					continue
 				}
-				v, err := c.EvalExpr(e)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "error,%s,%s\n", e, err.Error())
-					os.Exit(1)
-				}
-				fmt.Printf("expr,%s,%s\n", e, c.FormatValue(v))
+				rows = append(rows, fmt.Sprintf("assign,%s,%s", name, c.FormatValue(v)))
+				continue
 			}
-			if *vars {
-				for name, v := range c.Vars() {
-					fmt.Printf("var,%s,%s\n", name, c.FormatValue(v))
-				}
+			v, err := c.EvalExpr(e)
+			if err != nil {
+				rows = append(rows, fmt.Sprintf("error,%s,%s", e, err.Error()))
+				continue
 			}
-			if *state != "" {
-				if err := c.SaveState(*state); err != nil {
-					fmt.Fprintln(os.Stderr, err)
-					os.Exit(1)
-				}
-			}
-			return
+			rows = append(rows, fmt.Sprintf("expr,%s,%s", e, c.FormatValue(v)))
 		}
+		if *vars {
+			for name, v := range c.Vars() {
+				rows = append(rows, fmt.Sprintf("var,%s,%s", name, c.FormatValue(v)))
+			}
+		}
+		if *state != "" {
+			_ = c.SaveState(*state)
+		}
+		for _, r := range rows {
+			fmt.Println(r)
+		}
+		return
+	}
+
 		if *json {
 	if *json {
 		// Emit a single, parseable JSON document (array) so agents can consume

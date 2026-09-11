@@ -105,6 +105,8 @@ self-describing access:
 - `schema` (REPL) / `--schema` (CLI) prints a JSON document of the full language
   surface — functions with arity + help, constants with values, commands,
   operators, modes, and CLI flags.
+- `--json` emits one valid, parseable JSON document (an array of result objects)
+  so agents can `json.load` the whole stdout at once.
 - `--json` / `--csv` emit parseable results; `--verify` gives deterministic exit
   codes; `--eval`, `--file`, `--version` are stable scripting flags.
 
