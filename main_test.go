@@ -223,3 +223,22 @@ func TestSnapshot(t *testing.T) {
 		}
 	}
 }
+
+func TestHelpJSON(t *testing.T) {
+	got := runMain(t.TempDir()+"/h.json", "--help", "--json")
+	var d map[string]any
+	if err := json.Unmarshal([]byte(got), &d); err != nil {
+		t.Fatalf("--help --json not parseable: %v\n%s", err, got)
+	}
+	if d["version"] != "1.1.0" {
+		t.Errorf("help version wrong: %v", d["version"])
+	}
+	flags, ok := d["flags"].([]any)
+	if !ok || len(flags) == 0 {
+		t.Errorf("help missing flags array")
+	}
+	ec, ok := d["exit_codes"].(map[string]any)
+	if !ok || ec["ok"] != 0.0 || ec["eval"] != 3.0 {
+		t.Errorf("help exit_codes wrong: %v", d["exit_codes"])
+	}
+}

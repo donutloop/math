@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"prototype_kl/calc"
+	"reflect"
 )
 
 // Version is the calculator release version.
@@ -96,6 +97,23 @@ func main() {
 	}
 
 	if *calcHelp {
+		if *json {
+			flags := []map[string]any{}
+			flag.CommandLine.VisitAll(func(f *flag.Flag) {
+				flags = append(flags, map[string]any{"name": f.Name, "type": reflect.TypeOf(f.Value).String(), "help": f.Usage})
+			})
+			b, err := jsonenc.MarshalIndent(map[string]any{
+				"version":   calc.SchemaVersion(),
+				"flags":     flags,
+				"exit_codes": map[string]int{"ok": ExitOK, "usage": ExitUsage, "io": ExitIO, "eval": ExitEval},
+			}, "", "  ")
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "help: json:", err)
+				os.Exit(ExitIO)
+			}
+			fmt.Println(string(b))
+			return
+		}
 		flag.CommandLine.SetOutput(os.Stdout)
 		flag.CommandLine.Usage()
 		fmt.Println("Machine outputs: --schema --json --jsonl --csv --version")

@@ -112,6 +112,9 @@ REPL directly in that mode with the prose banner suppressed:
     > 1+1
     > {"expr":"1+1","kind":"value","value":2}
 
+For agents, `--help --json` emits the CLI contract as a structured document:
+`{version, flags:[{name,type,help}], exit_codes:{ok,usage,io,eval}}`.
+
 ## Structured health report (`--verify --json`)
 
 For agents that need deterministic, parseable health signals beyond an exit

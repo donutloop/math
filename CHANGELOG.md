@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [149] --help --json structured flag contract (agentic)
+
+- --help --json emits {version, flags:[{name,type,help}], exit_codes} by
+  introspecting flag.CommandLine (VisitAll + reflect). Prose --help unchanged.
+- Agents discover the CLI surface programmatically.
+- TestHelpJSON parses flags and exit codes.
+- ADR-0066 records the decision.
 ## [148] --snapshot runtime state dump (agentic)
 
 - --snapshot emits calc.Snapshot() as JSON: {vars, mode, prec, base}.
