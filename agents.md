@@ -102,3 +102,10 @@ Every feature ships with an ADR in `docs/adr/` (e.g. `0004-json-single-doc.md`,
 rationale, and the alternatives rejected — so future cycles and agents can
 reconstruct *why* the interface is shaped the way it is. Write the ADR for the
 feature *before* committing, and keep it one per feature.
+
+## Testing rule (always)
+
+Every feature or change ships with BOTH unit tests (in the package under
+change, e.g. `calc/*_test.go`) AND integration tests (`tests/integration/`)
+that exercise the feature as part of a whole program. Always add both —
+never a feature without unit + integration coverage.
