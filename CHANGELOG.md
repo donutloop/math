@@ -1,3 +1,17 @@
+# CHANGELOG
+
+## [136] machine-readable JSON schema
+
+- New `schema` REPL command and `--schema` CLI flag emit a self-describing
+  JSON document of the full language surface: every built-in function (with
+  arity + one-line help), constants (with values), commands, operators,
+  display/angle modes, and the stable CLI flag surface.
+- Agents and scripts can discover the whole calculator without scraping prose
+  help; `--schema` exits deterministically after printing valid JSON.
+- Schema self-check added to `--verify`; new unit tests in calc/schema_test.go.
+- Interface now reflects the human + agentic dual audience: humans get the
+  friendly REPL, agents get structured JSON.
+
 ## [135] trigamma(x)
 
 - New `trigamma(x)`: the trigamma function psi'(x), via recurrence into

@@ -43,6 +43,7 @@ func main() {
 	version := flag.Bool("version", false, "print version and exit")
 	eng := flag.Bool("eng", false, "engineering notation for output")
 	verify := flag.Bool("verify", false, "run the self-test battery")
+	schemaFlag := flag.Bool("schema", false, "print the machine-readable JSON language schema and exit")
 	rad := flag.Bool("rad", false, "trig in radians (default)")
 	grad := flag.Bool("grad", false, "trig in gradians")
 	flag.Parse()
@@ -56,6 +57,15 @@ func main() {
 
 	if *version {
 		fmt.Println("math calculator", Version)
+		return
+	}
+
+	if *schemaFlag {
+		if err := calc.SchemaToWriter(os.Stdout); err != nil {
+			fmt.Fprintln(os.Stderr, "error: schema:", err)
+			os.Exit(1)
+		}
+		fmt.Println()
 		return
 	}
 

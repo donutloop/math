@@ -95,6 +95,19 @@ x = 5
 | Operators    | `^` exponent; `!` factorial; `%` percent |
 | Scripting    | `--state` sharing, `--verify`, `make bench` |
 
+## Machine-readable schema
+
+This calculator is built for **both humans and agentic workflows**, and the
+interface reflects both. Humans get a friendly REPL (`help`, discoverable
+commands, readable formatting). Agents and scripts get structured, predictable,
+self-describing access:
+
+- `schema` (REPL) / `--schema` (CLI) prints a JSON document of the full language
+  surface — functions with arity + help, constants with values, commands,
+  operators, modes, and CLI flags.
+- `--json` / `--csv` emit parseable results; `--verify` gives deterministic exit
+  codes; `--eval`, `--file`, `--version` are stable scripting flags.
+
 ## Documentation
 
 - [CHANGELOG.md](CHANGELOG.md) — feature history.

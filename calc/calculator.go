@@ -277,6 +277,8 @@ switch strings.ToLower(line) {
 		c.csvMode = !c.csvMode
 		fmt.Fprintf(c.out, "csv = %v\n", c.csvMode)
 		return false, nil
+	case "schema":
+		return false, c.PrintSchema()
 	case "json":
 		c.jsonMode = !c.jsonMode
 		fmt.Fprintf(c.out, "json = %v\n", c.jsonMode)

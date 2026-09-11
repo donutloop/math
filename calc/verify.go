@@ -1,6 +1,7 @@
 package calc
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -289,5 +290,27 @@ func Verify(w io.Writer) (passed, failed int) {
 		}
 	}
 	fmt.Fprintf(w, "%d passed, %d failed\n", passed, failed)
+
+	// Schema self-check: the machine-readable language surface must be valid
+	// JSON and expose functions, constants, commands, operators, and modes.
+	schemaBytes, err := SchemaJSON()
+	if err != nil {
+		fmt.Fprintf(w, "FAIL schema JSON: %v\n", err)
+		failed++
+	}
+	var s Schema
+	if json.Unmarshal(schemaBytes, &s) != nil {
+		fmt.Fprintf(w, "FAIL schema parse\n")
+		failed++
+	} else if s.Name != "math-calculator" || s.Version == "" {
+		fmt.Fprintf(w, "FAIL schema identity\n")
+		failed++
+	} else if len(s.Functions) == 0 || len(s.Constants) == 0 || len(s.Commands) == 0 || len(s.Operators) == 0 || len(s.Modes) == 0 {
+		fmt.Fprintf(w, "FAIL schema surface incomplete\n")
+		failed++
+	} else {
+		fmt.Fprintf(w, "ok   schema: %d functions, %d constants, %d commands, %d operators, %d modes\n", len(s.Functions), len(s.Constants), len(s.Commands), len(s.Operators), len(s.Modes))
+		passed++
+	}
 	return
 }

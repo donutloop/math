@@ -3,6 +3,14 @@
 This is the root-level prompt for the coding agent building the Math Calculator.
 The agent must follow these rules indefinitely — this is a loop, not a one-off.
 
+> **This calculator is built for BOTH humans and agentic workflows.** The
+> interface must reflect that duality at every layer: humans get a friendly
+> REPL (help, discoverable commands, readable formatting), while agents and
+> scripts get structured, predictable, self-describing access (machine-readable
+> JSON/CSV, a JSON schema, stable CLI flags, self-describing commands, and
+> deterministic exit codes). No feature ships until it has a machine
+> consumption path as well as a human one.
+
 ## Mission
 
 Build the **best calculator language ever known by humanity**. Think like a
@@ -12,10 +20,23 @@ true programming-language expert. Every feature must consider the whole system:
   functions, control flow, composition.
 - **Internal components** — lexer, parser, AST, evaluator, error model,
   formatting. Keep them clean, layered, and extensible.
-- **User experience** — a great REPL: clear help, discoverable commands,
-  readable formatting, sensible errors, degrees/radians/gradians modes.
+- **User experience** — a great REPL for humans: clear help, discoverable
+  commands, readable formatting, sensible errors, degrees/radians/gradians
+  modes.
+- **Agentic workflows** — this calculator is not just for humans: it is also
+  a computation engine for agents and scripts. The interface must expose
+  machine-readable output (JSON/Csv/schema), stable CLI flags (`--eval`,
+  `--file`, `--verify`, `--version`), and self-describing commands so an
+  agent can discover the full language surface, plan its computation, and
+  consume results without guessing.
 - **Correctness** — every feature ships with unit tests, domain checks, and
   verify coverage. `go test ./...` must pass before commit.
+
+Because we build for **both humans and agents**, the interface must reflect
+both: humans get a friendly REPL; agents get structured, predictable,
+self-describing access. Every new feature should consider its machine
+consumption path (JSON/Csv output, exit codes, schema) as well as its human
+one.
 
 Be creative: prefer language-level features (conditionals, loops, user
 functions, assignments, modes, units, formatting) over plain math functions.
@@ -33,6 +54,9 @@ feels great to use.
    - `calc/help.go` — one-line help.
    - `calc/verify.go` — known-good verify case.
    - docs — `docs/operations.md`, `CHANGELOG.md`, `README.md`, ADR if needed.
+   - **Machine path** — if the feature is language/interface, make sure it is
+     discoverable via `schema`/help and consumable as JSON/Csv where it makes
+     sense (agents must not need to scrape prose).
 3. **Add tests for the feature** before committing.
 4. **Run tests before committing**: `go test ./...` must pass.
 5. Commit with a clear message (`feat(parser): ...`).
@@ -60,9 +84,13 @@ feels great to use.
 
 - Keep executing forever: after each feature is done, immediately begin the
   next one from the mission list (conditionals, loops, user functions,
-  assignments, modes, units, formatting) or any remaining gap.
+  assignments, modes, units, formatting, agentic/JSON/schema/schema paths) or
+  any remaining gap.
 - **Push every completed feature to the remote before starting the next one**:
   `git add -A && git commit -m "<feature>" && git push origin HEAD`.
 - If the push fails or the remote diverged, `git pull --rebase origin HEAD`
   and push again.
 - There is no terminal state; the loop continues indefinitely.
+- Do **not** stop after step 8 or after a single feature — the loop must keep
+  running. Every cycle must also keep the agentic interface honest: keep
+  `schema`/JSON output current with every new feature added.

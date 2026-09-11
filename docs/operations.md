@@ -38,6 +38,28 @@ user functions. A call with the wrong number of arguments is rejected, and
 reserved names (built-in functions, `pi`, `e`, `ans`, `mem`) cannot be
 redefined. Definitions persist across saves like variables.
 
+## Schema (machine-readable language surface)
+
+Agents and scripts don't need to scrape prose help. `schema` (REPL) and
+`--schema` (CLI) emit a self-describing JSON document of the whole language:
+functions (with arity + one-line help), constants (with values), commands,
+operators, display/angle modes, and the stable CLI flag surface.
+
+    calculator --schema
+
+```json
+{
+  "version": "1.0.0",
+  "name": "math-calculator",
+  "functions": { "sqrt": {"arity": 1, "help": "sqrt(x): square root"}, ... },
+  "constants": { "pi": {"value": 3.141592653589793, "help": "pi: the constant pi"}, ... },
+  "commands": ["help", "quit", "schema", ...],
+  "operators": ["+", "-", "*", "/", "^", "!", "%", ...],
+  "modes": ["degrees", "radians", "gradians", ...],
+  "cli_flags": ["--eval", "--file", "--verify", "--schema", ...]
+}
+```
+
 ## Units & conversion
 ## Range loops
 ## Conditionals
