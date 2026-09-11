@@ -23,6 +23,7 @@ type Schema struct {
 	Operators []string                   `json:"operators"`
 	Modes     []string                   `json:"modes"`
 	CLI       []string                   `json:"cli_flags"`
+	Formats   []string                 `json:"formats"`
 	ExitCodes map[string]int              `json:"exit_codes"`
 }
 
@@ -108,6 +109,7 @@ func BuildSchema() Schema {
 		Commands:  schemaCommands,
 		Operators: schemaOperators,
 		Modes:     schemaModes,
+		Formats:   []string{"text", "json", "jsonl", "csv"},
 		CLI:       schemaCLI,
 		ExitCodes: schemaExitCodes,
 	}

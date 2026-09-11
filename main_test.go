@@ -256,3 +256,24 @@ func TestEvalSnapshot(t *testing.T) {
 		t.Errorf("post-eval state should include x=5: %v", d["vars"])
 	}
 }
+
+func TestSchemaFormats(t *testing.T) {
+	got := runMain(t.TempDir()+"/f.json", "--schema")
+	var d map[string]any
+	if err := json.Unmarshal([]byte(got), &d); err != nil {
+		t.Fatalf("--schema not parseable: %v\n%s", err, got)
+	}
+	fmts, ok := d["formats"].([]any)
+	if !ok || len(fmts) == 0 {
+		t.Fatalf("--schema missing formats list: %v", got)
+	}
+	seen := map[string]bool{}
+	for _, f := range fmts {
+		seen[f.(string)] = true
+	}
+	for _, want := range []string{"text", "json", "jsonl", "csv"} {
+		if !seen[want] {
+			t.Errorf("schema formats missing %q: %v", want, fmts)
+		}
+	}
+}

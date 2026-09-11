@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [152] schema formats field (agentic)
+
+- Schema JSON adds "formats": ["text", "json", "jsonl", "csv"] so agents
+  discover output formats from --schema in one call.
+- TestSchemaFormats parses the list.
+- ADR-0069 records the decision.
 ## [151] --eval --snapshot clean post-eval state (agentic)
 
 - --eval --snapshot suppresses eval-result print and emits ONLY the clean
