@@ -292,11 +292,13 @@ func main() {
 	}
 
 	if *jsonl {
+		evalFailed := false
 		for _, e := range evals {
 			if strings.Contains(e, "=") {
 				name, v, err := c.AssignExpr(e)
 				if err != nil {
 					printJSONL(e, "error", err.Error())
+					evalFailed = true
 					continue
 				}
 				printJSONL(e, "assign", name+"="+c.FormatValue(v))
@@ -305,6 +307,7 @@ func main() {
 			v, err := c.EvalExpr(e)
 			if err != nil {
 				printJSONL(e, "error", err.Error())
+				evalFailed = true
 				continue
 			}
 			printJSONL(e, "value", v)
@@ -316,6 +319,9 @@ func main() {
 		}
 		if *state != "" {
 			_ = c.SaveState(*state)
+		}
+		if evalFailed {
+			os.Exit(ExitEval)
 		}
 		return
 	}
@@ -455,10 +461,14 @@ func (m multiFlag) Set(v string) error {
 
 // printJSONL writes one NDJSON object per line for streaming agents.
 func printJSONL(expr, kind, value any) {
+	key := "value"
+	if kind == "error" {
+		key = "error"
+	}
 	b, err := jsonenc.Marshal(map[string]any{
 		"expr":  expr,
 		"kind":  kind,
-		"value": value,
+		key:     value,
 	})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: jsonl: %v\n", err)

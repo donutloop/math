@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [155] CLI --eval --jsonl structured error contract (agentic)
+
+- printJSONL emits the error key (not value) for kind:"error", matching the
+  REPL jsonl shape so agents parse failures uniformly.
+- Eval jsonl branch exits 3 (ExitEval) on any failed expression per the
+  documented 0/1/2/3 contract (was exit 0).
+- TestEvalJSONLStructuredError builds the binary, asserts exit 3 and the
+  {kind:"error",error} object.
+- ADR-0072 records the decision.
 ## [154] Structured REPL help in machine modes (agentic)
 
 - In jsonl/json/csv modes, printHelp emits {kind:"help",commands:[...]}

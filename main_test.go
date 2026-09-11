@@ -3,9 +3,12 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"io"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -275,5 +278,42 @@ func TestSchemaFormats(t *testing.T) {
 		if !seen[want] {
 			t.Errorf("schema formats missing %q: %v", want, fmts)
 		}
+	}
+}
+
+func TestEvalJSONLStructuredError(t *testing.T) {
+	// CLI --eval --jsonl on a failing expression must emit {expr,kind:"error",error}
+	// (not "value") and exit 3, so agents detect failures without prose.
+	dir := t.TempDir()
+	bin := filepath.Join(dir, "calc")
+	cmd := exec.Command("go", "build", "-o", bin, ".")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatalf("build failed: %v", err)
+	}
+	c := exec.Command(bin, "--eval", "1/0", "--jsonl")
+	out, err := c.Output()
+	var ee *exec.ExitError
+	if err == nil {
+		t.Fatalf("want non-zero exit, got success: %s", out)
+	}
+	if !errors.As(err, &ee) {
+		t.Fatalf("not an exit error: %v", err)
+	}
+	if ee.ExitCode() != 3 {
+		t.Fatalf("want exit 3 (eval error), got %d", ee.ExitCode())
+	}
+	var m map[string]any
+	if err := json.Unmarshal(out, &m); err != nil {
+		t.Fatalf("jsonl error not one JSON object: %v (%s)", err, out)
+	}
+	if m["kind"] != "error" {
+		t.Fatalf("want kind=error, got %v", m["kind"])
+	}
+	if _, ok := m["error"]; !ok {
+		t.Fatalf("want error key, got %v", m)
+	}
+	if _, ok := m["value"]; ok {
+		t.Fatalf("error result must not carry value key: %v", m)
 	}
 }
