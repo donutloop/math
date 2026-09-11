@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [159] begin(...) statement blocks (math programming language)
+
+- New construct: begin(...) sequences statements (paren-aware split on ';')
+  and returns the last value. Statements run as assignments or expressions,
+  so they can mutate variables.
+- Works standalone and as a while/repeat loop body:
+  begin(a = a + 5; b = a * 2) -> b=10; while(x < 4, begin(acc = acc + x; x = x + 1)) -> acc=6.
+- Tests: standalone block + begin as loop body.
+- Steer: toward a math programming language.
 ## [158] paren-aware statement splitting + multi-step loop bodies
 
 - splitStatements now splits on ';' only at paren depth 0, so ';' inside

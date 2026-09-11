@@ -521,6 +521,19 @@ func (c *Calculator) expand(s string) (string, error) {
 			i = end + 1
 			continue
 		}
+		if k < n && s[k] == '(' && ident == "begin" {
+			end := findMatchingParen(s, k)
+			if end < 0 {
+				return "", fmt.Errorf("unmatched '(' in call to begin")
+			}
+			r, err := c.expandBegin(s[k+1 : end])
+			if err != nil {
+				return "", err
+			}
+			b.WriteString(r)
+			i = end + 1
+			continue
+		}
 		if k < n && s[k] == '(' && (ident == "countif" || ident == "sumif") {
 			end := findMatchingParen(s, k)
 			if end < 0 {

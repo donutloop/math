@@ -193,3 +193,25 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 		}
 	}
 }
+
+// expandBegin implements a begin(...) statement block: the statements inside
+// are evaluated in sequence (paren-aware split on ';'), each as an assignment
+// or expression, so they can mutate variables. It returns the last value.
+func (c *Calculator) expandBegin(body string) (string, error) {
+	last := "0"
+	for _, st := range splitStatements(body) {
+		if name, expr, ok := parseAssignment(st); ok {
+			if err := c.assign(name, expr); err != nil {
+				return "", err
+			}
+			last = fmt.Sprintf("%g", c.vars[name])
+		} else {
+			bv, err := c.eval(st)
+			if err != nil {
+				return "", err
+			}
+			last = fmt.Sprintf("%g", bv)
+		}
+	}
+	return last, nil
+}
