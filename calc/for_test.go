@@ -95,3 +95,25 @@ func TestRepeatBreakValue(t *testing.T) {
 		t.Fatalf("repeat break value: expected 1000, got:\n%s", got)
 	}
 }
+
+func TestBreakInsideIfBranch(t *testing.T) {
+	got := runBatch(t, "i = 0\nwhile(i < 5, begin(i = i + 1; if(i == 3, break, 0)))\ni\nquit\n")
+	if !strings.Contains(got, "3") {
+		t.Fatalf("break in if branch: expected i=3, got:\n%s", got)
+	}
+}
+
+func TestContinueInsideIfBranch(t *testing.T) {
+	got := runBatch(t, "i = 0\ns = 0\nwhile(i < 5, begin(i = i + 1; if(i == 2, continue, 0); s = s + i))\ns\nquit\n")
+	// continue skips s += i when i == 2, so s = 1 + 3 + 4 + 5 = 13.
+	if !strings.Contains(got, "13") {
+		t.Fatalf("continue in if branch: expected s=13, got:\n%s", got)
+	}
+}
+
+func TestBreakValueInsideIfBranch(t *testing.T) {
+	got := runBatch(t, "i = 0\nwhile(i < 5, begin(i = i + 1; if(i == 3, break i * 100, 0)))\nquit\n")
+	if !strings.Contains(got, "300") {
+		t.Fatalf("break value in if branch: expected 300, got:\n%s", got)
+	}
+}

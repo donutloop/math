@@ -18,6 +18,15 @@
 - Unit tests (calc/for_test.go) and whole-program integration tests cover
   while/for/repeat and the begin-wrapped form.
 
+## [169] break / continue inside if branches of loop bodies (math programming language)
+
+- `if(cond, break, val)` / `if(cond, continue, val)` / `if(cond, break <expr>, val)`
+  inside a while/for/repeat body now propagate loop control to the enclosing
+  loop: `expandIf` returns the sentinel for a break/continue branch, and
+  `expandBegin` forwards nested sentinels up instead of erroring.
+- Unit tests (calc/for_test.go) and whole-program integration tests cover
+  break, continue, and break-value inside if branches.
+
 ## [165] break / continue propagate through for and repeat loops (math programming language)
 
 - `for` and `repeat` loop bodies now split statements (paren-aware) and honor

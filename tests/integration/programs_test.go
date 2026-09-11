@@ -219,3 +219,14 @@ quit
 	got := runProgram(t, prog)
 	checkLine(t, got, "10")
 }
+
+func TestProgramBreakInIfBranch(t *testing.T) {
+	// break inside an if branch of a loop body exits the while loop.
+	prog := `i = 0
+while(i < 5, begin(i = i + 1; if(i == 3, break, 0)))
+i
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "3")
+}

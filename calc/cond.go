@@ -3,9 +3,9 @@ package calc
 import (
 	"fmt"
 	"math"
+	"prototype_kl/parser"
 	"strconv"
 	"strings"
-	"prototype_kl/parser"
 )
 
 // expandIf rewrites if(cond, then, else) into
@@ -24,12 +24,29 @@ func (c *Calculator) expandIf(inner string) (string, error) {
 	// Lazy branch selection: evaluate cond numerically; expand only the taken branch.
 	if v, err := parser.Evaluate(condE); err == nil {
 		if v != 0 {
-			return c.expand(then)
+			return c.expandBranch(then)
 		}
-		return c.expand(els)
+		return c.expandBranch(els)
 	}
 	// cond not evaluable at expansion time: fall back to a lazy ternary.
 	return fmt.Sprintf("(%s ? %s : %s)", condE, then, els), nil
+}
+
+// expandBranch expands an if/else branch. If the branch is a bare
+// break/continue or "break <expr>", it returns the loop-control sentinel so
+// the enclosing loop can act on it; otherwise it expands normally.
+func (c *Calculator) expandBranch(branch string) (string, error) {
+	t := strings.TrimSpace(branch)
+	if t == "break" {
+		return breakSentinel, nil
+	}
+	if t == "continue" {
+		return continueSentinel, nil
+	}
+	if expr, ok := breakValue(t); ok {
+		return breakValuePrefix + expr, nil
+	}
+	return c.expand(branch)
 }
 
 // expandAndOr rewrites and(a, b) into (a) && (b) and or(a, b) into (a) || (b),

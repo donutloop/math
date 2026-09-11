@@ -311,7 +311,17 @@ func (c *Calculator) expandBegin(body string) (string, error) {
 			}
 			last = fmt.Sprintf("%g", c.vars[name])
 		} else {
-			bv, err := c.eval(st)
+			// Expand at string level so nested break/continue (e.g. from an
+			// if branch) can propagate up to the enclosing loop.
+			expanded, err := c.substitute(st)
+			if err != nil {
+				return "", err
+			}
+			if expanded == breakSentinel || expanded == continueSentinel ||
+				strings.HasPrefix(expanded, breakValuePrefix) {
+				return expanded, nil
+			}
+			bv, err := c.evalExpanded(expanded)
 			if err != nil {
 				return "", err
 			}
