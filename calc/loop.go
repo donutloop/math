@@ -176,8 +176,16 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 		}
 		// Evaluate body as a sequence of statements (paren-aware split on ';'),
 		// so multi-step bodies like acc = acc + x; x = x + 1 mutate variables.
+		// Direct 'break' exits the loop; 'continue' skips the rest of the body.
 		last = "0"
 		for _, st := range splitStatements(body) {
+			t := strings.TrimSpace(st)
+			if t == "break" {
+				return last, nil
+			}
+			if t == "continue" {
+				break
+			}
 			if name, expr, ok := parseAssignment(st); ok {
 				if err := c.assign(name, expr); err != nil {
 					return "", err
@@ -200,6 +208,13 @@ func (c *Calculator) expandWhile(cond, body string) (string, error) {
 func (c *Calculator) expandBegin(body string) (string, error) {
 	last := "0"
 	for _, st := range splitStatements(body) {
+		t := strings.TrimSpace(st)
+		if t == "break" {
+			return "0", nil
+		}
+		if t == "continue" {
+			break
+		}
 		if name, expr, ok := parseAssignment(st); ok {
 			if err := c.assign(name, expr); err != nil {
 				return "", err

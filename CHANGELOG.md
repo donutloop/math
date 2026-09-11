@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [162] break / continue in while loops (math programming language)
+
+- New loop-control statements: a direct `break` body statement exits the loop
+  with the last value; `continue` skips the rest of the current body step.
+- `begin(...)` blocks honor break/continue for their own statement sequence.
+- Iteration bound guard (10000) still applies.
+- Tests: while-loop break/continue.
+
 ## [161] function-local variable scope (math programming language)
 
 - User-function bodies are now local scope: assignments inside a call (e.g.
