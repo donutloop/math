@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [145] REPL jsonl (NDJSON) mode (agentic)
+
+- Add 'jsonl' REPL command + jsonlMode: every result is one {expr,kind,value}
+  object per line, matching CLI --jsonl shape. jsonl disables json/csv.
+- Driving agents ingest REPL results line-by-line.
+- TestREPLJSONL drives the REPL and parses each result.
+- ADR-0062 records the decision.
 ## [144] Schema version pinning (agentic)
 
 - Bump schemaVersion to 1.1.0 reflecting the expanded machine surface

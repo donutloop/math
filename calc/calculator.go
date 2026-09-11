@@ -35,6 +35,7 @@ type Calculator struct {
 	quiet       bool
 	quietAssign bool
 	jsonMode    bool
+	jsonlMode   bool
 	csvMode     bool
 	lastExpr    string
 	eng         bool
@@ -283,6 +284,12 @@ switch strings.ToLower(line) {
 		c.jsonMode = !c.jsonMode
 		fmt.Fprintf(c.out, "json = %v\n", c.jsonMode)
 		return false, nil
+	case "jsonl":
+		c.jsonlMode = !c.jsonlMode
+		c.jsonMode = false
+		c.csvMode = false
+		fmt.Fprintf(c.out, "jsonl = %v\n", c.jsonlMode)
+		return false, nil
 	case "quiet":
 		c.quietAssign = !c.quietAssign
 		fmt.Fprintf(c.out, "quiet = %v\n", c.quietAssign)
@@ -332,6 +339,8 @@ func (c *Calculator) process(stmt string) (bool, error) {
 	c.results = append(c.results, c.format(v))
 	if c.csvMode {
 		fmt.Fprintf(c.out, "value,%s\n", c.format(v))
+	} else if c.jsonlMode {
+		fmt.Fprintf(c.out, "{\"expr\": %q, \"kind\": \"value\", \"value\": %s}\n", stmt, c.format(v))
 	} else if c.jsonMode {
 		fmt.Fprintf(c.out, "{\"value\": %s}\n", c.format(v))
 	} else {

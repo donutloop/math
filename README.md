@@ -128,6 +128,8 @@ self-describing access:
   so agents can `json.load` the whole stdout at once.
 - `--jsonl` emits NDJSON — one JSON object per result line (`{expr,kind,value}`) —
   for streaming agents that ingest line-by-line without buffering a document.
+- In the REPL, the `jsonl` command switches to NDJSON results (one
+  `{expr,kind,value}` object per line), matching the CLI `--jsonl` shape.
 - `--output text|json|jsonl|csv` is one flag that names the machine format
   (equivalent to `--json`/`--jsonl`/`--csv`) so agents collapse flag discovery.
 - `--csv` emits one valid CSV document with a header row (`kind,key,value`).

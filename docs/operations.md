@@ -100,6 +100,10 @@ Agents pick the machine format with one flag instead of probing several:
 `text` (or omitted) is the default prose. It is equivalent to the individual
 `--json`, `--jsonl`, `--csv` flags; unknown formats exit `1`.
 
+In the interactive REPL, the `jsonl` command switches to NDJSON: every result
+is one `{expr,kind,value}` object per line (matching `--jsonl`). `json` and
+`csv` remain available; `jsonl` disables both.
+
 ## Structured health report (`--verify --json`)
 
 For agents that need deterministic, parseable health signals beyond an exit

@@ -2,6 +2,7 @@ package calc
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -1098,3 +1099,31 @@ func TestDigitDomain(t *testing.T) {
 }
 
 
+
+func TestREPLJSONL(t *testing.T) {
+	// 'jsonl' switches the REPL to NDJSON: every result becomes one
+	// parseable {expr,kind,value} object per line, for driving agents.
+	got := run(t, "jsonl\n1+1\n2+3\n")
+	lines := strings.Split(strings.TrimSpace(got), "\n")
+	jsonl := 0
+	for _, ln := range lines {
+		// REPL prefixes results with the "> " prompt; strip it.
+		body := strings.TrimPrefix(strings.TrimSpace(ln), "> ")
+		if !strings.HasPrefix(body, "{") {
+			// banner, echo, or prompt-only line: not a jsonl result
+			continue
+		}
+		var m map[string]any
+		if err := json.Unmarshal([]byte(body), &m); err != nil {
+			t.Errorf("REPL jsonl line not parseable JSON: %q (%v)", ln, err)
+			continue
+		}
+		if m["kind"] != "value" || m["expr"] == nil || m["value"] == nil {
+			t.Errorf("REPL jsonl line missing {expr,kind,value}: %q", ln)
+		}
+		jsonl++
+	}
+	if jsonl < 2 {
+		t.Errorf("expected jsonl results, got %d", jsonl)
+	}
+}
