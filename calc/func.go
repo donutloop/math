@@ -614,7 +614,21 @@ func (c *Calculator) expand(s string) (string, error) {
 			for pi, p := range def.Params {
 				body = replaceIdent(body, p, vals[pi])
 			}
+			// Function-local scope: snapshot variables so assignments inside the
+			// body (e.g. acc = ...) do not leak to the caller or between calls.
+			// The snapshot is restored after the body expands, keeping recursion
+			// safe and functions pure.
+			snap := make(map[string]float64, len(c.vars))
+			for k, v := range c.vars {
+				snap[k] = v
+			}
 			eb, err := c.expand(body)
+			for k := range c.vars {
+				delete(c.vars, k)
+			}
+			for k, v := range snap {
+				c.vars[k] = v
+			}
 			if err != nil {
 				return "", err
 			}

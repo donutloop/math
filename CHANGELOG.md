@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [161] function-local variable scope (math programming language)
+
+- User-function bodies are now local scope: assignments inside a call (e.g.
+  acc = ...) are snapshot/restored, so they do not leak to the caller or
+  between calls. Recursion stays safe.
+- f(n) = begin(acc = 0; for(i, 1, n, acc = acc + i); acc): f(5)=15, acc
+  undefined after the call.
+- Tests: function-local scope.
+- Steer: toward a math programming language.
 ## [160] for(var, lo, hi, body) range loop (math programming language)
 
 - New construct: binds var to each integer in [lo, hi] inclusive, evaluates
