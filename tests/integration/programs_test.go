@@ -230,3 +230,14 @@ quit
 	got := runProgram(t, prog)
 	checkLine(t, got, "3")
 }
+
+func TestProgramForStep(t *testing.T) {
+	// for with an explicit step accumulates odd numbers 1..9 -> 25.
+	prog := `s = 0
+for(i, 1, 9, 2, s = s + i)
+s
+quit
+`
+	got := runProgram(t, prog)
+	checkLine(t, got, "25")
+}

@@ -2,6 +2,7 @@ package calc
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -334,7 +335,7 @@ func (c *Calculator) expandBegin(body string) (string, error) {
 // expandFor implements for(var, lo, hi, body): bind var to each integer in
 // [lo, hi] inclusive and evaluate body (substituting var), returning the last
 // body value. lo/hi are evaluated first so the range is fixed up front.
-func (c *Calculator) expandFor(vname, loS, hiS, body string) (string, error) {
+func (c *Calculator) expandFor(vname, loS, hiS, stepS, body string) (string, error) {
 	lo, err := c.eval(loS)
 	if err != nil {
 		return "", err
@@ -344,7 +345,14 @@ func (c *Calculator) expandFor(vname, loS, hiS, body string) (string, error) {
 		return "", err
 	}
 	last := "0"
-	for i := int(lo); i <= int(hi); i++ {
+	step, err := c.eval(stepS)
+	if err != nil {
+		return "", err
+	}
+	if step == 0 {
+		return "", fmt.Errorf("for step must be nonzero")
+	}
+	for i := int(lo); i <= int(hi); i += int(math.Abs(step)) {
 		for _, st := range splitStatements(body) {
 			b := replaceIdent(st, vname, strconv.Itoa(i))
 			t := strings.TrimSpace(b)

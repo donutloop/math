@@ -344,7 +344,7 @@ func (c *Calculator) expand(s string) (string, error) {
 			if end < 0 {
 				return "", fmt.Errorf("unmatched '(' in call to %s", ident)
 			}
-			boolExpr, err := c.expandAndOr(s[k+1 : end], ident)
+			boolExpr, err := c.expandAndOr(s[k+1:end], ident)
 			if err != nil {
 				return "", err
 			}
@@ -510,14 +510,22 @@ func (c *Calculator) expand(s string) (string, error) {
 				return "", fmt.Errorf("unmatched '(' in call to for")
 			}
 			args := splitArgs(s[k+1 : end])
-			if len(args) != 4 {
-				return "", fmt.Errorf("for expects 4 arguments (var, lo, hi, body), got %d", len(args))
+			if len(args) != 4 && len(args) != 5 {
+				return "", fmt.Errorf("for requires 4 or 5 arguments (var, lo, hi[, step], body)")
 			}
-			r, err := c.expandFor(strings.TrimSpace(args[0]), strings.TrimSpace(args[1]), strings.TrimSpace(args[2]), strings.TrimSpace(args[3]))
+			step := "1"
+			body := ""
+			if len(args) == 5 {
+				step = strings.TrimSpace(args[3])
+				body = strings.TrimSpace(args[4])
+			} else {
+				body = strings.TrimSpace(args[3])
+			}
+			expanded, err := c.expandFor(strings.TrimSpace(args[0]), strings.TrimSpace(args[1]), strings.TrimSpace(args[2]), step, body)
 			if err != nil {
 				return "", err
 			}
-			b.WriteString(r)
+			b.WriteString(expanded)
 			i = end + 1
 			continue
 		}

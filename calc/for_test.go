@@ -117,3 +117,19 @@ func TestBreakValueInsideIfBranch(t *testing.T) {
 		t.Fatalf("break value in if branch: expected 300, got:\n%s", got)
 	}
 }
+
+func TestForLoopStep(t *testing.T) {
+	got := runBatch(t, "s = 0\nfor(i, 2, 10, 2, s = s + i)\ns\nquit\n")
+	// evens 2+4+6+8+10 = 30
+	if !strings.Contains(got, "30") {
+		t.Fatalf("for step: expected 30, got:\n%s", got)
+	}
+}
+
+func TestForLoopStepOdds(t *testing.T) {
+	got := runBatch(t, "s = 0\nfor(i, 1, 9, 2, s = s + i)\ns\nquit\n")
+	// odds 1+3+5+7+9 = 25
+	if !strings.Contains(got, "25") {
+		t.Fatalf("for step odds: expected 25, got:\n%s", got)
+	}
+}

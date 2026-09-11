@@ -27,6 +27,15 @@
 - Unit tests (calc/for_test.go) and whole-program integration tests cover
   break, continue, and break-value inside if branches.
 
+## [170] for loop with an explicit step (math programming language)
+
+- `for(var, lo, hi, step, body)` iterates var by |step| (nonzero). With no
+  step it behaves exactly as before.
+- `for(i, 2, 10, 2, s = s + i)` sums evens 2..10 -> 30; `for(i, 1, 9, 2, ...)`
+  sums odds 1..9 -> 25.
+- Unit tests (calc/for_test.go) and whole-program integration tests cover
+  even and odd stepping.
+
 ## [165] break / continue propagate through for and repeat loops (math programming language)
 
 - `for` and `repeat` loop bodies now split statements (paren-aware) and honor
