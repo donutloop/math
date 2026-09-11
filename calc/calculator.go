@@ -2,6 +2,7 @@ package calc
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -217,6 +218,16 @@ switch strings.ToLower(line) {
 		return true, nil
 	case "vars":
 		c.printVars()
+		return false, nil
+	case "snapshot":
+		// Structured runtime state dump for driving agents: variables, mode,
+		// precision, radix, as one JSON object.
+		b, err := json.Marshal(c.Snapshot())
+		if err != nil {
+			fmt.Fprintf(c.out, "error: %v\n", err)
+			return false, nil
+		}
+		fmt.Fprintln(c.out, string(b))
 		return false, nil
 	case "clear":
 		c.vars = make(map[string]float64)

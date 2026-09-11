@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [150] REPL snapshot command (agentic)
+
+- Add 'snapshot' REPL command: emits calc.Snapshot() ({vars, mode, prec,
+  base}) as one JSON object, mirroring CLI --snapshot.
+- Driving agents dump REPL state without leaving the session.
+- TestREPLSnapshot drives the REPL and parses the state.
+- ADR-0067 records the decision.
 ## [149] --help --json structured flag contract (agentic)
 
 - --help --json emits {version, flags:[{name,type,help}], exit_codes} by

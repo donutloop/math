@@ -1190,3 +1190,29 @@ func TestSetMachineMode(t *testing.T) {
 		t.Errorf("machine REPL produced %d structured results, want >=2", found)
 	}
 }
+
+func TestREPLSnapshot(t *testing.T) {
+	got := run(t, "x=5\nsnapshot\n")
+	var d map[string]any
+	found := false
+	for _, ln := range strings.Split(strings.TrimSpace(got), "\n") {
+		body := strings.TrimPrefix(strings.TrimSpace(ln), "> ")
+		if err := json.Unmarshal([]byte(body), &d); err != nil {
+			continue
+		}
+		found = true
+		break
+	}
+	if !found {
+		t.Fatalf("snapshot command produced no JSON state:\n%s", got)
+	}
+	for _, k := range []string{"vars", "mode", "prec", "base"} {
+		if d[k] == nil {
+			t.Errorf("snapshot missing %q", k)
+		}
+	}
+	vars, ok := d["vars"].(map[string]any)
+	if !ok || vars["x"] != 5.0 {
+		t.Errorf("snapshot vars should include x=5: %v", d["vars"])
+	}
+}

@@ -115,6 +115,9 @@ REPL directly in that mode with the prose banner suppressed:
 For agents, `--help --json` emits the CLI contract as a structured document:
 `{version, flags:[{name,type,help}], exit_codes:{ok,usage,io,eval}}`.
 
+In the REPL, the `snapshot` command emits the full runtime state as one JSON
+object (`{vars, mode, prec, base}`), mirroring CLI `--snapshot`.
+
 ## Structured health report (`--verify --json`)
 
 For agents that need deterministic, parseable health signals beyond an exit
