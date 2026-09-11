@@ -242,3 +242,17 @@ func TestHelpJSON(t *testing.T) {
 		t.Errorf("help exit_codes wrong: %v", d["exit_codes"])
 	}
 }
+
+func TestEvalSnapshot(t *testing.T) {
+	// --eval --snapshot emits ONLY clean post-eval state JSON (no mixed
+	// eval-result prose), so agents get one parseable document.
+	got := runMain(t.TempDir()+"/es.json", "--eval", "x=5", "--snapshot")
+	var d map[string]any
+	if err := json.Unmarshal([]byte(got), &d); err != nil {
+		t.Fatalf("--eval --snapshot not clean JSON: %v\n%s", err, got)
+	}
+	vars, ok := d["vars"].(map[string]any)
+	if !ok || vars["x"] != 5.0 {
+		t.Errorf("post-eval state should include x=5: %v", d["vars"])
+	}
+}

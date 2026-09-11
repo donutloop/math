@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [151] --eval --snapshot clean post-eval state (agentic)
+
+- --eval --snapshot suppresses eval-result print and emits ONLY the clean
+  post-eval Snapshot() JSON ({vars, mode, prec, base}).
+- Agents get one parseable document instead of mixed output.
+- TestEvalSnapshot asserts state contains the assigned var.
+- ADR-0068 records the decision.
 ## [150] REPL snapshot command (agentic)
 
 - Add 'snapshot' REPL command: emits calc.Snapshot() ({vars, mode, prec,

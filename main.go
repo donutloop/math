@@ -364,7 +364,11 @@ func main() {
 			fmt.Fprintln(os.Stderr, "error: empty evaluation")
 			os.Exit(ExitEval)
 		}
-		fmt.Print(out.String())
+		// --eval --snapshot emits ONLY the clean post-eval state JSON, so agents
+		// get one parseable document instead of mixed eval output + state.
+		if !*snapshot {
+			fmt.Print(out.String())
+		}
 		if *vars {
 			c.PrintVars()
 		}
