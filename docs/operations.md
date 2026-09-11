@@ -104,6 +104,14 @@ In the interactive REPL, the `jsonl` command switches to NDJSON: every result
 is one `{expr,kind,value}` object per line (matching `--jsonl`). `json` and
 `csv` remain available; `jsonl` disables both.
 
+Agents can spawn an interactive machine session in one command: pass a format
+flag (`--jsonl`, `--json`, `--csv`, `--output`) without `--eval` to start the
+REPL directly in that mode with the prose banner suppressed:
+
+    calculator --jsonl
+    > 1+1
+    > {"expr":"1+1","kind":"value","value":2}
+
 ## Structured health report (`--verify --json`)
 
 For agents that need deterministic, parseable health signals beyond an exit

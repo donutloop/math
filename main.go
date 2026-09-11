@@ -370,6 +370,33 @@ func main() {
 		}
 	}
 	c.SetQuietAssign(*quiet)
+	// Spawn a machine REPL session directly when a format flag is given
+	// without --eval: presets the mode and suppresses the prose banner so a
+	// driving agent gets clean parseable output from the first line.
+	if len(evals) == 0 {
+		switch {
+		case *jsonl:
+			if err := c.SetMachineMode("jsonl"); err != nil {
+				fmt.Fprintln(os.Stderr, "repl:", err)
+				os.Exit(ExitUsage)
+			}
+		case *json:
+			if err := c.SetMachineMode("json"); err != nil {
+				fmt.Fprintln(os.Stderr, "repl:", err)
+				os.Exit(ExitUsage)
+			}
+		case *csv:
+			if err := c.SetMachineMode("csv"); err != nil {
+				fmt.Fprintln(os.Stderr, "repl:", err)
+				os.Exit(ExitUsage)
+			}
+		case *output != "" && *output != "text":
+			if err := c.SetMachineMode(*output); err != nil {
+				fmt.Fprintln(os.Stderr, "repl:", err)
+				os.Exit(ExitUsage)
+			}
+		}
+	}
 	c.Run()
 }
 

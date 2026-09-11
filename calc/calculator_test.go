@@ -1155,3 +1155,38 @@ func TestREPLJSONLError(t *testing.T) {
 		t.Errorf("expected a structured error object in jsonl REPL output")
 	}
 }
+
+
+func TestSetMachineMode(t *testing.T) {
+	// SetMachineMode("jsonl") presets a machine REPL: banner suppressed, and
+	// every result is a parseable NDJSON object for a driving agent.
+	var out bytes.Buffer
+	c := New(strings.NewReader("1+1\n2+3\n"), &out)
+	if err := c.SetMachineMode("jsonl"); err != nil {
+		t.Fatal(err)
+	}
+	c.Run()
+	got := out.String()
+	if strings.Contains(got, "Math Calculator") {
+		t.Errorf("machine REPL should suppress the prose banner:\n%s", got)
+	}
+	found := 0
+	for _, ln := range strings.Split(strings.TrimSpace(got), "\n") {
+		body := strings.TrimPrefix(strings.TrimSpace(ln), "> ")
+		if !strings.HasPrefix(body, "{") {
+			continue
+		}
+		var m map[string]any
+		if err := json.Unmarshal([]byte(body), &m); err != nil {
+			t.Errorf("machine REPL jsonl line not parseable: %q (%v)", ln, err)
+			continue
+		}
+		if m["kind"] != "value" || m["expr"] == nil || m["value"] == nil {
+			t.Errorf("machine REPL line missing {expr,kind,value}: %q", ln)
+		}
+		found++
+	}
+	if found < 2 {
+		t.Errorf("machine REPL produced %d structured results, want >=2", found)
+	}
+}

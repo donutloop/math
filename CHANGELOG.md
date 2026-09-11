@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [147] Spawn a machine REPL from the CLI (agentic)
+
+- A format flag (--jsonl/--json/--csv/--output) without --eval starts the
+  REPL directly in that machine mode via calc.SetMachineMode: banner
+  suppressed, parseable output from the first line.
+- Unknown modes exit 1. TestSetMachineMode drives a preset REPL.
+- ADR-0064 records the decision.
 ## [146] Structured errors in REPL machine modes (agentic)
 
 - REPL jsonl/json/csv modes emit parseable error objects on eval failure

@@ -77,6 +77,29 @@ func NewPersistent(reader io.Reader, writer io.Writer, path string) (*Calculator
 
 // Run starts the interactive loop. It returns when input reaches EOF or the
 // user types "quit"/"exit".
+// SetMachineMode presets the REPL output format for spawning a machine
+// session directly: text|json|jsonl|csv. Machine modes suppress the prose
+// banner so driving agents get clean, parseable output from the first line.
+func (c *Calculator) SetMachineMode(mode string) error {
+	c.quiet = true
+	c.jsonMode = false
+	c.jsonlMode = false
+	c.csvMode = false
+	switch mode {
+	case "json":
+		c.jsonMode = true
+	case "jsonl":
+		c.jsonlMode = true
+	case "csv":
+		c.csvMode = true
+	case "text", "":
+		// prose REPL as normal
+	default:
+		return fmt.Errorf("unknown machine mode %q", mode)
+	}
+	return nil
+}
+
 func (c *Calculator) Run() {
 	if !c.quiet {
 		fmt.Fprintln(c.out, "Math Calculator - type 'help' for commands, 'quit' to exit.")
